@@ -20,7 +20,7 @@ public class CourseModel {
 
     private String title;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JsonManagedReference
     @JoinTable(
             name = "Course_Student",
