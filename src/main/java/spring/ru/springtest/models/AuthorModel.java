@@ -5,21 +5,22 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "users", schema = "test")
+@Table(name = "authors", schema = "test")
 @Getter
 @Setter
-public class UserModel {
+public class AuthorModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private String username;
+    private String name;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
-    private ProfileModel profile;
+    private List<BookModel> books;
 }
