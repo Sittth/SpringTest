@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS course_student (
         FOREIGN KEY(course_id)
         REFERENCES courses(id)
         ON DELETE CASCADE,
-    CONSTRAINT fk_course_student_course
+    CONSTRAINT fk_course_student_student
         FOREIGN KEY(student_id)
         REFERENCES students(id)
         ON DELETE CASCADE
