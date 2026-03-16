@@ -7,7 +7,7 @@ import spring.ru.springtest.models.AuthorModel;
 @Component
 public class AuthorMapper {
 
-    public Author toDto(Author author) {
+    public Author toDto(AuthorModel author) {
         if (author == null) {
             return null;
         }

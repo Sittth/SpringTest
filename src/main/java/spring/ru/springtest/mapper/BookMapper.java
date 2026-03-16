@@ -7,7 +7,7 @@ import spring.ru.springtest.models.BookModel;
 @Component
 public class BookMapper {
 
-    public Book toDto(Book book) {
+    public Book toDto(BookModel book) {
         if (book == null) {
             return null;
         }

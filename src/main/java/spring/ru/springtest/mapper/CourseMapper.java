@@ -7,7 +7,7 @@ import spring.ru.springtest.models.CourseModel;
 @Component
 public class CourseMapper {
 
-    public Course toDto(Course course) {
+    public Course toDto(CourseModel course) {
         if (course == null) {
             return null;
         }

@@ -7,7 +7,7 @@ import spring.ru.springtest.models.StudentModel;
 @Component
 public class StudentMapper {
 
-    public Student toDto(Student student) {
+    public Student toDto(StudentModel student) {
         if (student == null) {
             return null;
         }

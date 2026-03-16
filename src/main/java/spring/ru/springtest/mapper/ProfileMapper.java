@@ -7,7 +7,7 @@ import spring.ru.springtest.models.ProfileModel;
 @Component
 public class ProfileMapper {
 
-    public Profile toDto(Profile profile) {
+    public Profile toDto(ProfileModel profile) {
         if (profile == null) {
             return null;
         }
