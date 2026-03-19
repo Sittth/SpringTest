@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-03-15T21:13:03.022664+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-03-19T14:26:48.796838600+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 @Validated
 @Tag(name = "authors", description = "the authors API")
 public interface AuthorsApi {
@@ -43,13 +43,40 @@ public interface AuthorsApi {
     }
 
     /**
+     * POST /authors : Create author
+     *
+     * @param author  (required)
+     * @return Created (status code 201)
+     */
+    @Operation(
+        operationId = "createAuthorById",
+        summary = "Create author",
+        responses = {
+            @ApiResponse(responseCode = "201", description = "Created")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = "/authors",
+        consumes = { "application/json" }
+    )
+    
+    default ResponseEntity<Void> createAuthorById(
+        @Parameter(name = "Author", description = "", required = true) @Valid @RequestBody Author author
+    ) {
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+
+    /**
      * DELETE /authors/{id} : Delete author
      *
      * @param id  (required)
      * @return Deleted (status code 204)
      */
     @Operation(
-        operationId = "authorsIdDelete",
+        operationId = "deleteAuthorById",
         summary = "Delete author",
         responses = {
             @ApiResponse(responseCode = "204", description = "Deleted")
@@ -60,7 +87,7 @@ public interface AuthorsApi {
         value = "/authors/{id}"
     )
     
-    default ResponseEntity<Void> authorsIdDelete(
+    default ResponseEntity<Void> deleteAuthorById(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id
     ) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
@@ -75,7 +102,7 @@ public interface AuthorsApi {
      * @return Author found (status code 200)
      */
     @Operation(
-        operationId = "authorsIdGet",
+        operationId = "getAuthorById",
         summary = "Get author by id",
         responses = {
             @ApiResponse(responseCode = "200", description = "Author found", content = {
@@ -89,7 +116,7 @@ public interface AuthorsApi {
         produces = { "application/json" }
     )
     
-    default ResponseEntity<Author> authorsIdGet(
+    default ResponseEntity<Author> getAuthorById(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id
     ) {
         getRequest().ifPresent(request -> {
@@ -114,7 +141,7 @@ public interface AuthorsApi {
      * @return Updated (status code 200)
      */
     @Operation(
-        operationId = "authorsIdPut",
+        operationId = "updateAuthorById",
         summary = "Update author",
         responses = {
             @ApiResponse(responseCode = "200", description = "Updated")
@@ -126,35 +153,8 @@ public interface AuthorsApi {
         consumes = { "application/json" }
     )
     
-    default ResponseEntity<Void> authorsIdPut(
+    default ResponseEntity<Void> updateAuthorById(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id,
-        @Parameter(name = "Author", description = "", required = true) @Valid @RequestBody Author author
-    ) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
-    }
-
-
-    /**
-     * POST /authors : Create author
-     *
-     * @param author  (required)
-     * @return Created (status code 201)
-     */
-    @Operation(
-        operationId = "authorsPost",
-        summary = "Create author",
-        responses = {
-            @ApiResponse(responseCode = "201", description = "Created")
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.POST,
-        value = "/authors",
-        consumes = { "application/json" }
-    )
-    
-    default ResponseEntity<Void> authorsPost(
         @Parameter(name = "Author", description = "", required = true) @Valid @RequestBody Author author
     ) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);

@@ -7,6 +7,7 @@ paths:
   /users/{id}:
     get:
       summary: Get user by id
+      operationId: getUserById
       parameters:
         - name: id
           in: path
@@ -23,6 +24,7 @@ paths:
                 $ref: '#/components/schemas/User'
     put:
       summary: Update user
+      operationId: updateUserById
       parameters:
         - name: id
           in: path
@@ -41,6 +43,7 @@ paths:
           description: Updated
     delete:
       summary: Delete user
+      operationId: deleteUserById
       parameters:
         - name: id
           in: path
@@ -55,6 +58,7 @@ paths:
   /users:
     post:
       summary: Create user
+      operationId: createUserById
       requestBody:
         required: true
         content:
@@ -68,6 +72,7 @@ paths:
   /authors/{id}:
     get:
       summary: Get author by id
+      operationId: getAuthorById
       parameters:
         - name: id
           in: path
@@ -84,6 +89,7 @@ paths:
                 $ref: '#/components/schemas/Author'
     put:
       summary: Update author
+      operationId: updateAuthorById
       parameters:
         - name: id
           in: path
@@ -102,6 +108,7 @@ paths:
           description: Updated
     delete:
       summary: Delete author
+      operationId: deleteAuthorById
       parameters:
         - name: id
           in: path
@@ -116,6 +123,7 @@ paths:
   /authors:
     post:
       summary: Create author
+      operationId: createAuthorById
       requestBody:
         required: true
         content:
@@ -129,6 +137,7 @@ paths:
   /courses/{id}:
     get:
       summary: Get course by id
+      operationId: getCourseById
       parameters:
         - name: id
           in: path
@@ -145,6 +154,7 @@ paths:
                 $ref: '#/components/schemas/Course'
     put:
       summary: Update course
+      operationId: updateCourseById
       parameters:
         - name: id
           in: path
@@ -163,6 +173,7 @@ paths:
           description: Updated
     delete:
       summary: Delete course
+      operationId: deleteCourseById
       parameters:
         - name: id
           in: path
@@ -177,6 +188,7 @@ paths:
   /courses:
     post:
       summary: Create course
+      operationId: createCourseById
       requestBody:
         required: true
         content:

@@ -19,7 +19,7 @@ public class UserController implements UsersApi {
     private final UserMapper userMapper;
 
     @Override
-    public ResponseEntity<User> usersIdGet(UUID id) {
+    public ResponseEntity<User> getUserById(UUID id) {
         UserModel model = userService.findById(id);
 
         User dto = userMapper.toDto(model);
@@ -28,7 +28,7 @@ public class UserController implements UsersApi {
     }
 
     @Override
-    public ResponseEntity<Void> usersPost(User user) {
+    public ResponseEntity<Void> createUserById(User user) {
         UserModel model = userMapper.toEntity(user);
 
         userService.save(model);
@@ -37,7 +37,7 @@ public class UserController implements UsersApi {
     }
 
     @Override
-    public ResponseEntity<Void> usersIdPut(UUID id, User user) {
+    public ResponseEntity<Void> updateUserById(UUID id, User user) {
         UserModel model = userMapper.toEntity(user);
 
         model.setId(id);
@@ -47,7 +47,7 @@ public class UserController implements UsersApi {
     }
 
     @Override
-    public ResponseEntity<Void> usersIdDelete(UUID id) {
+    public ResponseEntity<Void> deleteUserById(UUID id) {
         userService.delete(id);
 
         return ResponseEntity.ok().build();

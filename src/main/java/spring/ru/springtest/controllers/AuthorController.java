@@ -19,7 +19,7 @@ public class AuthorController implements AuthorsApi {
     private final AuthorMapper authorMapper;
 
     @Override
-    public ResponseEntity<Author> authorsIdGet(UUID id) {
+    public ResponseEntity<Author> getAuthorById(UUID id) {
         AuthorModel model = authorService.findById(id);
 
         Author dto = authorMapper.toDto(model);
@@ -28,7 +28,7 @@ public class AuthorController implements AuthorsApi {
     }
 
     @Override
-    public ResponseEntity<Void> authorsPost(Author author) {
+    public ResponseEntity<Void> createAuthorById(Author author) {
         AuthorModel model = authorMapper.toEntity(author);
 
         authorService.save(model);
@@ -37,7 +37,7 @@ public class AuthorController implements AuthorsApi {
     }
 
     @Override
-    public ResponseEntity<Void> authorsIdPut(UUID id, Author author) {
+    public ResponseEntity<Void> updateAuthorById(UUID id, Author author) {
         AuthorModel model = authorMapper.toEntity(author);
 
         model.setId(id);
@@ -47,7 +47,7 @@ public class AuthorController implements AuthorsApi {
     }
 
     @Override
-    public ResponseEntity<Void> authorsIdDelete(UUID id) {
+    public ResponseEntity<Void> deleteAuthorById(UUID id) {
         authorService.delete(id);
 
         return ResponseEntity.ok().build();

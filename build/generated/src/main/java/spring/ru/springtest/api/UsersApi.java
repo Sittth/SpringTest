@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-03-15T21:13:03.022664+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-03-19T14:26:48.796838600+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 @Validated
 @Tag(name = "users", description = "the users API")
 public interface UsersApi {
@@ -43,13 +43,40 @@ public interface UsersApi {
     }
 
     /**
+     * POST /users : Create user
+     *
+     * @param user  (required)
+     * @return Created (status code 201)
+     */
+    @Operation(
+        operationId = "createUserById",
+        summary = "Create user",
+        responses = {
+            @ApiResponse(responseCode = "201", description = "Created")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = "/users",
+        consumes = { "application/json" }
+    )
+    
+    default ResponseEntity<Void> createUserById(
+        @Parameter(name = "User", description = "", required = true) @Valid @RequestBody User user
+    ) {
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+
+    /**
      * DELETE /users/{id} : Delete user
      *
      * @param id  (required)
      * @return Deleted (status code 204)
      */
     @Operation(
-        operationId = "usersIdDelete",
+        operationId = "deleteUserById",
         summary = "Delete user",
         responses = {
             @ApiResponse(responseCode = "204", description = "Deleted")
@@ -60,7 +87,7 @@ public interface UsersApi {
         value = "/users/{id}"
     )
     
-    default ResponseEntity<Void> usersIdDelete(
+    default ResponseEntity<Void> deleteUserById(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id
     ) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
@@ -75,7 +102,7 @@ public interface UsersApi {
      * @return User found (status code 200)
      */
     @Operation(
-        operationId = "usersIdGet",
+        operationId = "getUserById",
         summary = "Get user by id",
         responses = {
             @ApiResponse(responseCode = "200", description = "User found", content = {
@@ -89,7 +116,7 @@ public interface UsersApi {
         produces = { "application/json" }
     )
     
-    default ResponseEntity<User> usersIdGet(
+    default ResponseEntity<User> getUserById(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id
     ) {
         getRequest().ifPresent(request -> {
@@ -114,7 +141,7 @@ public interface UsersApi {
      * @return Updated (status code 200)
      */
     @Operation(
-        operationId = "usersIdPut",
+        operationId = "updateUserById",
         summary = "Update user",
         responses = {
             @ApiResponse(responseCode = "200", description = "Updated")
@@ -126,35 +153,8 @@ public interface UsersApi {
         consumes = { "application/json" }
     )
     
-    default ResponseEntity<Void> usersIdPut(
+    default ResponseEntity<Void> updateUserById(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id,
-        @Parameter(name = "User", description = "", required = true) @Valid @RequestBody User user
-    ) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
-    }
-
-
-    /**
-     * POST /users : Create user
-     *
-     * @param user  (required)
-     * @return Created (status code 201)
-     */
-    @Operation(
-        operationId = "usersPost",
-        summary = "Create user",
-        responses = {
-            @ApiResponse(responseCode = "201", description = "Created")
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.POST,
-        value = "/users",
-        consumes = { "application/json" }
-    )
-    
-    default ResponseEntity<Void> usersPost(
         @Parameter(name = "User", description = "", required = true) @Valid @RequestBody User user
     ) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);

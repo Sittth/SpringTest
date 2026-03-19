@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-03-15T21:13:03.022664+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-03-19T14:26:48.796838600+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 @Validated
 @Tag(name = "courses", description = "the courses API")
 public interface CoursesApi {
@@ -43,13 +43,40 @@ public interface CoursesApi {
     }
 
     /**
+     * POST /courses : Create course
+     *
+     * @param course  (required)
+     * @return Created (status code 201)
+     */
+    @Operation(
+        operationId = "createCourseById",
+        summary = "Create course",
+        responses = {
+            @ApiResponse(responseCode = "201", description = "Created")
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.POST,
+        value = "/courses",
+        consumes = { "application/json" }
+    )
+    
+    default ResponseEntity<Void> createCourseById(
+        @Parameter(name = "Course", description = "", required = true) @Valid @RequestBody Course course
+    ) {
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
+
+
+    /**
      * DELETE /courses/{id} : Delete course
      *
      * @param id  (required)
      * @return Deleted (status code 204)
      */
     @Operation(
-        operationId = "coursesIdDelete",
+        operationId = "deleteCourseById",
         summary = "Delete course",
         responses = {
             @ApiResponse(responseCode = "204", description = "Deleted")
@@ -60,7 +87,7 @@ public interface CoursesApi {
         value = "/courses/{id}"
     )
     
-    default ResponseEntity<Void> coursesIdDelete(
+    default ResponseEntity<Void> deleteCourseById(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id
     ) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
@@ -75,7 +102,7 @@ public interface CoursesApi {
      * @return Course found (status code 200)
      */
     @Operation(
-        operationId = "coursesIdGet",
+        operationId = "getCourseById",
         summary = "Get course by id",
         responses = {
             @ApiResponse(responseCode = "200", description = "Course found", content = {
@@ -89,7 +116,7 @@ public interface CoursesApi {
         produces = { "application/json" }
     )
     
-    default ResponseEntity<Course> coursesIdGet(
+    default ResponseEntity<Course> getCourseById(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id
     ) {
         getRequest().ifPresent(request -> {
@@ -114,7 +141,7 @@ public interface CoursesApi {
      * @return Updated (status code 200)
      */
     @Operation(
-        operationId = "coursesIdPut",
+        operationId = "updateCourseById",
         summary = "Update course",
         responses = {
             @ApiResponse(responseCode = "200", description = "Updated")
@@ -126,35 +153,8 @@ public interface CoursesApi {
         consumes = { "application/json" }
     )
     
-    default ResponseEntity<Void> coursesIdPut(
+    default ResponseEntity<Void> updateCourseById(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id,
-        @Parameter(name = "Course", description = "", required = true) @Valid @RequestBody Course course
-    ) {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
-    }
-
-
-    /**
-     * POST /courses : Create course
-     *
-     * @param course  (required)
-     * @return Created (status code 201)
-     */
-    @Operation(
-        operationId = "coursesPost",
-        summary = "Create course",
-        responses = {
-            @ApiResponse(responseCode = "201", description = "Created")
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.POST,
-        value = "/courses",
-        consumes = { "application/json" }
-    )
-    
-    default ResponseEntity<Void> coursesPost(
         @Parameter(name = "Course", description = "", required = true) @Valid @RequestBody Course course
     ) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);

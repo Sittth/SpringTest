@@ -19,7 +19,7 @@ public class CourseController implements CoursesApi {
     private final CourseMapper courseMapper;
 
     @Override
-    public ResponseEntity<Course> coursesIdGet(UUID id) {
+    public ResponseEntity<Course> getCourseById(UUID id) {
         CourseModel model = courseService.findById(id);
 
         Course dto = courseMapper.toDto(model);
@@ -28,7 +28,7 @@ public class CourseController implements CoursesApi {
     }
 
     @Override
-    public ResponseEntity<Void> coursesPost(Course course) {
+    public ResponseEntity<Void> createCourseById(Course course) {
         CourseModel model = courseMapper.toEntity(course);
 
         courseService.save(model);
@@ -37,7 +37,7 @@ public class CourseController implements CoursesApi {
     }
 
     @Override
-    public ResponseEntity<Void> coursesIdPut(UUID id, Course course) {
+    public ResponseEntity<Void> updateCourseById(UUID id, Course course) {
         CourseModel model = courseMapper.toEntity(course);
 
         model.setId(id);
@@ -47,7 +47,7 @@ public class CourseController implements CoursesApi {
     }
 
     @Override
-    public ResponseEntity<Void> coursesIdDelete(UUID id) {
+    public ResponseEntity<Void> deleteCourseById(UUID id) {
         courseService.delete(id);
 
         return ResponseEntity.ok().build();
