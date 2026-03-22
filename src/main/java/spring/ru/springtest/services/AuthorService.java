@@ -3,6 +3,8 @@ package spring.ru.springtest.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spring.ru.springtest.dto.Author;
+import spring.ru.springtest.mapper.AuthorMapper;
 import spring.ru.springtest.models.AuthorModel;
 import spring.ru.springtest.repositories.AuthorRepository;
 
@@ -13,10 +15,12 @@ import java.util.UUID;
 public class AuthorService {
 
     private final AuthorRepository authorRepository;
+    private final AuthorMapper authorMapper;
 
     @Autowired
-    public AuthorService(AuthorRepository authorRepository) {
+    public AuthorService(AuthorRepository authorRepository, AuthorMapper authorMapper) {
         this.authorRepository = authorRepository;
+        this.authorMapper = authorMapper;
     }
 
     @Transactional(readOnly = true)
@@ -33,19 +37,14 @@ public class AuthorService {
         authorRepository.save(author);
     }
 
-    public void update(UUID id, AuthorModel updatedAuthor) {
+    public void update(UUID id, Author dto) {
         AuthorModel existingAuthor = authorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Author not found"));
 
-        existingAuthor.setName(updatedAuthor.getName());
+        authorMapper.updateEntityFromDto(dto, existingAuthor);
 
-        existingAuthor.getBooks().clear();
-
-        if (updatedAuthor.getBooks() != null) {
-            updatedAuthor.getBooks().forEach(book -> {
-                book.setAuthor(existingAuthor);
-                existingAuthor.getBooks().add(book);
-            });
+        if (existingAuthor.getBooks() != null) {
+            existingAuthor.getBooks().forEach(book -> book.setAuthor(existingAuthor));
         }
 
         authorRepository.save(existingAuthor);

@@ -38,10 +38,7 @@ public class AuthorController implements AuthorsApi {
 
     @Override
     public ResponseEntity<Void> updateAuthorById(UUID id, Author author) {
-        AuthorModel model = authorMapper.toEntity(author);
-
-        model.setId(id);
-        authorService.update(id, model);
+        authorService.update(id, author);
 
         return ResponseEntity.ok().build();
     }

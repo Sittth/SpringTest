@@ -38,10 +38,8 @@ public class UserController implements UsersApi {
 
     @Override
     public ResponseEntity<Void> updateUserById(UUID id, User user) {
-        UserModel model = userMapper.toEntity(user);
 
-        model.setId(id);
-        userService.update(id, model);
+        userService.update(id, user);
 
         return ResponseEntity.ok().build();
     }

@@ -1,46 +1,22 @@
 package spring.ru.springtest.mapper;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.mapstruct.*;
 import spring.ru.springtest.dto.Author;
 import spring.ru.springtest.models.AuthorModel;
-import spring.ru.springtest.models.BookModel;
 
-import java.util.List;
+@Mapper(componentModel = "spring", uses = BookMapper.class)
+public interface AuthorMapper {
 
-@Component
-@RequiredArgsConstructor
-public class AuthorMapper {
+    Author toDto(AuthorModel author);
 
-    private final BookMapper bookMapper;
+    AuthorModel toEntity(Author dto);
 
-    public Author toDto(AuthorModel author) {
-        if (author == null) {
-            return null;
+    void updateEntityFromDto(Author dto, @MappingTarget AuthorModel author);
+
+    @AfterMapping
+    default void linkBooksToAuthor(@MappingTarget AuthorModel authorModel) {
+        if (authorModel.getBooks() != null) {
+            authorModel.getBooks().forEach(book -> book.setAuthor(authorModel));
         }
-
-        return new Author().id(author.getId()).name(author.getName())
-                .books(bookMapper.toDto(author.getBooks()));
-    }
-
-    public AuthorModel toEntity(Author dto) {
-        if (dto == null) {
-            return null;
-        }
-
-        AuthorModel authorModel = new AuthorModel();
-        authorModel.setId(dto.getId());
-        authorModel.setName(dto.getName());
-
-        List<BookModel> books = bookMapper.toEntity(dto.getBooks());
-
-        if (books != null) {
-            books.forEach(book -> {
-                book.setAuthor(authorModel);
-            });
-        }
-
-        authorModel.setBooks(books);
-        return authorModel;
     }
 }

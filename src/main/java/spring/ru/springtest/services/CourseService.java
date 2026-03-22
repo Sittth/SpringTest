@@ -3,20 +3,24 @@ package spring.ru.springtest.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spring.ru.springtest.dto.Course;
+import spring.ru.springtest.mapper.CourseMapper;
 import spring.ru.springtest.models.CourseModel;
 import spring.ru.springtest.repositories.CourseRepository;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 @Service
 @Transactional
 public class CourseService {
+
     private final CourseRepository courseRepository;
+    private final CourseMapper courseMapper;
 
     @Autowired
-    public CourseService(CourseRepository courseRepository) {
+    public CourseService(CourseRepository courseRepository, CourseMapper courseMapper) {
         this.courseRepository = courseRepository;
+        this.courseMapper = courseMapper;
     }
 
     @Transactional(readOnly = true)
@@ -26,39 +30,15 @@ public class CourseService {
     }
 
     public void save(CourseModel course) {
-        if (course.getStudents() != null) {
-            course.getStudents().forEach(student -> {
-
-                if (student.getCourses() == null) {
-                    student.setCourses(new ArrayList<>());
-                }
-
-                student.getCourses().add(course);
-            });
-        }
-
         courseRepository.save(course);
     }
 
-    public void update(UUID id, CourseModel updatedCourse) {
+    public void update(UUID id, Course dto) {
 
         CourseModel existingCourse = courseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
 
-        existingCourse.setTitle(updatedCourse.getTitle());
-
-        existingCourse.getStudents().clear();
-
-        if (updatedCourse.getStudents() != null) {
-            updatedCourse.getStudents().forEach(student -> {
-                existingCourse.getStudents().add(student);
-
-                if (student.getCourses() == null) {
-                    student.setCourses(new ArrayList<>());
-                }
-                student.getCourses().add(existingCourse);
-            });
-        }
+        courseMapper.updateEntityFromDto(dto, existingCourse);
 
         courseRepository.save(existingCourse);
     }

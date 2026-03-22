@@ -1,34 +1,45 @@
 package spring.ru.springtest.mapper;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.mapstruct.AfterMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import spring.ru.springtest.dto.User;
+import spring.ru.springtest.models.ProfileModel;
 import spring.ru.springtest.models.UserModel;
 
-@Component
-@RequiredArgsConstructor
-public class UserMapper {
+@Mapper(componentModel = "spring", uses = ProfileMapper.class)
+public interface UserMapper {
 
-    private final ProfileMapper profileMapper;
+    User toDto(UserModel user);
 
-    public User toDto(UserModel model) {
-        if (model == null) {
-            return null;
+    UserModel toEntity(User dto);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "profile", ignore = true)
+    void updateEntityFromDto(User dto, @MappingTarget UserModel user);
+
+    @AfterMapping
+    default void handleProfile(User dto, @MappingTarget UserModel user) {
+
+        if (dto.getProfile() == null) {
+            user.setProfile(null);
+            return;
         }
 
-        return new User().id(model.getId()).username(model.getUsername())
-                .profile(profileMapper.toDto(model.getProfile()));
-    }
+        if (user.getProfile() == null) {
+            ProfileModel profile = new ProfileModel();
+            profile.setBio(dto.getProfile().getBio());
+            profile.setUser(user);
+            user.setProfile(profile);
+        } else {
+            ProfileModel existingProfile = user.getProfile();
 
-    public UserModel toEntity(User dto) {
-        if (dto == null) {
-            return null;
+            if (dto.getProfile().getId() != null) {
+                existingProfile.setId(dto.getProfile().getId());
+            }
+
+            existingProfile.setBio(dto.getProfile().getBio());
         }
-
-        UserModel userModel = new UserModel();
-        userModel.setId(dto.getId());
-        userModel.setUsername(dto.getUsername());
-        userModel.setProfile(profileMapper.toEntity(dto.getProfile()));
-        return userModel;
     }
 }

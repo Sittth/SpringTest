@@ -38,10 +38,8 @@ public class CourseController implements CoursesApi {
 
     @Override
     public ResponseEntity<Void> updateCourseById(UUID id, Course course) {
-        CourseModel model = courseMapper.toEntity(course);
 
-        model.setId(id);
-        courseService.update(id, model);
+        courseService.update(id, course);
 
         return ResponseEntity.ok().build();
     }

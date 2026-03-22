@@ -1,28 +1,18 @@
 package spring.ru.springtest.mapper;
 
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import spring.ru.springtest.dto.Profile;
 import spring.ru.springtest.models.ProfileModel;
 
-@Component
-public class ProfileMapper {
+@Mapper(componentModel = "spring")
+public interface ProfileMapper {
 
-    public Profile toDto(ProfileModel profile) {
-        if (profile == null) {
-            return null;
-        }
+    Profile toDto(ProfileModel profile);
 
-        return new Profile().id(profile.getId()).bio(profile.getBio());
-    }
+    @Mapping(target = "user", ignore = true)
+    ProfileModel toEntity(Profile dto);
 
-    public ProfileModel toEntity(Profile dto) {
-        if (dto == null) {
-            return null;
-        }
-
-        ProfileModel profileModel = new ProfileModel();
-        profileModel.setId(dto.getId());
-        profileModel.setBio(dto.getBio());
-        return profileModel;
-    }
+    void updateEntityFromDto(Profile dto, @MappingTarget ProfileModel model);
 }

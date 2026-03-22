@@ -1,50 +1,33 @@
 package spring.ru.springtest.mapper;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.mapstruct.AfterMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 import spring.ru.springtest.dto.Course;
 import spring.ru.springtest.models.CourseModel;
-import spring.ru.springtest.models.StudentModel;
 
 import java.util.ArrayList;
-import java.util.List;
 
-@Component
-@RequiredArgsConstructor
-public class CourseMapper {
+@Mapper(componentModel = "spring", uses = StudentMapper.class)
+public interface CourseMapper {
 
-    private final StudentMapper studentMapper;
+    Course toDto(CourseModel course);
 
-    public Course toDto(CourseModel course) {
-        if (course == null) {
-            return null;
-        }
+    CourseModel toEntity(Course dto);
 
-        return new Course().id(course.getId()).title(course.getTitle())
-                .students(studentMapper.toDto(course.getStudents()));
-    }
+    void updateEntityFromDto(Course dto, @MappingTarget CourseModel course);
 
-    public CourseModel toEntity(Course dto) {
-        if (dto == null) {
-            return null;
-        }
-
-        CourseModel courseModel = new CourseModel();
-        courseModel.setId(dto.getId());
-        courseModel.setTitle(dto.getTitle());
-
-        List<StudentModel> students = studentMapper.toEntity(dto.getStudents());
-
-        if (students != null) {
-            students.forEach(student -> {
+    @AfterMapping
+    default void linkStudentToCourse(@MappingTarget CourseModel courseModel) {
+        if (courseModel.getStudents() != null) {
+            courseModel.getStudents().forEach(student -> {
                 if (student.getCourses() == null) {
                     student.setCourses(new ArrayList<>());
                 }
-                student.getCourses().add(courseModel);
+                if (!student.getCourses().contains(courseModel)) {
+                    student.getCourses().add(courseModel);
+                }
             });
         }
-
-        courseModel.setStudents(studentMapper.toEntity(dto.getStudents()));
-        return courseModel;
     }
 }
