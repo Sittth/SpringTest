@@ -18,3 +18,7 @@ spring:
 
   flyway:
     default-schema: test
+
+  logging:
+    pattern:
+      console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - [requestId: %X{requestId}] - %msg%n"

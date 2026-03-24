@@ -5,8 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import spring.ru.springtest.api.AuthorsApi;
 import spring.ru.springtest.dto.Author;
-import spring.ru.springtest.mapper.AuthorMapper;
-import spring.ru.springtest.models.AuthorModel;
 import spring.ru.springtest.services.AuthorService;
 
 import java.util.UUID;
@@ -16,22 +14,15 @@ import java.util.UUID;
 public class AuthorController implements AuthorsApi {
 
     private final AuthorService authorService;
-    private final AuthorMapper authorMapper;
 
     @Override
     public ResponseEntity<Author> getAuthorById(UUID id) {
-        AuthorModel model = authorService.findById(id);
-
-        Author dto = authorMapper.toDto(model);
-
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(authorService.findById(id));
     }
 
     @Override
     public ResponseEntity<Void> createAuthorById(Author author) {
-        AuthorModel model = authorMapper.toEntity(author);
-
-        authorService.save(model);
+        authorService.save(author);
 
         return ResponseEntity.ok().build();
     }
