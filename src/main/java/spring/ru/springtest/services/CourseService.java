@@ -25,12 +25,12 @@ public class CourseService {
     public Course findById(UUID id) {
 
         log.debug("Search course by id {}", id);
+
         CourseModel courseModel = courseRepository.findById(id)
                 .orElseThrow(() -> {
                     log.error("Course not found with id {}", id);
                     return new CourseNotFoundException("Course with id " + id + " not found");
                 });
-
         return courseMapper.toDto(courseModel);
     }
 
@@ -38,9 +38,10 @@ public class CourseService {
     public void save(Course courseDto) {
 
         log.debug("Save course {}", courseDto);
-        CourseModel courseModel = courseMapper.toEntity(courseDto);
 
+        CourseModel courseModel = courseMapper.toEntity(courseDto);
         courseRepository.save(courseModel);
+
         log.info("Saved course with id {}", courseModel.getId());
     }
 
@@ -48,14 +49,15 @@ public class CourseService {
     public void update(UUID id, Course dto) {
 
         log.debug("Update course with id: {}", id);
+
         CourseModel existingCourse = courseRepository.findById(id)
                 .orElseThrow(() -> {
                     log.error("Update failed: course not found with id {}", id);
                     return new CourseNotFoundException("Course with id " + id + " not found");
                 });
-
         courseMapper.updateEntityFromDto(dto, existingCourse);
         courseRepository.save(existingCourse);
+
         log.info("Updated course with id {}", id);
     }
 
@@ -63,11 +65,13 @@ public class CourseService {
     public void delete(UUID id) {
 
         log.debug("Delete course with id {}", id);
+
         if (!courseRepository.existsById(id)) {
             log.warn("Attempt to delete non-existent course with id: {}", id);
             throw new CourseNotFoundException("Course with id " + id + " not found");
         }
         courseRepository.deleteById(id);
+
         log.info("Deleted course with id {}", id);
     }
 }

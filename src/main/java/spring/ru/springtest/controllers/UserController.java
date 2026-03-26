@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RestController;
 import spring.ru.springtest.api.UsersApi;
 import spring.ru.springtest.dto.User;
 import spring.ru.springtest.mapper.UserMapper;
-import spring.ru.springtest.models.UserModel;
 import spring.ru.springtest.services.UserService;
 
 import java.util.UUID;
@@ -20,18 +19,12 @@ public class UserController implements UsersApi {
 
     @Override
     public ResponseEntity<User> getUserById(UUID id) {
-        UserModel model = userService.findById(id);
-
-        User dto = userMapper.toDto(model);
-
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(userService.findById(id));
     }
 
     @Override
     public ResponseEntity<Void> createUserById(User user) {
-        UserModel model = userMapper.toEntity(user);
-
-        userService.save(model);
+        userService.save(user);
 
         return ResponseEntity.ok().build();
     }
