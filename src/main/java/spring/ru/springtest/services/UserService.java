@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import spring.ru.springtest.dto.User;
 import spring.ru.springtest.exceptions.UserNotFoundException;
 import spring.ru.springtest.mapper.UserMapper;
-import spring.ru.springtest.models.AuthorModel;
 import spring.ru.springtest.models.UserModel;
 import spring.ru.springtest.repositories.UserRepository;
 
@@ -26,7 +25,7 @@ public class UserService {
 
         log.debug("Search user by id {}", id);
 
-        UserModel userModel = userRepository.findById(id)
+        UserModel userModel = userRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> {
                     log.error("User not found with id {}", id);
                     return new UserNotFoundException("User with id " + id + " not found");
@@ -50,7 +49,7 @@ public class UserService {
 
         log.debug("Update user with id: {}", id);
 
-        UserModel existingUser = userRepository.findById(id)
+        UserModel existingUser = userRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> {
                     log.error("Update failed: user not found with id {}", id);
                     return new UserNotFoundException("User with id " + id + " not found");
@@ -66,11 +65,13 @@ public class UserService {
 
         log.debug("Delete user with id {}", id);
 
-        if (!userRepository.existsById(id)) {
-            log.warn("Attempt to delete non-existent user with id: {}", id);
-            throw new UserNotFoundException("User with id " + id + " not found");
-        }
-        userRepository.deleteById(id);
+        UserModel userModel = userRepository.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(() -> {
+                    log.warn("Attempt to delete non-existent or already deleted user with id: {}", id);
+                    return new UserNotFoundException("User with id " + id + " not found");
+                });
+
+        userRepository.delete(userModel);
 
         log.info("Deleted user with id {}", id);
     }

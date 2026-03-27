@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import spring.ru.springtest.dto.Course;
 import spring.ru.springtest.exceptions.CourseNotFoundException;
 import spring.ru.springtest.mapper.CourseMapper;
-import spring.ru.springtest.models.AuthorModel;
 import spring.ru.springtest.models.CourseModel;
 import spring.ru.springtest.repositories.CourseRepository;
 
@@ -26,7 +25,7 @@ public class CourseService {
 
         log.debug("Search course by id {}", id);
 
-        CourseModel courseModel = courseRepository.findById(id)
+        CourseModel courseModel = courseRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> {
                     log.error("Course not found with id {}", id);
                     return new CourseNotFoundException("Course with id " + id + " not found");
@@ -50,7 +49,7 @@ public class CourseService {
 
         log.debug("Update course with id: {}", id);
 
-        CourseModel existingCourse = courseRepository.findById(id)
+        CourseModel existingCourse = courseRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> {
                     log.error("Update failed: course not found with id {}", id);
                     return new CourseNotFoundException("Course with id " + id + " not found");
@@ -66,11 +65,13 @@ public class CourseService {
 
         log.debug("Delete course with id {}", id);
 
-        if (!courseRepository.existsById(id)) {
-            log.warn("Attempt to delete non-existent course with id: {}", id);
-            throw new CourseNotFoundException("Course with id " + id + " not found");
-        }
-        courseRepository.deleteById(id);
+        CourseModel courseModel = courseRepository.findByIdAndIsDeletedFalse(id).
+                orElseThrow(() -> {
+                    log.warn("Attempt to delete non-existent or already deleted course with id: {}", id);
+                    return new CourseNotFoundException("Course with id " + id + " not found");
+                });
+
+        courseRepository.delete(courseModel);
 
         log.info("Deleted course with id {}", id);
     }

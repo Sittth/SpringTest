@@ -8,7 +8,7 @@ import spring.ru.springtest.models.UserModel;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-03-24T18:29:47+0300",
+    date = "2026-03-27T20:49:00+0300",
     comments = "version: 1.6.3, compiler: IncrementalProcessingEnvironment from gradle-language-java-9.3.1.jar, environment: Java 25 (Oracle Corporation)"
 )
 @Component
@@ -44,7 +44,7 @@ public class UserMapperImpl implements UserMapper {
         userModel.setUsername( dto.getUsername() );
         userModel.setProfile( profileMapper.toEntity( dto.getProfile() ) );
 
-        handleProfile( dto, userModel );
+        linkProfile( dto, userModel );
 
         return userModel;
     }
@@ -57,6 +57,6 @@ public class UserMapperImpl implements UserMapper {
 
         user.setUsername( dto.getUsername() );
 
-        handleProfile( dto, user );
+        linkProfile( dto, user );
     }
 }

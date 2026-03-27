@@ -20,26 +20,21 @@ public interface UserMapper {
     void updateEntityFromDto(User dto, @MappingTarget UserModel user);
 
     @AfterMapping
-    default void handleProfile(User dto, @MappingTarget UserModel user) {
-
+    default void linkProfile(User dto, @MappingTarget UserModel user) {
         if (dto.getProfile() == null) {
             user.setProfile(null);
             return;
         }
 
-        if (user.getProfile() == null) {
-            ProfileModel profile = new ProfileModel();
-            profile.setBio(dto.getProfile().getBio());
-            profile.setUser(user);
-            user.setProfile(profile);
+        ProfileModel profileModel = user.getProfile();
+        if (profileModel == null) {
+            profileModel = new ProfileModel();
+            profileModel.setBio(dto.getProfile().getBio());
+            profileModel.setUser(user);
+            user.setProfile(profileModel);
         } else {
-            ProfileModel existingProfile = user.getProfile();
-
-            if (dto.getProfile().getId() != null) {
-                existingProfile.setId(dto.getProfile().getId());
-            }
-
-            existingProfile.setBio(dto.getProfile().getBio());
+            profileModel.setBio(dto.getProfile().getBio());
+            profileModel.setUser(user);
         }
     }
 }

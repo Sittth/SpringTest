@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,6 +14,7 @@ import java.util.UUID;
 @Table(name = "courses", schema = "test")
 @Getter
 @Setter
+@SQLDelete(sql = "UPDATE test.courses SET is_deleted = true, updated_at = now() WHERE id=?")
 public class CourseModel {
 
     @Id
@@ -28,4 +31,24 @@ public class CourseModel {
             inverseJoinColumns = @JoinColumn(name = "student_id")
     )
     private List<StudentModel> students;
+
+    @Column(nullable = false, updatable = false)
+    private OffsetDateTime createdAt;
+
+    @Column(nullable = false)
+    private OffsetDateTime updatedAt;
+
+    @Column(nullable = false)
+    private boolean isDeleted;
+
+    @PrePersist
+    public void onCreate() {
+        createdAt = OffsetDateTime.now();
+        updatedAt = OffsetDateTime.now();
+    }
+
+    @PreUpdate
+    public void onUpdate() {
+        updatedAt = OffsetDateTime.now();
+    }
 }

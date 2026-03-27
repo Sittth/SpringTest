@@ -10,7 +10,7 @@ import spring.ru.springtest.models.BookModel;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-03-24T18:29:47+0300",
+    date = "2026-03-27T20:27:18+0300",
     comments = "version: 1.6.3, compiler: IncrementalProcessingEnvironment from gradle-language-java-9.3.1.jar, environment: Java 25 (Oracle Corporation)"
 )
 @Component

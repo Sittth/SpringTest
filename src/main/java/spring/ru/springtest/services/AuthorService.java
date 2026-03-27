@@ -22,8 +22,10 @@ public class AuthorService {
 
     @Transactional(readOnly = true)
     public Author findById(UUID id) {
+
         log.debug("Finding author by id: {}", id);
-        AuthorModel authorModel = authorRepository.findById(id)
+
+        AuthorModel authorModel = authorRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> {
                     log.error("Author not found with id {}", id);
                     return new AuthorNotFoundException("Author with id " + id + " not found");
@@ -48,7 +50,7 @@ public class AuthorService {
 
         log.debug("Update author with id: {}", id);
 
-        AuthorModel existingAuthor = authorRepository.findById(id)
+        AuthorModel existingAuthor = authorRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> {
                     log.error("Update failed: author not found with id {}", id);
                     return new AuthorNotFoundException("Author with id " + id + " not found");
@@ -64,11 +66,19 @@ public class AuthorService {
 
         log.debug("Delete author with id {}", id);
 
-        if (!authorRepository.existsById(id)) {
-            log.warn("Attempt to delete non-existent author with id: {}", id);
-            throw new AuthorNotFoundException("Author with id " + id + " not found");
+        AuthorModel authorModel = authorRepository.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(() -> {
+                    log.warn("Attempt to delete non-existent or already deleted author with id: {}", id);
+                    return new AuthorNotFoundException("Author with id " + id + " not found");
+                });
+
+        if (authorModel.getBooks() != null) {
+            authorModel.getBooks().forEach(bookModel -> bookModel.setDeleted(true));
         }
-        authorRepository.deleteById(id);
+
+        authorModel.setDeleted(true);
+
+        authorRepository.save(authorModel);
 
         log.info("Deleted author with id {}", id);
     }
