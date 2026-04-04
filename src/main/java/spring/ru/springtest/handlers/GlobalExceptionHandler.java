@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import spring.ru.springtest.exceptions.EntityNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -14,35 +15,9 @@ import java.util.Map;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<?> handleUserNotFound(UserNotFoundException ex) {
-        log.warn("User not found: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of(
-                        "timestamp", LocalDateTime.now(),
-                        "status", HttpStatus.NOT_FOUND.value(),
-                        "error", "Not Found",
-                        "message", ex.getMessage(),
-                        "requestId", MDC.get("requestId")
-                ));
-    }
-
-    @ExceptionHandler(AuthorNotFoundException.class)
-    public ResponseEntity<?> handleAuthorNotFound(AuthorNotFoundException ex) {
-        log.warn("Author not found: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of(
-                        "timestamp", LocalDateTime.now(),
-                        "status", HttpStatus.NOT_FOUND.value(),
-                        "error", "Not Found",
-                        "message", ex.getMessage(),
-                        "requestId", MDC.get("requestId")
-                ));
-    }
-
-    @ExceptionHandler(CourseNotFoundException.class)
-    public ResponseEntity<?> handleCourseNotFound(CourseNotFoundException ex) {
-        log.warn("Course not found: {}", ex.getMessage());
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<?> handleEntityNotFound(EntityNotFoundException ex) {
+        log.warn("Entity not found: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of(
                         "timestamp", LocalDateTime.now(),
