@@ -29,7 +29,7 @@ public class UserModel {
     @Column(nullable = false, updatable = false)
     private OffsetDateTime createdAt;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private OffsetDateTime updatedAt;
 
     @Column(nullable = false)
@@ -38,7 +38,6 @@ public class UserModel {
     @PrePersist
     public void onCreate() {
         createdAt = OffsetDateTime.now();
-        updatedAt = OffsetDateTime.now();
     }
 
     @PreUpdate
