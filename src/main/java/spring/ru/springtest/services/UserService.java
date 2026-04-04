@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import spring.ru.springtest.dto.UserRequestCreate;
 import spring.ru.springtest.dto.UserRequestUpdate;
 import spring.ru.springtest.dto.UserResponse;
-import spring.ru.springtest.exceptions.UserNotFoundException;
+import spring.ru.springtest.exceptions.EntityNotFoundException;
 import spring.ru.springtest.mapper.ProfileMapper;
 import spring.ru.springtest.mapper.UserMapper;
 import spring.ru.springtest.models.ProfileModel;
@@ -33,7 +33,7 @@ public class UserService {
         UserModel user = userRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> {
                     log.error("User not found with id {}", id);
-                    return new UserNotFoundException("User with id " + id + " not found");
+                    return new EntityNotFoundException("User", id);
                 });
         return userMapper.toResponse(user);
     }
@@ -66,7 +66,7 @@ public class UserService {
         UserModel existingUser = userRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> {
                     log.error("Update failed: user not found with id {}", id);
-                    return new UserNotFoundException("User with id " + id + " not found");
+                    return new EntityNotFoundException("User", id);
                 });
         userMapper.updateEntityFromDto(requestUpdate, existingUser);
 
@@ -98,7 +98,7 @@ public class UserService {
         UserModel userModel = userRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> {
                     log.warn("Attempt to delete non-existent or already deleted user with id: {}", id);
-                    return new UserNotFoundException("User with id " + id + " not found");
+                    return new EntityNotFoundException("User", id);
                 });
 
         userRepository.delete(userModel);

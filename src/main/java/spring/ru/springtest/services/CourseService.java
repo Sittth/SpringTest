@@ -8,7 +8,7 @@ import spring.ru.springtest.dto.CourseRequestCreate;
 import spring.ru.springtest.dto.CourseRequestUpdate;
 import spring.ru.springtest.dto.CourseResponse;
 import spring.ru.springtest.dto.StudentRequestUpdate;
-import spring.ru.springtest.exceptions.CourseNotFoundException;
+import spring.ru.springtest.exceptions.EntityNotFoundException;
 import spring.ru.springtest.mapper.CourseMapper;
 import spring.ru.springtest.models.CourseModel;
 import spring.ru.springtest.models.StudentModel;
@@ -36,7 +36,7 @@ public class CourseService {
         CourseModel courseModel = courseRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> {
                     log.error("Course not found with id {}", id);
-                    return new CourseNotFoundException("Course with id " + id + " not found");
+                    return new EntityNotFoundException("Course", id);
                 });
         return courseMapper.toResponse(courseModel);
     }
@@ -62,7 +62,7 @@ public class CourseService {
         CourseModel existingCourse = courseRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> {
                     log.error("Update failed: course not found with id {}", id);
-                    return new CourseNotFoundException("Course with id " + id + " not found");
+                    return new EntityNotFoundException("Course", id);
                 });
 
         courseMapper.updateEntityFromDto(requestUpdate, existingCourse);
@@ -113,7 +113,7 @@ public class CourseService {
         CourseModel courseModel = courseRepository.findByIdAndIsDeletedFalse(id).
                 orElseThrow(() -> {
                     log.warn("Attempt to delete non-existent or already deleted course with id: {}", id);
-                    return new CourseNotFoundException("Course with id " + id + " not found");
+                    return new EntityNotFoundException("Course", id);
                 });
 
         courseRepository.delete(courseModel);

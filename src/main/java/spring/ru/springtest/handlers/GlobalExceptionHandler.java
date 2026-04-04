@@ -6,9 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import spring.ru.springtest.exceptions.AuthorNotFoundException;
-import spring.ru.springtest.exceptions.CourseNotFoundException;
-import spring.ru.springtest.exceptions.UserNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.Map;

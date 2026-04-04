@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spring.ru.springtest.dto.*;
-import spring.ru.springtest.exceptions.AuthorNotFoundException;
+import spring.ru.springtest.exceptions.EntityNotFoundException;
 import spring.ru.springtest.mapper.AuthorMapper;
 import spring.ru.springtest.models.AuthorModel;
 import spring.ru.springtest.models.BookModel;
@@ -33,7 +33,7 @@ public class AuthorService {
         AuthorModel authorModel = authorRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> {
                     log.error("Author not found with id {}", id);
-                    return new AuthorNotFoundException("Author with id " + id + " not found");
+                    return new EntityNotFoundException("Author", id);
                 });
 
         return authorMapper.toResponse(authorModel);
@@ -74,7 +74,7 @@ public class AuthorService {
         AuthorModel existingAuthor = authorRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> {
                     log.error("Update failed: author not found with id {}", id);
-                    return new AuthorNotFoundException("Author with id " + id + " not found");
+                    return new EntityNotFoundException("Author", id);
                 });
 
         authorMapper.updateEntityFromDto(requestUpdate, existingAuthor);
@@ -117,7 +117,7 @@ public class AuthorService {
         AuthorModel authorModel = authorRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> {
                     log.warn("Attempt to delete non-existent or already deleted author with id: {}", id);
-                    return new AuthorNotFoundException("Author with id " + id + " not found");
+                    return new EntityNotFoundException("Author", id);
                 });
 
         if (authorModel.getBooks() != null) {
