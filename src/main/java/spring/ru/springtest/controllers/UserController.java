@@ -4,8 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import spring.ru.springtest.api.UsersApi;
-import spring.ru.springtest.dto.User;
-import spring.ru.springtest.mapper.UserMapper;
+import spring.ru.springtest.dto.*;
 import spring.ru.springtest.services.UserService;
 
 import java.util.UUID;
@@ -15,26 +14,24 @@ import java.util.UUID;
 public class UserController implements UsersApi {
 
     private final UserService userService;
-    private final UserMapper userMapper;
 
     @Override
-    public ResponseEntity<User> getUserById(UUID id) {
+    public ResponseEntity<UserResponse> getUserById(UUID id) {
         return ResponseEntity.ok(userService.findById(id));
     }
 
     @Override
-    public ResponseEntity<Void> createUserById(User user) {
-        userService.save(user);
+    public ResponseEntity<UserResponse> createUser(UserRequestCreate requestCreate) {
+        UserResponse created = userService.save(requestCreate);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(201).body(created);
     }
 
     @Override
-    public ResponseEntity<Void> updateUserById(UUID id, User user) {
+    public ResponseEntity<UserResponse> updateUserById(UUID id, UserRequestUpdate requestUpdate) {
+        UserResponse updated = userService.update(id, requestUpdate);
 
-        userService.update(id, user);
-
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(updated);
     }
 
     @Override

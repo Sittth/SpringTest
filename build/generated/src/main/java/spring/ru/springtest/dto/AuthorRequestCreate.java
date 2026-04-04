@@ -7,8 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
-import spring.ru.springtest.dto.Book;
+import spring.ru.springtest.dto.BookRequestCreate;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
@@ -20,40 +19,29 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * Author
+ * AuthorRequestCreate
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-03-27T18:49:16.267114700+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
-public class Author {
-
-  private UUID id;
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-04-02T18:50:56.628982800+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+public class AuthorRequestCreate {
 
   private String name;
 
   @Valid
-  private List<@Valid Book> books = new ArrayList<>();
+  private List<@Valid BookRequestCreate> books = new ArrayList<>();
 
-  public Author id(UUID id) {
-    this.id = id;
-    return this;
+  public AuthorRequestCreate() {
+    super();
   }
 
   /**
-   * Get id
-   * @return id
-  */
-  @Valid 
-  @Schema(name = "id", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("id")
-  public UUID getId() {
-    return id;
+   * Constructor with only required parameters
+   */
+  public AuthorRequestCreate(String name) {
+    this.name = name;
   }
 
-  public void setId(UUID id) {
-    this.id = id;
-  }
-
-  public Author name(String name) {
+  public AuthorRequestCreate name(String name) {
     this.name = name;
     return this;
   }
@@ -62,8 +50,8 @@ public class Author {
    * Get name
    * @return name
   */
-  
-  @Schema(name = "name", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @NotNull 
+  @Schema(name = "name", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("name")
   public String getName() {
     return name;
@@ -73,12 +61,12 @@ public class Author {
     this.name = name;
   }
 
-  public Author books(List<@Valid Book> books) {
+  public AuthorRequestCreate books(List<@Valid BookRequestCreate> books) {
     this.books = books;
     return this;
   }
 
-  public Author addBooksItem(Book booksItem) {
+  public AuthorRequestCreate addBooksItem(BookRequestCreate booksItem) {
     if (this.books == null) {
       this.books = new ArrayList<>();
     }
@@ -93,11 +81,11 @@ public class Author {
   @Valid 
   @Schema(name = "books", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("books")
-  public List<@Valid Book> getBooks() {
+  public List<@Valid BookRequestCreate> getBooks() {
     return books;
   }
 
-  public void setBooks(List<@Valid Book> books) {
+  public void setBooks(List<@Valid BookRequestCreate> books) {
     this.books = books;
   }
 
@@ -109,22 +97,20 @@ public class Author {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Author author = (Author) o;
-    return Objects.equals(this.id, author.id) &&
-        Objects.equals(this.name, author.name) &&
-        Objects.equals(this.books, author.books);
+    AuthorRequestCreate authorRequestCreate = (AuthorRequestCreate) o;
+    return Objects.equals(this.name, authorRequestCreate.name) &&
+        Objects.equals(this.books, authorRequestCreate.books);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, books);
+    return Objects.hash(name, books);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Author {\n");
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("class AuthorRequestCreate {\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    books: ").append(toIndentedString(books)).append("\n");
     sb.append("}");

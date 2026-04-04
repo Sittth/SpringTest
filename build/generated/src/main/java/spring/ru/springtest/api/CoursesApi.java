@@ -5,7 +5,9 @@
  */
 package spring.ru.springtest.api;
 
-import spring.ru.springtest.dto.Course;
+import spring.ru.springtest.dto.CourseRequestCreate;
+import spring.ru.springtest.dto.CourseRequestUpdate;
+import spring.ru.springtest.dto.CourseResponse;
 import java.util.UUID;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,7 +35,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-03-27T18:49:16.267114700+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-04-02T18:50:56.628982800+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 @Validated
 @Tag(name = "courses", description = "the courses API")
 public interface CoursesApi {
@@ -45,25 +47,37 @@ public interface CoursesApi {
     /**
      * POST /courses : Create course
      *
-     * @param course  (required)
+     * @param courseRequestCreate  (required)
      * @return Created (status code 201)
      */
     @Operation(
-        operationId = "createCourseById",
+        operationId = "createCourse",
         summary = "Create course",
         responses = {
-            @ApiResponse(responseCode = "201", description = "Created")
+            @ApiResponse(responseCode = "201", description = "Created", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = CourseResponse.class))
+            })
         }
     )
     @RequestMapping(
         method = RequestMethod.POST,
         value = "/courses",
+        produces = { "application/json" },
         consumes = { "application/json" }
     )
     
-    default ResponseEntity<Void> createCourseById(
-        @Parameter(name = "Course", description = "", required = true) @Valid @RequestBody Course course
+    default ResponseEntity<CourseResponse> createCourse(
+        @Parameter(name = "CourseRequestCreate", description = "", required = true) @Valid @RequestBody CourseRequestCreate courseRequestCreate
     ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"students\" : [ { \"name\" : \"name\", \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" }, { \"name\" : \"name\", \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" } ], \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"title\" : \"title\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }
@@ -106,7 +120,7 @@ public interface CoursesApi {
         summary = "Get course by id",
         responses = {
             @ApiResponse(responseCode = "200", description = "Course found", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Course.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = CourseResponse.class))
             })
         }
     )
@@ -116,7 +130,7 @@ public interface CoursesApi {
         produces = { "application/json" }
     )
     
-    default ResponseEntity<Course> getCourseById(
+    default ResponseEntity<CourseResponse> getCourseById(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id
     ) {
         getRequest().ifPresent(request -> {
@@ -134,29 +148,41 @@ public interface CoursesApi {
 
 
     /**
-     * PUT /courses/{id} : Update course
+     * PATCH /courses/{id} : Update course
      *
      * @param id  (required)
-     * @param course  (required)
+     * @param courseRequestUpdate  (required)
      * @return Updated (status code 200)
      */
     @Operation(
         operationId = "updateCourseById",
         summary = "Update course",
         responses = {
-            @ApiResponse(responseCode = "200", description = "Updated")
+            @ApiResponse(responseCode = "200", description = "Updated", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = CourseResponse.class))
+            })
         }
     )
     @RequestMapping(
-        method = RequestMethod.PUT,
+        method = RequestMethod.PATCH,
         value = "/courses/{id}",
+        produces = { "application/json" },
         consumes = { "application/json" }
     )
     
-    default ResponseEntity<Void> updateCourseById(
+    default ResponseEntity<CourseResponse> updateCourseById(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id,
-        @Parameter(name = "Course", description = "", required = true) @Valid @RequestBody Course course
+        @Parameter(name = "CourseRequestUpdate", description = "", required = true) @Valid @RequestBody CourseRequestUpdate courseRequestUpdate
     ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"students\" : [ { \"name\" : \"name\", \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" }, { \"name\" : \"name\", \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" } ], \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"title\" : \"title\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }

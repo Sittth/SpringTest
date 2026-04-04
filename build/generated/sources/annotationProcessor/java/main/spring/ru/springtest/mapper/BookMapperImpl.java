@@ -4,70 +4,56 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;
-import spring.ru.springtest.dto.Book;
+import spring.ru.springtest.dto.BookRequestCreate;
+import spring.ru.springtest.dto.BookResponse;
 import spring.ru.springtest.models.BookModel;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-03-27T20:27:18+0300",
+    date = "2026-04-03T22:08:53+0300",
     comments = "version: 1.6.3, compiler: IncrementalProcessingEnvironment from gradle-language-java-9.3.1.jar, environment: Java 25 (Oracle Corporation)"
 )
 @Component
 public class BookMapperImpl implements BookMapper {
 
     @Override
-    public Book toDto(BookModel book) {
+    public BookResponse toResponse(BookModel book) {
         if ( book == null ) {
             return null;
         }
 
-        Book book1 = new Book();
+        BookResponse bookResponse = new BookResponse();
 
-        book1.setId( book.getId() );
-        book1.setTitle( book.getTitle() );
+        bookResponse.setId( book.getId() );
+        bookResponse.setTitle( book.getTitle() );
 
-        return book1;
+        return bookResponse;
     }
 
     @Override
-    public BookModel toEntity(Book dto) {
+    public List<BookResponse> toResponse(List<BookModel> books) {
+        if ( books == null ) {
+            return null;
+        }
+
+        List<BookResponse> list = new ArrayList<BookResponse>( books.size() );
+        for ( BookModel bookModel : books ) {
+            list.add( toResponse( bookModel ) );
+        }
+
+        return list;
+    }
+
+    @Override
+    public BookModel toEntity(BookRequestCreate dto) {
         if ( dto == null ) {
             return null;
         }
 
         BookModel bookModel = new BookModel();
 
-        bookModel.setId( dto.getId() );
         bookModel.setTitle( dto.getTitle() );
 
         return bookModel;
-    }
-
-    @Override
-    public List<Book> toDto(List<BookModel> books) {
-        if ( books == null ) {
-            return null;
-        }
-
-        List<Book> list = new ArrayList<Book>( books.size() );
-        for ( BookModel bookModel : books ) {
-            list.add( toDto( bookModel ) );
-        }
-
-        return list;
-    }
-
-    @Override
-    public List<BookModel> toEntity(List<Book> dto) {
-        if ( dto == null ) {
-            return null;
-        }
-
-        List<BookModel> list = new ArrayList<BookModel>( dto.size() );
-        for ( Book book : dto ) {
-            list.add( toEntity( book ) );
-        }
-
-        return list;
     }
 }

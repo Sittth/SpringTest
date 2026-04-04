@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,7 +26,7 @@ public class StudentModel {
 
     @ManyToMany(mappedBy = "students")
     @JsonBackReference
-    private List<CourseModel> courses;
+    private List<CourseModel> courses = new ArrayList<>();
 
     @Column(nullable = false, updatable = false)
     private OffsetDateTime createdAt;

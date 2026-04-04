@@ -16,17 +16,17 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * Student
+ * StudentResponse
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-03-27T18:49:16.267114700+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
-public class Student {
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-04-02T18:50:56.628982800+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+public class StudentResponse {
 
   private UUID id;
 
   private String name;
 
-  public Student id(UUID id) {
+  public StudentResponse id(UUID id) {
     this.id = id;
     return this;
   }
@@ -46,7 +46,7 @@ public class Student {
     this.id = id;
   }
 
-  public Student name(String name) {
+  public StudentResponse name(String name) {
     this.name = name;
     return this;
   }
@@ -74,9 +74,9 @@ public class Student {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Student student = (Student) o;
-    return Objects.equals(this.id, student.id) &&
-        Objects.equals(this.name, student.name);
+    StudentResponse studentResponse = (StudentResponse) o;
+    return Objects.equals(this.id, studentResponse.id) &&
+        Objects.equals(this.name, studentResponse.name);
   }
 
   @Override
@@ -87,7 +87,7 @@ public class Student {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Student {\n");
+    sb.append("class StudentResponse {\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("}");

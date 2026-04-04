@@ -1,17 +1,22 @@
 package spring.ru.springtest.mapper;
 
 import org.mapstruct.*;
-import spring.ru.springtest.dto.Author;
+import spring.ru.springtest.dto.AuthorRequestCreate;
+import spring.ru.springtest.dto.AuthorRequestUpdate;
+import spring.ru.springtest.dto.AuthorResponse;
 import spring.ru.springtest.models.AuthorModel;
 
-@Mapper(componentModel = "spring", uses = BookMapper.class)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = BookMapper.class)
 public interface AuthorMapper {
 
-    Author toDto(AuthorModel author);
+    AuthorResponse toResponse(AuthorModel author);
 
-    AuthorModel toEntity(Author dto);
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "books", ignore = true)
+    AuthorModel toEntity(AuthorRequestCreate requestCreate);
 
-    void updateEntityFromDto(Author dto, @MappingTarget AuthorModel author);
+    @Mapping(target = "books", ignore = true)
+    void updateEntityFromDto(AuthorRequestUpdate dto, @MappingTarget AuthorModel author);
 
     @AfterMapping
     default void linkBooksToAuthor(@MappingTarget AuthorModel authorModel) {

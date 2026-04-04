@@ -7,8 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
-import spring.ru.springtest.dto.Student;
+import spring.ru.springtest.dto.StudentRequestCreate;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
@@ -20,40 +19,29 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * Course
+ * CourseRequestCreate
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-03-27T18:49:16.267114700+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
-public class Course {
-
-  private UUID id;
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-04-02T18:50:56.628982800+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+public class CourseRequestCreate {
 
   private String title;
 
   @Valid
-  private List<@Valid Student> students = new ArrayList<>();
+  private List<@Valid StudentRequestCreate> students = new ArrayList<>();
 
-  public Course id(UUID id) {
-    this.id = id;
-    return this;
+  public CourseRequestCreate() {
+    super();
   }
 
   /**
-   * Get id
-   * @return id
-  */
-  @Valid 
-  @Schema(name = "id", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("id")
-  public UUID getId() {
-    return id;
+   * Constructor with only required parameters
+   */
+  public CourseRequestCreate(String title) {
+    this.title = title;
   }
 
-  public void setId(UUID id) {
-    this.id = id;
-  }
-
-  public Course title(String title) {
+  public CourseRequestCreate title(String title) {
     this.title = title;
     return this;
   }
@@ -62,8 +50,8 @@ public class Course {
    * Get title
    * @return title
   */
-  
-  @Schema(name = "title", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @NotNull 
+  @Schema(name = "title", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("title")
   public String getTitle() {
     return title;
@@ -73,12 +61,12 @@ public class Course {
     this.title = title;
   }
 
-  public Course students(List<@Valid Student> students) {
+  public CourseRequestCreate students(List<@Valid StudentRequestCreate> students) {
     this.students = students;
     return this;
   }
 
-  public Course addStudentsItem(Student studentsItem) {
+  public CourseRequestCreate addStudentsItem(StudentRequestCreate studentsItem) {
     if (this.students == null) {
       this.students = new ArrayList<>();
     }
@@ -93,11 +81,11 @@ public class Course {
   @Valid 
   @Schema(name = "students", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("students")
-  public List<@Valid Student> getStudents() {
+  public List<@Valid StudentRequestCreate> getStudents() {
     return students;
   }
 
-  public void setStudents(List<@Valid Student> students) {
+  public void setStudents(List<@Valid StudentRequestCreate> students) {
     this.students = students;
   }
 
@@ -109,22 +97,20 @@ public class Course {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Course course = (Course) o;
-    return Objects.equals(this.id, course.id) &&
-        Objects.equals(this.title, course.title) &&
-        Objects.equals(this.students, course.students);
+    CourseRequestCreate courseRequestCreate = (CourseRequestCreate) o;
+    return Objects.equals(this.title, courseRequestCreate.title) &&
+        Objects.equals(this.students, courseRequestCreate.students);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, title, students);
+    return Objects.hash(title, students);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Course {\n");
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("class CourseRequestCreate {\n");
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
     sb.append("    students: ").append(toIndentedString(students)).append("\n");
     sb.append("}");

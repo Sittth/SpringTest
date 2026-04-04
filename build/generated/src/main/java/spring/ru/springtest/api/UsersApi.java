@@ -6,7 +6,9 @@
 package spring.ru.springtest.api;
 
 import java.util.UUID;
-import spring.ru.springtest.dto.User;
+import spring.ru.springtest.dto.UserRequestCreate;
+import spring.ru.springtest.dto.UserRequestUpdate;
+import spring.ru.springtest.dto.UserResponse;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,7 +35,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-03-27T18:49:16.267114700+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-04-02T18:50:56.628982800+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 @Validated
 @Tag(name = "users", description = "the users API")
 public interface UsersApi {
@@ -45,25 +47,37 @@ public interface UsersApi {
     /**
      * POST /users : Create user
      *
-     * @param user  (required)
+     * @param userRequestCreate  (required)
      * @return Created (status code 201)
      */
     @Operation(
-        operationId = "createUserById",
+        operationId = "createUser",
         summary = "Create user",
         responses = {
-            @ApiResponse(responseCode = "201", description = "Created")
+            @ApiResponse(responseCode = "201", description = "Created", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))
+            })
         }
     )
     @RequestMapping(
         method = RequestMethod.POST,
         value = "/users",
+        produces = { "application/json" },
         consumes = { "application/json" }
     )
     
-    default ResponseEntity<Void> createUserById(
-        @Parameter(name = "User", description = "", required = true) @Valid @RequestBody User user
+    default ResponseEntity<UserResponse> createUser(
+        @Parameter(name = "UserRequestCreate", description = "", required = true) @Valid @RequestBody UserRequestCreate userRequestCreate
     ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"profile\" : { \"bio\" : \"bio\", \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" }, \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"username\" : \"username\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }
@@ -106,7 +120,7 @@ public interface UsersApi {
         summary = "Get user by id",
         responses = {
             @ApiResponse(responseCode = "200", description = "User found", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))
             })
         }
     )
@@ -116,7 +130,7 @@ public interface UsersApi {
         produces = { "application/json" }
     )
     
-    default ResponseEntity<User> getUserById(
+    default ResponseEntity<UserResponse> getUserById(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id
     ) {
         getRequest().ifPresent(request -> {
@@ -134,29 +148,41 @@ public interface UsersApi {
 
 
     /**
-     * PUT /users/{id} : Update user
+     * PATCH /users/{id} : Update user
      *
      * @param id  (required)
-     * @param user  (required)
+     * @param userRequestUpdate  (required)
      * @return Updated (status code 200)
      */
     @Operation(
         operationId = "updateUserById",
         summary = "Update user",
         responses = {
-            @ApiResponse(responseCode = "200", description = "Updated")
+            @ApiResponse(responseCode = "200", description = "Updated", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))
+            })
         }
     )
     @RequestMapping(
-        method = RequestMethod.PUT,
+        method = RequestMethod.PATCH,
         value = "/users/{id}",
+        produces = { "application/json" },
         consumes = { "application/json" }
     )
     
-    default ResponseEntity<Void> updateUserById(
+    default ResponseEntity<UserResponse> updateUserById(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id,
-        @Parameter(name = "User", description = "", required = true) @Valid @RequestBody User user
+        @Parameter(name = "UserRequestUpdate", description = "", required = true) @Valid @RequestBody UserRequestUpdate userRequestUpdate
     ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"profile\" : { \"bio\" : \"bio\", \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" }, \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"username\" : \"username\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }

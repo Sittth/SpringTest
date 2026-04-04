@@ -5,7 +5,9 @@
  */
 package spring.ru.springtest.api;
 
-import spring.ru.springtest.dto.Author;
+import spring.ru.springtest.dto.AuthorRequestCreate;
+import spring.ru.springtest.dto.AuthorRequestUpdate;
+import spring.ru.springtest.dto.AuthorResponse;
 import java.util.UUID;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,7 +35,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-03-27T18:49:16.267114700+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-04-02T18:50:56.628982800+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 @Validated
 @Tag(name = "authors", description = "the authors API")
 public interface AuthorsApi {
@@ -45,25 +47,37 @@ public interface AuthorsApi {
     /**
      * POST /authors : Create author
      *
-     * @param author  (required)
+     * @param authorRequestCreate  (required)
      * @return Created (status code 201)
      */
     @Operation(
-        operationId = "createAuthorById",
+        operationId = "createAuthor",
         summary = "Create author",
         responses = {
-            @ApiResponse(responseCode = "201", description = "Created")
+            @ApiResponse(responseCode = "201", description = "Created", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = AuthorResponse.class))
+            })
         }
     )
     @RequestMapping(
         method = RequestMethod.POST,
         value = "/authors",
+        produces = { "application/json" },
         consumes = { "application/json" }
     )
     
-    default ResponseEntity<Void> createAuthorById(
-        @Parameter(name = "Author", description = "", required = true) @Valid @RequestBody Author author
+    default ResponseEntity<AuthorResponse> createAuthor(
+        @Parameter(name = "AuthorRequestCreate", description = "", required = true) @Valid @RequestBody AuthorRequestCreate authorRequestCreate
     ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"books\" : [ { \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"title\" : \"title\" }, { \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"title\" : \"title\" } ], \"name\" : \"name\", \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }
@@ -106,7 +120,7 @@ public interface AuthorsApi {
         summary = "Get author by id",
         responses = {
             @ApiResponse(responseCode = "200", description = "Author found", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = Author.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = AuthorResponse.class))
             })
         }
     )
@@ -116,7 +130,7 @@ public interface AuthorsApi {
         produces = { "application/json" }
     )
     
-    default ResponseEntity<Author> getAuthorById(
+    default ResponseEntity<AuthorResponse> getAuthorById(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id
     ) {
         getRequest().ifPresent(request -> {
@@ -134,29 +148,41 @@ public interface AuthorsApi {
 
 
     /**
-     * PUT /authors/{id} : Update author
+     * PATCH /authors/{id} : Update author
      *
      * @param id  (required)
-     * @param author  (required)
+     * @param authorRequestUpdate  (required)
      * @return Updated (status code 200)
      */
     @Operation(
         operationId = "updateAuthorById",
         summary = "Update author",
         responses = {
-            @ApiResponse(responseCode = "200", description = "Updated")
+            @ApiResponse(responseCode = "200", description = "Updated", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = AuthorResponse.class))
+            })
         }
     )
     @RequestMapping(
-        method = RequestMethod.PUT,
+        method = RequestMethod.PATCH,
         value = "/authors/{id}",
+        produces = { "application/json" },
         consumes = { "application/json" }
     )
     
-    default ResponseEntity<Void> updateAuthorById(
+    default ResponseEntity<AuthorResponse> updateAuthorById(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id,
-        @Parameter(name = "Author", description = "", required = true) @Valid @RequestBody Author author
+        @Parameter(name = "AuthorRequestUpdate", description = "", required = true) @Valid @RequestBody AuthorRequestUpdate authorRequestUpdate
     ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"books\" : [ { \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"title\" : \"title\" }, { \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"title\" : \"title\" } ], \"name\" : \"name\", \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }

@@ -3,12 +3,14 @@ package spring.ru.springtest.mapper;
 import javax.annotation.processing.Generated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import spring.ru.springtest.dto.User;
+import spring.ru.springtest.dto.UserRequestCreate;
+import spring.ru.springtest.dto.UserRequestUpdate;
+import spring.ru.springtest.dto.UserResponse;
 import spring.ru.springtest.models.UserModel;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-03-27T20:49:00+0300",
+    date = "2026-04-03T22:08:53+0300",
     comments = "version: 1.6.3, compiler: IncrementalProcessingEnvironment from gradle-language-java-9.3.1.jar, environment: Java 25 (Oracle Corporation)"
 )
 @Component
@@ -18,45 +20,39 @@ public class UserMapperImpl implements UserMapper {
     private ProfileMapper profileMapper;
 
     @Override
-    public User toDto(UserModel user) {
+    public UserResponse toResponse(UserModel user) {
         if ( user == null ) {
             return null;
         }
 
-        User user1 = new User();
+        UserResponse userResponse = new UserResponse();
 
-        user1.setId( user.getId() );
-        user1.setUsername( user.getUsername() );
-        user1.setProfile( profileMapper.toDto( user.getProfile() ) );
+        userResponse.setId( user.getId() );
+        userResponse.setUsername( user.getUsername() );
+        userResponse.setProfile( profileMapper.toResponse( user.getProfile() ) );
 
-        return user1;
+        return userResponse;
     }
 
     @Override
-    public UserModel toEntity(User dto) {
+    public UserModel toEntity(UserRequestCreate dto) {
         if ( dto == null ) {
             return null;
         }
 
         UserModel userModel = new UserModel();
 
-        userModel.setId( dto.getId() );
         userModel.setUsername( dto.getUsername() );
-        userModel.setProfile( profileMapper.toEntity( dto.getProfile() ) );
-
-        linkProfile( dto, userModel );
 
         return userModel;
     }
 
     @Override
-    public void updateEntityFromDto(User dto, UserModel user) {
+    public void updateEntityFromDto(UserRequestUpdate dto, UserModel user) {
         if ( dto == null ) {
             return;
         }
 
         user.setUsername( dto.getUsername() );
-
-        linkProfile( dto, user );
     }
 }

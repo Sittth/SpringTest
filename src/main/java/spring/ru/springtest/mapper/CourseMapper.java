@@ -1,21 +1,24 @@
 package spring.ru.springtest.mapper;
 
-import org.mapstruct.AfterMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import spring.ru.springtest.dto.Course;
+import org.mapstruct.*;
+import spring.ru.springtest.dto.CourseRequestCreate;
+import spring.ru.springtest.dto.CourseRequestUpdate;
+import spring.ru.springtest.dto.CourseResponse;
 import spring.ru.springtest.models.CourseModel;
 
 import java.util.ArrayList;
 
-@Mapper(componentModel = "spring", uses = StudentMapper.class)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = StudentMapper.class)
 public interface CourseMapper {
 
-    Course toDto(CourseModel course);
+    CourseResponse toResponse(CourseModel course);
 
-    CourseModel toEntity(Course dto);
+    @Mapping(target = "id", ignore = true)
+    CourseModel toEntity(CourseRequestCreate requestCreate);
 
-    void updateEntityFromDto(Course dto, @MappingTarget CourseModel course);
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "students", ignore = true)
+    void updateEntityFromDto(CourseRequestUpdate dto, @MappingTarget CourseModel course);
 
     @AfterMapping
     default void linkStudentToCourse(@MappingTarget CourseModel courseModel) {

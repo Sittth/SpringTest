@@ -2,19 +2,21 @@ package spring.ru.springtest.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import spring.ru.springtest.dto.Book;
+import org.mapstruct.MappingConstants;
+import spring.ru.springtest.dto.BookRequestCreate;
+import spring.ru.springtest.dto.BookResponse;
 import spring.ru.springtest.models.BookModel;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface BookMapper {
 
-    Book toDto(BookModel book);
+    BookResponse toResponse(BookModel book);
 
+    List<BookResponse> toResponse(List<BookModel> books);
+
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "author", ignore = true)
-    BookModel toEntity(Book dto);
-
-    List<Book> toDto(List<BookModel> books);
-    List<BookModel> toEntity(List<Book> dto);
+    BookModel toEntity(BookRequestCreate dto);
 }

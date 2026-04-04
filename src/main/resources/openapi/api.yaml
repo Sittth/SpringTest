@@ -21,8 +21,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-    put:
+                $ref: '#/components/schemas/UserResponse'
+    patch:
       summary: Update user
       operationId: updateUserById
       parameters:
@@ -37,10 +37,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserRequestUpdate'
       responses:
         '200':
           description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
     delete:
       summary: Delete user
       operationId: deleteUserById
@@ -58,16 +62,20 @@ paths:
   /users:
     post:
       summary: Create user
-      operationId: createUserById
+      operationId: createUser
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserRequestCreate'
       responses:
         '201':
           description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
 
   /authors/{id}:
     get:
@@ -86,8 +94,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Author'
-    put:
+                $ref: '#/components/schemas/AuthorResponse'
+    patch:
       summary: Update author
       operationId: updateAuthorById
       parameters:
@@ -102,10 +110,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Author'
+              $ref: '#/components/schemas/AuthorRequestUpdate'
       responses:
         '200':
           description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorResponse'
     delete:
       summary: Delete author
       operationId: deleteAuthorById
@@ -123,16 +135,20 @@ paths:
   /authors:
     post:
       summary: Create author
-      operationId: createAuthorById
+      operationId: createAuthor
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Author'
+              $ref: '#/components/schemas/AuthorRequestCreate'
       responses:
         '201':
           description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorResponse'
 
   /courses/{id}:
     get:
@@ -151,8 +167,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Course'
-    put:
+                $ref: '#/components/schemas/CourseResponse'
+    patch:
       summary: Update course
       operationId: updateCourseById
       parameters:
@@ -167,10 +183,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Course'
+              $ref: '#/components/schemas/CourseRequestUpdate'
       responses:
         '200':
           description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseResponse'
     delete:
       summary: Delete course
       operationId: deleteCourseById
@@ -188,20 +208,24 @@ paths:
   /courses:
     post:
       summary: Create course
-      operationId: createCourseById
+      operationId: createCourse
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Course'
+              $ref: '#/components/schemas/CourseRequestCreate'
       responses:
         '201':
           description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseResponse'
 
 components:
   schemas:
-    User:
+    UserResponse:
       type: object
       properties:
         id:
@@ -210,8 +234,25 @@ components:
         username:
           type: string
         profile:
-          $ref: '#/components/schemas/Profile'
-    Profile:
+          $ref: '#/components/schemas/ProfileResponse'
+    UserRequestCreate:
+      type: object
+      required:
+        - username
+      properties:
+        username:
+          type: string
+        profile:
+          $ref: '#/components/schemas/ProfileRequestCreate'
+    UserRequestUpdate:
+      type: object
+      properties:
+        username:
+          type: string
+        profile:
+          $ref: '#/components/schemas/ProfileRequestUpdate'
+
+    ProfileResponse:
       type: object
       properties:
         id:
@@ -219,7 +260,20 @@ components:
           format: uuid
         bio:
           type: string
-    Author:
+    ProfileRequestCreate:
+      type: object
+      required:
+        - bio
+      properties:
+        bio:
+          type: string
+    ProfileRequestUpdate:
+      type: object
+      properties:
+        bio:
+          type: string
+
+    AuthorResponse:
       type: object
       properties:
         id:
@@ -230,8 +284,29 @@ components:
         books:
           type: array
           items:
-            $ref: '#/components/schemas/Book'
-    Book:
+            $ref: '#/components/schemas/BookResponse'
+    AuthorRequestCreate:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        books:
+          type: array
+          items:
+            $ref: '#/components/schemas/BookRequestCreate'
+    AuthorRequestUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        books:
+          type: array
+          items:
+            $ref: '#/components/schemas/BookRequestUpdate'
+
+    BookResponse:
       type: object
       properties:
         id:
@@ -239,7 +314,23 @@ components:
           format: uuid
         title:
           type: string
-    Course:
+    BookRequestCreate:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+    BookRequestUpdate:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+
+    CourseResponse:
       type: object
       properties:
         id:
@@ -250,8 +341,44 @@ components:
         students:
           type: array
           items:
-            $ref: '#/components/schemas/Student'
-    Student:
+            $ref: '#/components/schemas/StudentResponse'
+    CourseRequestCreate:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+        students:
+          type: array
+          items:
+            $ref: '#/components/schemas/StudentRequestCreate'
+    CourseRequestUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        students:
+          type: array
+          items:
+            $ref: '#/components/schemas/StudentRequestUpdate'
+
+    StudentResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+    StudentRequestCreate:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+    StudentRequestUpdate:
       type: object
       properties:
         id:

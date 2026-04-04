@@ -4,7 +4,6 @@ import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import java.util.UUID;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
@@ -16,37 +15,15 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * Profile
+ * ProfileRequestUpdate
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-03-27T18:49:16.267114700+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
-public class Profile {
-
-  private UUID id;
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-04-02T18:50:56.628982800+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+public class ProfileRequestUpdate {
 
   private String bio;
 
-  public Profile id(UUID id) {
-    this.id = id;
-    return this;
-  }
-
-  /**
-   * Get id
-   * @return id
-  */
-  @Valid 
-  @Schema(name = "id", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("id")
-  public UUID getId() {
-    return id;
-  }
-
-  public void setId(UUID id) {
-    this.id = id;
-  }
-
-  public Profile bio(String bio) {
+  public ProfileRequestUpdate bio(String bio) {
     this.bio = bio;
     return this;
   }
@@ -74,21 +51,19 @@ public class Profile {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Profile profile = (Profile) o;
-    return Objects.equals(this.id, profile.id) &&
-        Objects.equals(this.bio, profile.bio);
+    ProfileRequestUpdate profileRequestUpdate = (ProfileRequestUpdate) o;
+    return Objects.equals(this.bio, profileRequestUpdate.bio);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, bio);
+    return Objects.hash(bio);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Profile {\n");
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("class ProfileRequestUpdate {\n");
     sb.append("    bio: ").append(toIndentedString(bio)).append("\n");
     sb.append("}");
     return sb.toString();

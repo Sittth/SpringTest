@@ -4,8 +4,7 @@ import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import java.util.UUID;
-import spring.ru.springtest.dto.Profile;
+import spring.ru.springtest.dto.ProfileRequestUpdate;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
@@ -17,39 +16,17 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * User
+ * UserRequestUpdate
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-03-27T18:49:16.267114700+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
-public class User {
-
-  private UUID id;
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-04-02T18:50:56.628982800+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+public class UserRequestUpdate {
 
   private String username;
 
-  private Profile profile;
+  private ProfileRequestUpdate profile;
 
-  public User id(UUID id) {
-    this.id = id;
-    return this;
-  }
-
-  /**
-   * Get id
-   * @return id
-  */
-  @Valid 
-  @Schema(name = "id", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("id")
-  public UUID getId() {
-    return id;
-  }
-
-  public void setId(UUID id) {
-    this.id = id;
-  }
-
-  public User username(String username) {
+  public UserRequestUpdate username(String username) {
     this.username = username;
     return this;
   }
@@ -69,7 +46,7 @@ public class User {
     this.username = username;
   }
 
-  public User profile(Profile profile) {
+  public UserRequestUpdate profile(ProfileRequestUpdate profile) {
     this.profile = profile;
     return this;
   }
@@ -81,11 +58,11 @@ public class User {
   @Valid 
   @Schema(name = "profile", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("profile")
-  public Profile getProfile() {
+  public ProfileRequestUpdate getProfile() {
     return profile;
   }
 
-  public void setProfile(Profile profile) {
+  public void setProfile(ProfileRequestUpdate profile) {
     this.profile = profile;
   }
 
@@ -97,22 +74,20 @@ public class User {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    User user = (User) o;
-    return Objects.equals(this.id, user.id) &&
-        Objects.equals(this.username, user.username) &&
-        Objects.equals(this.profile, user.profile);
+    UserRequestUpdate userRequestUpdate = (UserRequestUpdate) o;
+    return Objects.equals(this.username, userRequestUpdate.username) &&
+        Objects.equals(this.profile, userRequestUpdate.profile);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, username, profile);
+    return Objects.hash(username, profile);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class User {\n");
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("class UserRequestUpdate {\n");
     sb.append("    username: ").append(toIndentedString(username)).append("\n");
     sb.append("    profile: ").append(toIndentedString(profile)).append("\n");
     sb.append("}");

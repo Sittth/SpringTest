@@ -4,12 +4,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import spring.ru.springtest.dto.Course;
+import spring.ru.springtest.dto.CourseRequestCreate;
+import spring.ru.springtest.dto.CourseRequestUpdate;
+import spring.ru.springtest.dto.CourseResponse;
+import spring.ru.springtest.dto.StudentRequestUpdate;
 import spring.ru.springtest.exceptions.CourseNotFoundException;
 import spring.ru.springtest.mapper.CourseMapper;
 import spring.ru.springtest.models.CourseModel;
+import spring.ru.springtest.models.StudentModel;
 import spring.ru.springtest.repositories.CourseRepository;
+import spring.ru.springtest.repositories.StudentRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -19,9 +26,10 @@ public class CourseService {
 
     private final CourseRepository courseRepository;
     private final CourseMapper courseMapper;
+    private final StudentRepository studentRepository;
 
     @Transactional(readOnly = true)
-    public Course findById(UUID id) {
+    public CourseResponse findById(UUID id) {
 
         log.debug("Search course by id {}", id);
 
@@ -30,22 +38,24 @@ public class CourseService {
                     log.error("Course not found with id {}", id);
                     return new CourseNotFoundException("Course with id " + id + " not found");
                 });
-        return courseMapper.toDto(courseModel);
+        return courseMapper.toResponse(courseModel);
     }
 
     @Transactional
-    public void save(Course courseDto) {
+    public CourseResponse save(CourseRequestCreate requestCreate) {
 
-        log.debug("Save course {}", courseDto);
+        log.debug("Save course {}", requestCreate);
 
-        CourseModel courseModel = courseMapper.toEntity(courseDto);
-        courseRepository.save(courseModel);
+        CourseModel entity = courseMapper.toEntity(requestCreate);
+        CourseModel saved = courseRepository.save(entity);
 
-        log.info("Saved course with id {}", courseModel.getId());
+        log.info("Saved course with id {}", saved.getId());
+
+        return courseMapper.toResponse(saved);
     }
 
     @Transactional
-    public void update(UUID id, Course dto) {
+    public CourseResponse update(UUID id, CourseRequestUpdate requestUpdate) {
 
         log.debug("Update course with id: {}", id);
 
@@ -54,10 +64,45 @@ public class CourseService {
                     log.error("Update failed: course not found with id {}", id);
                     return new CourseNotFoundException("Course with id " + id + " not found");
                 });
-        courseMapper.updateEntityFromDto(dto, existingCourse);
-        courseRepository.save(existingCourse);
+
+        courseMapper.updateEntityFromDto(requestUpdate, existingCourse);
+
+        if (requestUpdate.getStudents() != null) {
+            List<StudentModel> students = new ArrayList<>();
+
+            for (StudentRequestUpdate student : requestUpdate.getStudents()) {
+
+                if (student.getId() != null) {
+                    StudentModel existing = studentRepository.findById(student.getId()).orElseThrow();
+
+                    if (student.getName() != null) {
+                        existing.setName(student.getName());
+                    }
+
+                    students.add(existing);
+                } else {
+                    StudentModel studentModel = new StudentModel();
+                    studentModel.setName(student.getName());
+                    studentModel = studentRepository.save(studentModel);
+                    students.add(studentModel);
+                }
+            }
+
+            existingCourse.getStudents().clear();
+            existingCourse.getStudents().addAll(students);
+
+            for (StudentModel student : students) {
+                if (!student.getCourses().contains(existingCourse)) {
+                    student.getCourses().add(existingCourse);
+                }
+            }
+        }
+
+        CourseModel saved = courseRepository.save(existingCourse);
 
         log.info("Updated course with id {}", id);
+
+        return courseMapper.toResponse(saved);
     }
 
     @Transactional

@@ -16,17 +16,17 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * Book
+ * BookResponse
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-03-27T18:49:16.267114700+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
-public class Book {
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-04-02T18:50:56.628982800+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+public class BookResponse {
 
   private UUID id;
 
   private String title;
 
-  public Book id(UUID id) {
+  public BookResponse id(UUID id) {
     this.id = id;
     return this;
   }
@@ -46,7 +46,7 @@ public class Book {
     this.id = id;
   }
 
-  public Book title(String title) {
+  public BookResponse title(String title) {
     this.title = title;
     return this;
   }
@@ -74,9 +74,9 @@ public class Book {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Book book = (Book) o;
-    return Objects.equals(this.id, book.id) &&
-        Objects.equals(this.title, book.title);
+    BookResponse bookResponse = (BookResponse) o;
+    return Objects.equals(this.id, bookResponse.id) &&
+        Objects.equals(this.title, bookResponse.title);
   }
 
   @Override
@@ -87,7 +87,7 @@ public class Book {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Book {\n");
+    sb.append("class BookResponse {\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
     sb.append("}");
