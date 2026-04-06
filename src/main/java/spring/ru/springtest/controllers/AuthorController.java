@@ -1,5 +1,6 @@
 package spring.ru.springtest.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,14 +24,14 @@ public class AuthorController implements AuthorsApi {
     }
 
     @Override
-    public ResponseEntity<AuthorResponse> createAuthor(AuthorRequestCreate requestCreate) {
+    public ResponseEntity<AuthorResponse> createAuthor(@Valid AuthorRequestCreate requestCreate) {
         AuthorResponse created = authorService.save(requestCreate);
 
         return ResponseEntity.status(201).body(created);
     }
 
     @Override
-    public ResponseEntity<AuthorResponse> updateAuthorById(UUID id, AuthorRequestUpdate requestUpdate) {
+    public ResponseEntity<AuthorResponse> updateAuthorById(UUID id, @Valid AuthorRequestUpdate requestUpdate) {
         AuthorResponse updated = authorService.update(id, requestUpdate);
 
         return ResponseEntity.ok(updated);

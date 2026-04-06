@@ -242,6 +242,9 @@ components:
       properties:
         username:
           type: string
+          minLength: 2
+          maxLength: 50
+          pattern: '^[a-zA-Z0-9_]+$'
         profile:
           $ref: '#/components/schemas/ProfileRequestCreate'
     UserRequestUpdate:
@@ -249,6 +252,9 @@ components:
       properties:
         username:
           type: string
+          minLength: 2
+          maxLength: 50
+          pattern: '^[a-zA-Z0-9_]+$'
         profile:
           $ref: '#/components/schemas/ProfileRequestUpdate'
 
@@ -267,11 +273,15 @@ components:
       properties:
         bio:
           type: string
+          minLength: 1
+          maxLength: 500
     ProfileRequestUpdate:
       type: object
       properties:
         bio:
           type: string
+          minLength: 1
+          maxLength: 500
 
     AuthorResponse:
       type: object
@@ -292,8 +302,11 @@ components:
       properties:
         name:
           type: string
+          minLength: 2
+          maxLength: 50
         books:
           type: array
+          maxItems: 200
           items:
             $ref: '#/components/schemas/BookRequestCreate'
     AuthorRequestUpdate:
@@ -301,8 +314,11 @@ components:
       properties:
         name:
           type: string
+          minLength: 2
+          maxLength: 50
         books:
           type: array
+          maxItems: 200
           items:
             $ref: '#/components/schemas/BookRequestUpdate'
 
@@ -321,6 +337,8 @@ components:
       properties:
         title:
           type: string
+          minLength: 1
+          maxLength: 100
     BookRequestUpdate:
       type: object
       properties:
@@ -329,6 +347,8 @@ components:
           format: uuid
         title:
           type: string
+          minLength: 1
+          maxLength: 100
 
     CourseResponse:
       type: object
@@ -349,8 +369,11 @@ components:
       properties:
         title:
           type: string
+          minLength: 3
+          maxLength: 100
         students:
           type: array
+          maxItems: 200
           items:
             $ref: '#/components/schemas/StudentRequestCreate'
     CourseRequestUpdate:
@@ -358,8 +381,11 @@ components:
       properties:
         title:
           type: string
+          minLength: 3
+          maxLength: 100
         students:
           type: array
+          maxItems: 200
           items:
             $ref: '#/components/schemas/StudentRequestUpdate'
 
@@ -378,6 +404,8 @@ components:
       properties:
         name:
           type: string
+          minLength: 2
+          maxLength: 50
     StudentRequestUpdate:
       type: object
       properties:
@@ -386,3 +414,5 @@ components:
           format: uuid
         name:
           type: string
+          minLength: 2
+          maxLength: 50

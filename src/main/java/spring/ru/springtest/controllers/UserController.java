@@ -1,5 +1,6 @@
 package spring.ru.springtest.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,14 +22,14 @@ public class UserController implements UsersApi {
     }
 
     @Override
-    public ResponseEntity<UserResponse> createUser(UserRequestCreate requestCreate) {
+    public ResponseEntity<UserResponse> createUser(@Valid UserRequestCreate requestCreate) {
         UserResponse created = userService.save(requestCreate);
 
         return ResponseEntity.status(201).body(created);
     }
 
     @Override
-    public ResponseEntity<UserResponse> updateUserById(UUID id, UserRequestUpdate requestUpdate) {
+    public ResponseEntity<UserResponse> updateUserById(UUID id, @Valid UserRequestUpdate requestUpdate) {
         UserResponse updated = userService.update(id, requestUpdate);
 
         return ResponseEntity.ok(updated);

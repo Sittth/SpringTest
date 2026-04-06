@@ -1,5 +1,6 @@
 package spring.ru.springtest.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,14 +24,14 @@ public class CourseController implements CoursesApi {
     }
 
     @Override
-    public ResponseEntity<CourseResponse> createCourse(CourseRequestCreate requestCreate) {
+    public ResponseEntity<CourseResponse> createCourse(@Valid CourseRequestCreate requestCreate) {
         CourseResponse created = courseService.save(requestCreate);
 
         return ResponseEntity.status(201).body(created);
     }
 
     @Override
-    public ResponseEntity<CourseResponse> updateCourseById(UUID id, CourseRequestUpdate requestUpdate) {
+    public ResponseEntity<CourseResponse> updateCourseById(UUID id, @Valid CourseRequestUpdate requestUpdate) {
         CourseResponse updated = courseService.update(id, requestUpdate);
 
         return ResponseEntity.ok(updated);

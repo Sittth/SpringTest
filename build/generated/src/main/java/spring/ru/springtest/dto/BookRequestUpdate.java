@@ -9,6 +9,7 @@ import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+import org.hibernate.validator.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 
@@ -19,7 +20,7 @@ import jakarta.annotation.Generated;
  * BookRequestUpdate
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-04-02T18:50:56.628982800+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-04-05T18:26:19.788055+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 public class BookRequestUpdate {
 
   private UUID id;
@@ -55,7 +56,7 @@ public class BookRequestUpdate {
    * Get title
    * @return title
   */
-  
+  @Size(min = 1, max = 100) 
   @Schema(name = "title", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("title")
   public String getTitle() {

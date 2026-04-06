@@ -12,6 +12,7 @@ import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+import org.hibernate.validator.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 
@@ -22,7 +23,7 @@ import jakarta.annotation.Generated;
  * AuthorRequestCreate
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-04-02T18:50:56.628982800+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-04-05T18:26:19.788055+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 public class AuthorRequestCreate {
 
   private String name;
@@ -50,7 +51,7 @@ public class AuthorRequestCreate {
    * Get name
    * @return name
   */
-  @NotNull 
+  @NotNull @Size(min = 2, max = 50) 
   @Schema(name = "name", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("name")
   public String getName() {
@@ -78,7 +79,7 @@ public class AuthorRequestCreate {
    * Get books
    * @return books
   */
-  @Valid 
+  @Valid @Size(max = 200) 
   @Schema(name = "books", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("books")
   public List<@Valid BookRequestCreate> getBooks() {
