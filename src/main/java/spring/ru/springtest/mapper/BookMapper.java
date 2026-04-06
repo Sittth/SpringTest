@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import spring.ru.springtest.dto.BookRequestCreate;
+import spring.ru.springtest.dto.BookRequestUpdate;
 import spring.ru.springtest.dto.BookResponse;
 import spring.ru.springtest.models.BookModel;
 
@@ -19,4 +20,8 @@ public interface BookMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "author", ignore = true)
     BookModel toEntity(BookRequestCreate dto);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "author", ignore = true)
+    BookModel toEntity(BookRequestUpdate dto);
 }

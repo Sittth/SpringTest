@@ -7,16 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 import spring.ru.springtest.dto.CourseRequestCreate;
 import spring.ru.springtest.dto.CourseRequestUpdate;
 import spring.ru.springtest.dto.CourseResponse;
-import spring.ru.springtest.dto.StudentRequestUpdate;
 import spring.ru.springtest.exceptions.EntityNotFoundException;
 import spring.ru.springtest.mapper.CourseMapper;
 import spring.ru.springtest.models.CourseModel;
-import spring.ru.springtest.models.StudentModel;
 import spring.ru.springtest.repositories.CourseRepository;
 import spring.ru.springtest.repositories.StudentRepository;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -66,37 +62,6 @@ public class CourseService {
                 });
 
         courseMapper.updateEntityFromDto(requestUpdate, existingCourse);
-
-        if (requestUpdate.getStudents() != null) {
-            List<StudentModel> students = new ArrayList<>();
-
-            for (StudentRequestUpdate student : requestUpdate.getStudents()) {
-
-                if (student.getId() != null) {
-                    StudentModel existing = studentRepository.findById(student.getId()).orElseThrow();
-
-                    if (student.getName() != null) {
-                        existing.setName(student.getName());
-                    }
-
-                    students.add(existing);
-                } else {
-                    StudentModel studentModel = new StudentModel();
-                    studentModel.setName(student.getName());
-                    studentModel = studentRepository.save(studentModel);
-                    students.add(studentModel);
-                }
-            }
-
-            existingCourse.getStudents().clear();
-            existingCourse.getStudents().addAll(students);
-
-            for (StudentModel student : students) {
-                if (!student.getCourses().contains(existingCourse)) {
-                    student.getCourses().add(existingCourse);
-                }
-            }
-        }
 
         CourseModel saved = courseRepository.save(existingCourse);
 

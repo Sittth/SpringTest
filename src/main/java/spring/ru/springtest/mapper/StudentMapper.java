@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import spring.ru.springtest.dto.StudentRequestCreate;
+import spring.ru.springtest.dto.StudentRequestUpdate;
 import spring.ru.springtest.dto.StudentResponse;
 import spring.ru.springtest.models.StudentModel;
 
@@ -21,4 +22,8 @@ public interface StudentMapper {
     StudentModel toEntity(StudentRequestCreate requestCreate);
 
     List<StudentModel> toEntity(List<StudentRequestCreate> requests);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "courses", ignore = true)
+    StudentModel toEntity(StudentRequestUpdate requestUpdate);
 }

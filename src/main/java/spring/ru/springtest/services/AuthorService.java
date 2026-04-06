@@ -8,12 +8,9 @@ import spring.ru.springtest.dto.*;
 import spring.ru.springtest.exceptions.EntityNotFoundException;
 import spring.ru.springtest.mapper.AuthorMapper;
 import spring.ru.springtest.models.AuthorModel;
-import spring.ru.springtest.models.BookModel;
 import spring.ru.springtest.repositories.AuthorRepository;
 import spring.ru.springtest.repositories.BookRepository;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -45,20 +42,6 @@ public class AuthorService {
         log.debug("Saving author: {}", requestCreate);
 
         AuthorModel entity = authorMapper.toEntity(requestCreate);
-
-        if (requestCreate.getBooks() != null) {
-            List<BookModel> books = new ArrayList<>();
-
-            for (BookRequestCreate book : requestCreate.getBooks()) {
-                BookModel bookModel = new BookModel();
-                bookModel.setTitle(book.getTitle());
-                bookModel.setAuthor(entity);
-                books.add(bookModel);
-            }
-
-            entity.setBooks(books);
-        }
-
         AuthorModel saved = authorRepository.save(entity);
 
         log.info("Saved author with id {}", saved.getId());
@@ -76,30 +59,6 @@ public class AuthorService {
                     log.error("Update failed: author not found with id {}", id);
                     return new EntityNotFoundException("Author", id);
                 });
-
-        authorMapper.updateEntityFromDto(requestUpdate, existingAuthor);
-
-        if (requestUpdate.getBooks() != null) {
-            List<BookModel> books = new ArrayList<>();
-
-            for (BookRequestUpdate book : requestUpdate.getBooks()) {
-
-                if (book.getId() != null) {
-                    BookModel existing = bookRepository.findById(book.getId()).orElseThrow();
-
-                    if (book.getTitle() != null) {
-                        existing.setTitle(book.getTitle());
-                    }
-                    books.add(existing);
-                } else {
-                    BookModel bookModel = new BookModel();
-                    bookModel.setTitle(book.getTitle());
-                    bookModel.setAuthor(existingAuthor);
-                    books.add(bookModel);
-                }
-            }
-            existingAuthor.setBooks(books);
-        }
 
         authorMapper.updateEntityFromDto(requestUpdate, existingAuthor);
         AuthorModel saved = authorRepository.save(existingAuthor);

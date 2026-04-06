@@ -44,13 +44,6 @@ public class UserService {
         log.debug("Save user {}", requestCreate);
 
         UserModel user = userMapper.toEntity(requestCreate);
-
-        if (requestCreate.getProfile() != null) {
-            ProfileModel profile = profileMapper.toEntity(requestCreate.getProfile());
-            profile.setUser(user);
-            user.setProfile(profile);
-        }
-
         UserModel saved = userRepository.save(user);
 
         log.info("Saved user with id {}", saved.getId());
@@ -69,20 +62,6 @@ public class UserService {
                     return new EntityNotFoundException("User", id);
                 });
         userMapper.updateEntityFromDto(requestUpdate, existingUser);
-
-        if (requestUpdate.getProfile() != null) {
-            ProfileModel profile = existingUser.getProfile();
-
-            if (profile == null) {
-                profile = profileMapper.toEntity(requestUpdate.getProfile());
-                profile.setUser(existingUser);
-                existingUser.setProfile(profile);
-            } else {
-                profileMapper.updateEntityFromDto(requestUpdate.getProfile(), profile);
-                profile.setUser(existingUser);
-            }
-        }
-
         UserModel saved = userRepository.save(existingUser);
 
         log.info("Updated user with id {}", id);

@@ -1,36 +1,37 @@
 package spring.ru.springtest.mapper;
 
 import org.mapstruct.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import spring.ru.springtest.dto.CourseRequestCreate;
 import spring.ru.springtest.dto.CourseRequestUpdate;
 import spring.ru.springtest.dto.CourseResponse;
+import spring.ru.springtest.helper.StudentHelper;
 import spring.ru.springtest.models.CourseModel;
+import spring.ru.springtest.models.StudentModel;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = StudentMapper.class)
-public interface CourseMapper {
+public abstract class CourseMapper {
 
-    CourseResponse toResponse(CourseModel course);
+    @Autowired
+    protected StudentHelper studentHelper;
+
+    public abstract CourseResponse toResponse(CourseModel course);
 
     @Mapping(target = "id", ignore = true)
-    CourseModel toEntity(CourseRequestCreate requestCreate);
+    public abstract CourseModel toEntity(CourseRequestCreate requestCreate);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "students", ignore = true)
-    void updateEntityFromDto(CourseRequestUpdate dto, @MappingTarget CourseModel course);
+    public abstract void updateEntityFromDto(CourseRequestUpdate dto, @MappingTarget CourseModel course);
 
     @AfterMapping
-    default void linkStudentToCourse(@MappingTarget CourseModel courseModel) {
-        if (courseModel.getStudents() != null) {
-            courseModel.getStudents().forEach(student -> {
-                if (student.getCourses() == null) {
-                    student.setCourses(new ArrayList<>());
-                }
-                if (!student.getCourses().contains(courseModel)) {
-                    student.getCourses().add(courseModel);
-                }
-            });
+    protected void updateStudents(@MappingTarget CourseModel courseModel, CourseRequestUpdate dto) {
+        if (dto.getStudents() != null) {
+            List<StudentModel> students = studentHelper.processStudents(dto.getStudents(), courseModel);
+            courseModel.getStudents().clear();
+            courseModel.getStudents().addAll(students);
         }
     }
 }
