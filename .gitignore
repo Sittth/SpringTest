@@ -34,3 +34,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+build/generated/.openapi-generator/FILES
+build/generated/.openapi-generator/VERSION
