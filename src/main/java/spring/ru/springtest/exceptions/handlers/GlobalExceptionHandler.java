@@ -1,4 +1,4 @@
-package spring.ru.springtest.handlers;
+package spring.ru.springtest.exceptions.handlers;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
