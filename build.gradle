@@ -79,12 +79,6 @@ openApiGenerate {
             dateLibrary: "java8",
             performBeanValidation: 'true'
     ]
-
-    globalProperties = [
-            apis: "",
-            models: "",
-            supportingFiles: "false"
-    ]
 }
 
 compileJava.dependsOn tasks.openApiGenerate
