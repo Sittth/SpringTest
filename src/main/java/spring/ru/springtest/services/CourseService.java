@@ -24,16 +24,21 @@ public class CourseService {
     private final CourseMapper courseMapper;
     private final StudentRepository studentRepository;
 
+    private CourseModel findExistingCourse(UUID id) {
+        return courseRepository.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(() -> {
+                    log.error("Course not found with id {}", id);
+                    return new EntityNotFoundException("Course " + id);
+                });
+    }
+
     @Transactional(readOnly = true)
     public CourseResponse findById(UUID id) {
 
         log.debug("Search course by id {}", id);
 
-        CourseModel courseModel = courseRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> {
-                    log.error("Course not found with id {}", id);
-                    return new EntityNotFoundException("Course", id);
-                });
+        CourseModel courseModel = findExistingCourse(id);
+
         return courseMapper.toResponse(courseModel);
     }
 
@@ -55,11 +60,7 @@ public class CourseService {
 
         log.debug("Update course with id: {}", id);
 
-        CourseModel existingCourse = courseRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> {
-                    log.error("Update failed: course not found with id {}", id);
-                    return new EntityNotFoundException("Course", id);
-                });
+        CourseModel existingCourse = findExistingCourse(id);
 
         courseMapper.updateEntityFromDto(requestUpdate, existingCourse);
 
@@ -75,11 +76,7 @@ public class CourseService {
 
         log.debug("Delete course with id {}", id);
 
-        CourseModel courseModel = courseRepository.findByIdAndIsDeletedFalse(id).
-                orElseThrow(() -> {
-                    log.warn("Attempt to delete non-existent or already deleted course with id: {}", id);
-                    return new EntityNotFoundException("Course", id);
-                });
+        CourseModel courseModel = findExistingCourse(id);
 
         courseRepository.delete(courseModel);
 

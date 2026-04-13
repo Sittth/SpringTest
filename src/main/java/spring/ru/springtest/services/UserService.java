@@ -10,7 +10,6 @@ import spring.ru.springtest.dto.UserResponse;
 import spring.ru.springtest.exceptions.EntityNotFoundException;
 import spring.ru.springtest.mapper.ProfileMapper;
 import spring.ru.springtest.mapper.UserMapper;
-import spring.ru.springtest.models.ProfileModel;
 import spring.ru.springtest.models.UserModel;
 import spring.ru.springtest.repositories.UserRepository;
 
@@ -25,16 +24,21 @@ public class UserService {
     private final UserMapper userMapper;
     private final ProfileMapper profileMapper;
 
+    private UserModel findExistingUser(UUID id) {
+        return userRepository.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(() -> {
+                    log.error("User not found with id {}", id);
+                    return new EntityNotFoundException("User " + id);
+                });
+    }
+
     @Transactional(readOnly = true)
     public UserResponse findById(UUID id) {
 
         log.debug("Search user by id {}", id);
 
-        UserModel user = userRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> {
-                    log.error("User not found with id {}", id);
-                    return new EntityNotFoundException("User", id);
-                });
+        UserModel user = findExistingUser(id);
+
         return userMapper.toResponse(user);
     }
 
@@ -56,11 +60,8 @@ public class UserService {
 
         log.debug("Update user with id: {}", id);
 
-        UserModel existingUser = userRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> {
-                    log.error("Update failed: user not found with id {}", id);
-                    return new EntityNotFoundException("User", id);
-                });
+        UserModel existingUser = findExistingUser(id);
+
         userMapper.updateEntityFromDto(requestUpdate, existingUser);
         UserModel saved = userRepository.save(existingUser);
 
@@ -74,11 +75,7 @@ public class UserService {
 
         log.debug("Delete user with id {}", id);
 
-        UserModel userModel = userRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> {
-                    log.warn("Attempt to delete non-existent or already deleted user with id: {}", id);
-                    return new EntityNotFoundException("User", id);
-                });
+        UserModel userModel = findExistingUser(id);
 
         userRepository.delete(userModel);
 

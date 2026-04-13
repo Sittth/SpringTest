@@ -22,16 +22,20 @@ public class AuthorService {
     private final AuthorMapper authorMapper;
     private final BookRepository bookRepository;
 
+    private AuthorModel findExistingAuthor(UUID id) {
+        return authorRepository.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(() -> {
+                    log.error("Author not found with id {}", id);
+                    return new EntityNotFoundException("Author ", id);
+                });
+    }
+
     @Transactional(readOnly = true)
     public AuthorResponse findById(UUID id) {
 
         log.debug("Finding author by id: {}", id);
 
-        AuthorModel authorModel = authorRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> {
-                    log.error("Author not found with id {}", id);
-                    return new EntityNotFoundException("Author", id);
-                });
+        AuthorModel authorModel = findExistingAuthor(id);
 
         return authorMapper.toResponse(authorModel);
     }
@@ -54,11 +58,7 @@ public class AuthorService {
 
         log.debug("Update author with id: {}", id);
 
-        AuthorModel existingAuthor = authorRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> {
-                    log.error("Update failed: author not found with id {}", id);
-                    return new EntityNotFoundException("Author", id);
-                });
+        AuthorModel existingAuthor = findExistingAuthor(id);
 
         authorMapper.updateEntityFromDto(requestUpdate, existingAuthor);
         AuthorModel saved = authorRepository.save(existingAuthor);
@@ -73,11 +73,7 @@ public class AuthorService {
 
         log.debug("Delete author with id {}", id);
 
-        AuthorModel authorModel = authorRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> {
-                    log.warn("Attempt to delete non-existent or already deleted author with id: {}", id);
-                    return new EntityNotFoundException("Author", id);
-                });
+        AuthorModel authorModel = findExistingAuthor(id);
 
         if (authorModel.getBooks() != null) {
             authorModel.getBooks().forEach(bookModel -> bookModel.setDeleted(true));
