@@ -20,7 +20,7 @@ import jakarta.annotation.Generated;
  * BookRequestUpdate
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-04-13T18:07:38.726875100+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-04-13T23:52:54.972128400+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 public class BookRequestUpdate {
 
   private UUID id;

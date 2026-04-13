@@ -8,6 +8,7 @@ package spring.ru.springtest.api;
 import spring.ru.springtest.dto.AuthorRequestCreate;
 import spring.ru.springtest.dto.AuthorRequestUpdate;
 import spring.ru.springtest.dto.AuthorResponse;
+import spring.ru.springtest.dto.ErrorResponse;
 import java.util.UUID;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,7 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-04-13T18:07:38.726875100+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-04-13T23:52:54.972128400+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 @Validated
 @Tag(name = "authors", description = "the authors API")
 public interface AuthorsApi {
@@ -49,6 +50,7 @@ public interface AuthorsApi {
      *
      * @param authorRequestCreate  (required)
      * @return Created (status code 201)
+     *         or Validation error (status code 400)
      */
     @Operation(
         operationId = "createAuthor",
@@ -56,6 +58,9 @@ public interface AuthorsApi {
         responses = {
             @ApiResponse(responseCode = "201", description = "Created", content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = AuthorResponse.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "Validation error", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
             })
         }
     )
@@ -76,6 +81,11 @@ public interface AuthorsApi {
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"code\" : \"code\", \"details\" : [ \"details\", \"details\" ], \"message\" : \"message\", \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
             }
         });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
@@ -88,22 +98,36 @@ public interface AuthorsApi {
      *
      * @param id  (required)
      * @return Deleted (status code 204)
+     *         or Author not found (status code 404)
      */
     @Operation(
         operationId = "deleteAuthorById",
         summary = "Delete author",
         responses = {
-            @ApiResponse(responseCode = "204", description = "Deleted")
+            @ApiResponse(responseCode = "204", description = "Deleted"),
+            @ApiResponse(responseCode = "404", description = "Author not found", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            })
         }
     )
     @RequestMapping(
         method = RequestMethod.DELETE,
-        value = "/authors/{id}"
+        value = "/authors/{id}",
+        produces = { "application/json" }
     )
     
     default ResponseEntity<Void> deleteAuthorById(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id
     ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"code\" : \"code\", \"details\" : [ \"details\", \"details\" ], \"message\" : \"message\", \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }
@@ -114,6 +138,7 @@ public interface AuthorsApi {
      *
      * @param id  (required)
      * @return Author found (status code 200)
+     *         or Author not found (status code 404)
      */
     @Operation(
         operationId = "getAuthorById",
@@ -121,6 +146,9 @@ public interface AuthorsApi {
         responses = {
             @ApiResponse(responseCode = "200", description = "Author found", content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = AuthorResponse.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "Author not found", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
             })
         }
     )
@@ -140,6 +168,11 @@ public interface AuthorsApi {
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"code\" : \"code\", \"details\" : [ \"details\", \"details\" ], \"message\" : \"message\", \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
             }
         });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
@@ -153,6 +186,8 @@ public interface AuthorsApi {
      * @param id  (required)
      * @param authorRequestUpdate  (required)
      * @return Updated (status code 200)
+     *         or Validation error (status code 400)
+     *         or Author not found (status code 404)
      */
     @Operation(
         operationId = "updateAuthorById",
@@ -160,6 +195,12 @@ public interface AuthorsApi {
         responses = {
             @ApiResponse(responseCode = "200", description = "Updated", content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = AuthorResponse.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "Validation error", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "Author not found", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
             })
         }
     )
@@ -178,6 +219,16 @@ public interface AuthorsApi {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"books\" : [ { \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"title\" : \"title\" }, { \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"title\" : \"title\" } ], \"name\" : \"name\", \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"code\" : \"code\", \"details\" : [ \"details\", \"details\" ], \"message\" : \"message\", \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"code\" : \"code\", \"details\" : [ \"details\", \"details\" ], \"message\" : \"message\", \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }

@@ -22,6 +22,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     patch:
       summary: Update user
       operationId: updateUserById
@@ -45,6 +51,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       summary: Delete user
       operationId: deleteUserById
@@ -58,6 +76,12 @@ paths:
       responses:
         '204':
           description: Deleted
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /users:
     post:
@@ -76,6 +100,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /authors/{id}:
     get:
@@ -95,6 +125,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthorResponse'
+        '404':
+          description: Author not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     patch:
       summary: Update author
       operationId: updateAuthorById
@@ -118,6 +154,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthorResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Author not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       summary: Delete author
       operationId: deleteAuthorById
@@ -131,6 +179,12 @@ paths:
       responses:
         '204':
           description: Deleted
+        '404':
+          description: Author not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /authors:
     post:
@@ -149,6 +203,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthorResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /courses/{id}:
     get:
@@ -168,6 +228,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CourseResponse'
+        '404':
+          description: Course not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     patch:
       summary: Update course
       operationId: updateCourseById
@@ -191,6 +257,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CourseResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Course not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       summary: Delete course
       operationId: deleteCourseById
@@ -204,6 +282,12 @@ paths:
       responses:
         '204':
           description: Deleted
+        '404':
+          description: Course not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /courses:
     post:
@@ -222,6 +306,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CourseResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
 components:
   schemas:
@@ -416,3 +506,17 @@ components:
           type: string
           minLength: 2
           maxLength: 50
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        code:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        details:
+          type: array
+          items:
+            type: string

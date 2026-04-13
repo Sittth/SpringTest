@@ -5,6 +5,7 @@
  */
 package spring.ru.springtest.api;
 
+import spring.ru.springtest.dto.ErrorResponse;
 import java.util.UUID;
 import spring.ru.springtest.dto.UserRequestCreate;
 import spring.ru.springtest.dto.UserRequestUpdate;
@@ -35,7 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-04-13T18:07:38.726875100+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-04-13T23:52:54.972128400+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 @Validated
 @Tag(name = "users", description = "the users API")
 public interface UsersApi {
@@ -49,6 +50,7 @@ public interface UsersApi {
      *
      * @param userRequestCreate  (required)
      * @return Created (status code 201)
+     *         or Validation error (status code 400)
      */
     @Operation(
         operationId = "createUser",
@@ -56,6 +58,9 @@ public interface UsersApi {
         responses = {
             @ApiResponse(responseCode = "201", description = "Created", content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "Validation error", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
             })
         }
     )
@@ -76,6 +81,11 @@ public interface UsersApi {
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"code\" : \"code\", \"details\" : [ \"details\", \"details\" ], \"message\" : \"message\", \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
             }
         });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
@@ -88,22 +98,36 @@ public interface UsersApi {
      *
      * @param id  (required)
      * @return Deleted (status code 204)
+     *         or User not found (status code 404)
      */
     @Operation(
         operationId = "deleteUserById",
         summary = "Delete user",
         responses = {
-            @ApiResponse(responseCode = "204", description = "Deleted")
+            @ApiResponse(responseCode = "204", description = "Deleted"),
+            @ApiResponse(responseCode = "404", description = "User not found", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            })
         }
     )
     @RequestMapping(
         method = RequestMethod.DELETE,
-        value = "/users/{id}"
+        value = "/users/{id}",
+        produces = { "application/json" }
     )
     
     default ResponseEntity<Void> deleteUserById(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id
     ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"code\" : \"code\", \"details\" : [ \"details\", \"details\" ], \"message\" : \"message\", \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }
@@ -114,6 +138,7 @@ public interface UsersApi {
      *
      * @param id  (required)
      * @return User found (status code 200)
+     *         or User not found (status code 404)
      */
     @Operation(
         operationId = "getUserById",
@@ -121,6 +146,9 @@ public interface UsersApi {
         responses = {
             @ApiResponse(responseCode = "200", description = "User found", content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "User not found", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
             })
         }
     )
@@ -140,6 +168,11 @@ public interface UsersApi {
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"code\" : \"code\", \"details\" : [ \"details\", \"details\" ], \"message\" : \"message\", \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
             }
         });
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
@@ -153,6 +186,8 @@ public interface UsersApi {
      * @param id  (required)
      * @param userRequestUpdate  (required)
      * @return Updated (status code 200)
+     *         or Validation error (status code 400)
+     *         or User not found (status code 404)
      */
     @Operation(
         operationId = "updateUserById",
@@ -160,6 +195,12 @@ public interface UsersApi {
         responses = {
             @ApiResponse(responseCode = "200", description = "Updated", content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "Validation error", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "User not found", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
             })
         }
     )
@@ -178,6 +219,16 @@ public interface UsersApi {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"profile\" : { \"bio\" : \"bio\", \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" }, \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"username\" : \"username\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"code\" : \"code\", \"details\" : [ \"details\", \"details\" ], \"message\" : \"message\", \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"code\" : \"code\", \"details\" : [ \"details\", \"details\" ], \"message\" : \"message\", \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
