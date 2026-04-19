@@ -7,10 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 import spring.ru.springtest.dto.*;
 import spring.ru.springtest.exceptions.EntityNotFoundException;
 import spring.ru.springtest.mapper.AuthorMapper;
+import spring.ru.springtest.mapper.BookMapper;
 import spring.ru.springtest.models.AuthorModel;
+import spring.ru.springtest.models.BookModel;
 import spring.ru.springtest.repositories.AuthorRepository;
-import spring.ru.springtest.repositories.BookRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -20,7 +22,29 @@ public class AuthorService {
 
     private final AuthorRepository authorRepository;
     private final AuthorMapper authorMapper;
-    private final BookRepository bookRepository;
+    private final BookMapper bookMapper;
+
+    private BookModel processBook(BookRequestUpdate dto, AuthorModel author) {
+
+        if (dto.getId() != null) {
+
+            BookModel existing = author.getBooks().stream()
+                    .filter(book -> book.getId().equals(dto.getId()))
+                    .findFirst()
+                    .orElseThrow(() -> new EntityNotFoundException("Book", dto.getId()));
+
+            if (dto.getTitle() != null) {
+                existing.setTitle(dto.getTitle());
+            }
+
+            return existing;
+
+        } else {
+            BookModel newBook = bookMapper.toEntity(dto);
+            newBook.setAuthor(author);
+            return newBook;
+        }
+    }
 
     private AuthorModel findExistingAuthor(UUID id) {
         return authorRepository.findByIdAndIsDeletedFalse(id)
@@ -61,6 +85,20 @@ public class AuthorService {
         AuthorModel existingAuthor = findExistingAuthor(id);
 
         authorMapper.updateEntityFromDto(requestUpdate, existingAuthor);
+
+        if (requestUpdate.getBooks() != null) {
+
+            List<BookModel> books = requestUpdate.getBooks().stream()
+                    .map(dto -> processBook(dto, existingAuthor))
+                    .toList();
+
+            existingAuthor.getBooks().clear();
+            for (BookModel book : books) {
+                book.setAuthor(existingAuthor);
+                existingAuthor.getBooks().add(book);
+            }
+        }
+
         AuthorModel saved = authorRepository.save(existingAuthor);
 
         log.info("Updated author with id {}", id);
