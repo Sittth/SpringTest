@@ -2,14 +2,20 @@ package spring.ru.springtest.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spring.ru.springtest.dto.CourseResponse;
 import spring.ru.springtest.dto.UserRequestCreate;
 import spring.ru.springtest.dto.UserRequestUpdate;
 import spring.ru.springtest.dto.UserResponse;
 import spring.ru.springtest.exceptions.EntityNotFoundException;
 import spring.ru.springtest.mapper.ProfileMapper;
 import spring.ru.springtest.mapper.UserMapper;
+import spring.ru.springtest.models.CourseModel;
 import spring.ru.springtest.models.ProfileModel;
 import spring.ru.springtest.models.UserModel;
 import spring.ru.springtest.repositories.UserRepository;
@@ -64,6 +70,24 @@ public class UserService {
         UserModel user = findExistingUser(id);
 
         return userMapper.toResponse(user);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<UserResponse> findAll(int page, int size) {
+
+        log.debug("Fetching users page {} with size {}", page, size);
+
+        int validatedPage = Math.max(page, 0);
+        int validatedSize = Math.min(Math.max(size, 1), 50);
+
+        Pageable pageable = PageRequest.of(
+                validatedPage,
+                validatedSize,
+                Sort.by("id").descending());
+
+        Page<UserModel> userPage = userRepository.findAllByIsDeletedFalse(pageable);
+
+        return userPage.map(userMapper::toResponse);
     }
 
     @Transactional

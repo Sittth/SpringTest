@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="spring.ru.springtest.SpringTestApplicationTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-04-14T13:20:48.389Z" hostname="DESKTOP-CS5QFQ0" time="25.506">
+<testsuite name="spring.ru.springtest.SpringTestApplicationTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-04-19T12:28:25.901Z" hostname="DESKTOP-CS5QFQ0" time="19.006">
   <properties/>
-  <testcase name="contextLoads()" classname="spring.ru.springtest.SpringTestApplicationTests" time="0.717"/>
-  <system-out><![CDATA[16:20:48.722 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [spring.ru.springtest.SpringTestApplicationTests]: SpringTestApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-16:20:48.931 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration spring.ru.springtest.SpringTestApplication for test class spring.ru.springtest.SpringTestApplicationTests
+  <testcase name="contextLoads()" classname="spring.ru.springtest.SpringTestApplicationTests" time="0.545"/>
+  <system-out><![CDATA[15:28:26.221 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [spring.ru.springtest.SpringTestApplicationTests]: SpringTestApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+15:28:26.428 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration spring.ru.springtest.SpringTestApplication for test class spring.ru.springtest.SpringTestApplicationTests
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -14,49 +14,49 @@
 
  :: Spring Boot ::                (v4.0.3)
 
-2026-04-14T16:20:49.801+03:00  INFO 37952 --- [SpringTest] [    Test worker] s.r.s.SpringTestApplicationTests         : Starting SpringTestApplicationTests using Java 21.0.10 with PID 37952 (started by Asus in C:\Projects\Java-less\SpringTest)
-2026-04-14T16:20:49.804+03:00  INFO 37952 --- [SpringTest] [    Test worker] s.r.s.SpringTestApplicationTests         : No active profile set, falling back to 1 default profile: "default"
-2026-04-14T16:20:51.335+03:00  INFO 37952 --- [SpringTest] [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-04-14T16:20:51.479+03:00  INFO 37952 --- [SpringTest] [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 124 ms. Found 6 JPA repository interfaces.
-2026-04-14T16:20:52.087+03:00  INFO 37952 --- [SpringTest] [    Test worker] org.testcontainers.images.PullPolicy     : Image pull policy will be performed by: DefaultPullPolicy()
-2026-04-14T16:20:52.092+03:00  INFO 37952 --- [SpringTest] [    Test worker] o.t.utility.ImageNameSubstitutor         : Image name substitution will be performed by: DefaultImageNameSubstitutor (composite of 'ConfigurationFileImageNameSubstitutor' and 'PrefixingImageNameSubstitutor')
-2026-04-14T16:20:52.129+03:00  INFO 37952 --- [SpringTest] [    Test worker] org.testcontainers.DockerClientFactory   : Testcontainers version: 2.0.3
-2026-04-14T16:20:52.493+03:00  INFO 37952 --- [SpringTest] [    Test worker] o.t.d.DockerClientProviderStrategy       : Loaded org.testcontainers.dockerclient.NpipeSocketClientProviderStrategy from ~/.testcontainers.properties, will try it first
-2026-04-14T16:20:53.881+03:00  INFO 37952 --- [SpringTest] [    Test worker] o.t.d.DockerClientProviderStrategy       : Found Docker environment with local Npipe socket (npipe:////./pipe/docker_engine)
-2026-04-14T16:20:53.883+03:00  INFO 37952 --- [SpringTest] [    Test worker] org.testcontainers.DockerClientFactory   : Docker host IP address is localhost
-2026-04-14T16:20:53.923+03:00  INFO 37952 --- [SpringTest] [    Test worker] org.testcontainers.DockerClientFactory   : Connected to docker: 
+2026-04-19T15:28:27.231+03:00  INFO 26004 --- [SpringTest] [    Test worker] s.r.s.SpringTestApplicationTests         : Starting SpringTestApplicationTests using Java 21.0.10 with PID 26004 (started by Asus in C:\Projects\Java-less\SpringTest)
+2026-04-19T15:28:27.234+03:00  INFO 26004 --- [SpringTest] [    Test worker] s.r.s.SpringTestApplicationTests         : No active profile set, falling back to 1 default profile: "default"
+2026-04-19T15:28:28.804+03:00  INFO 26004 --- [SpringTest] [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-19T15:28:28.935+03:00  INFO 26004 --- [SpringTest] [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 112 ms. Found 6 JPA repository interfaces.
+2026-04-19T15:28:29.566+03:00  INFO 26004 --- [SpringTest] [    Test worker] org.testcontainers.images.PullPolicy     : Image pull policy will be performed by: DefaultPullPolicy()
+2026-04-19T15:28:29.575+03:00  INFO 26004 --- [SpringTest] [    Test worker] o.t.utility.ImageNameSubstitutor         : Image name substitution will be performed by: DefaultImageNameSubstitutor (composite of 'ConfigurationFileImageNameSubstitutor' and 'PrefixingImageNameSubstitutor')
+2026-04-19T15:28:29.665+03:00  INFO 26004 --- [SpringTest] [    Test worker] org.testcontainers.DockerClientFactory   : Testcontainers version: 2.0.3
+2026-04-19T15:28:30.169+03:00  INFO 26004 --- [SpringTest] [    Test worker] o.t.d.DockerClientProviderStrategy       : Loaded org.testcontainers.dockerclient.NpipeSocketClientProviderStrategy from ~/.testcontainers.properties, will try it first
+2026-04-19T15:28:30.837+03:00  INFO 26004 --- [SpringTest] [    Test worker] o.t.d.DockerClientProviderStrategy       : Found Docker environment with local Npipe socket (npipe:////./pipe/docker_engine)
+2026-04-19T15:28:30.839+03:00  INFO 26004 --- [SpringTest] [    Test worker] org.testcontainers.DockerClientFactory   : Docker host IP address is localhost
+2026-04-19T15:28:30.876+03:00  INFO 26004 --- [SpringTest] [    Test worker] org.testcontainers.DockerClientFactory   : Connected to docker: 
   Server Version: 29.2.1
   API Version: 1.53
   Operating System: Docker Desktop
   Total Memory: 7410 MB
   Labels: 
     com.docker.desktop.address=npipe://\\.\pipe\docker_cli
-2026-04-14T16:20:54.549+03:00  INFO 37952 --- [SpringTest] [    Test worker] tc.testcontainers/ryuk:0.13.0            : Creating container for image: testcontainers/ryuk:0.13.0
-2026-04-14T16:20:54.835+03:00  INFO 37952 --- [SpringTest] [    Test worker] o.t.utility.RegistryAuthLocator          : Credential helper/store (docker-credential-desktop) does not have credentials for https://index.docker.io/v1/
-2026-04-14T16:20:55.446+03:00  INFO 37952 --- [SpringTest] [    Test worker] tc.testcontainers/ryuk:0.13.0            : Container testcontainers/ryuk:0.13.0 is starting: 459b3dfd4390d806e511a79c0c9210433bb9c20725273245098beddcdb1e2372
-2026-04-14T16:20:56.673+03:00  INFO 37952 --- [SpringTest] [    Test worker] tc.testcontainers/ryuk:0.13.0            : Container testcontainers/ryuk:0.13.0 started in PT2.1227274S
-2026-04-14T16:20:56.684+03:00  INFO 37952 --- [SpringTest] [    Test worker] o.t.utility.RyukResourceReaper           : Ryuk started - will monitor and terminate Testcontainers containers on JVM exit
-2026-04-14T16:20:56.685+03:00  INFO 37952 --- [SpringTest] [    Test worker] org.testcontainers.DockerClientFactory   : Checking the system...
-2026-04-14T16:20:56.686+03:00  INFO 37952 --- [SpringTest] [    Test worker] org.testcontainers.DockerClientFactory   : ✔︎ Docker server version should be at least 1.6.0
-2026-04-14T16:20:56.687+03:00  INFO 37952 --- [SpringTest] [    Test worker] tc.postgres:latest                       : Creating container for image: postgres:latest
-2026-04-14T16:20:57.004+03:00  INFO 37952 --- [SpringTest] [    Test worker] tc.postgres:latest                       : Container postgres:latest is starting: d06cd6396876c3156a7cad96fe2c23cdbf95684a484380a3470466f863626aa7
-2026-04-14T16:21:05.719+03:00  INFO 37952 --- [SpringTest] [    Test worker] tc.postgres:latest                       : Container postgres:latest started in PT9.0322297S
-2026-04-14T16:21:05.720+03:00  INFO 37952 --- [SpringTest] [    Test worker] tc.postgres:latest                       : Container is started (JDBC URL: jdbc:postgresql://localhost:63681/test?loggerLevel=OFF)
-2026-04-14T16:21:06.664+03:00  INFO 37952 --- [SpringTest] [    Test worker] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://localhost:63681/test?loggerLevel=OFF (PostgreSQL 18.3)
-2026-04-14T16:21:06.752+03:00  INFO 37952 --- [SpringTest] [    Test worker] o.f.core.internal.database.base.Schema   : Creating schema "test" ...
-2026-04-14T16:21:06.769+03:00  INFO 37952 --- [SpringTest] [    Test worker] o.f.c.i.s.JdbcTableSchemaHistory         : Creating Schema History table "test"."flyway_schema_history" ...
-2026-04-14T16:21:06.964+03:00  INFO 37952 --- [SpringTest] [    Test worker] o.f.core.internal.command.DbMigrate      : Current version of schema "test": null
-2026-04-14T16:21:07.009+03:00  INFO 37952 --- [SpringTest] [    Test worker] o.f.core.internal.command.DbMigrate      : Migrating schema "test" to version "1 - create tables and triggers"
-2026-04-14T16:21:07.140+03:00  WARN 37952 --- [SpringTest] [    Test worker] o.f.c.i.s.DefaultSqlScriptExecutor       : DB: schema "test" already exists, skipping (SQL State: 42P06 - Error Code: 0)
-2026-04-14T16:21:07.387+03:00  INFO 37952 --- [SpringTest] [    Test worker] o.f.core.internal.command.DbMigrate      : Successfully applied 1 migration to schema "test", now at version v1 (execution time 00:00.223s)
-2026-04-14T16:21:07.625+03:00  INFO 37952 --- [SpringTest] [    Test worker] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
-2026-04-14T16:21:07.772+03:00  INFO 37952 --- [SpringTest] [    Test worker] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.4.Final
-2026-04-14T16:21:08.569+03:00  INFO 37952 --- [SpringTest] [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-04-14T16:21:08.664+03:00  INFO 37952 --- [SpringTest] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2026-04-14T16:21:08.724+03:00  INFO 37952 --- [SpringTest] [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@64a9fca7
-2026-04-14T16:21:08.728+03:00  INFO 37952 --- [SpringTest] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2026-04-14T16:21:08.851+03:00  INFO 37952 --- [SpringTest] [    Test worker] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
-	Database JDBC URL [jdbc:postgresql://localhost:63681/test?loggerLevel=OFF]
+2026-04-19T15:28:31.108+03:00  INFO 26004 --- [SpringTest] [    Test worker] tc.testcontainers/ryuk:0.13.0            : Creating container for image: testcontainers/ryuk:0.13.0
+2026-04-19T15:28:31.250+03:00  INFO 26004 --- [SpringTest] [    Test worker] o.t.utility.RegistryAuthLocator          : Credential helper/store (docker-credential-desktop) does not have credentials for https://index.docker.io/v1/
+2026-04-19T15:28:31.603+03:00  INFO 26004 --- [SpringTest] [    Test worker] tc.testcontainers/ryuk:0.13.0            : Container testcontainers/ryuk:0.13.0 is starting: 6c5380539db868a30bdf857886c7f9f8cfe6346694b938de962d05a7e9b16887
+2026-04-19T15:28:32.535+03:00  INFO 26004 --- [SpringTest] [    Test worker] tc.testcontainers/ryuk:0.13.0            : Container testcontainers/ryuk:0.13.0 started in PT1.4270264S
+2026-04-19T15:28:32.547+03:00  INFO 26004 --- [SpringTest] [    Test worker] o.t.utility.RyukResourceReaper           : Ryuk started - will monitor and terminate Testcontainers containers on JVM exit
+2026-04-19T15:28:32.548+03:00  INFO 26004 --- [SpringTest] [    Test worker] org.testcontainers.DockerClientFactory   : Checking the system...
+2026-04-19T15:28:32.549+03:00  INFO 26004 --- [SpringTest] [    Test worker] org.testcontainers.DockerClientFactory   : ✔︎ Docker server version should be at least 1.6.0
+2026-04-19T15:28:32.550+03:00  INFO 26004 --- [SpringTest] [    Test worker] tc.postgres:latest                       : Creating container for image: postgres:latest
+2026-04-19T15:28:32.838+03:00  INFO 26004 --- [SpringTest] [    Test worker] tc.postgres:latest                       : Container postgres:latest is starting: e0182d7f53f4c08bfcf2283565e7758451cdd8f2c2ab479ae0a772fd9c4f739e
+2026-04-19T15:28:37.545+03:00  INFO 26004 --- [SpringTest] [    Test worker] tc.postgres:latest                       : Container postgres:latest started in PT4.9944954S
+2026-04-19T15:28:37.547+03:00  INFO 26004 --- [SpringTest] [    Test worker] tc.postgres:latest                       : Container is started (JDBC URL: jdbc:postgresql://localhost:49467/test?loggerLevel=OFF)
+2026-04-19T15:28:38.425+03:00  INFO 26004 --- [SpringTest] [    Test worker] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://localhost:49467/test?loggerLevel=OFF (PostgreSQL 18.3)
+2026-04-19T15:28:38.538+03:00  INFO 26004 --- [SpringTest] [    Test worker] o.f.core.internal.database.base.Schema   : Creating schema "test" ...
+2026-04-19T15:28:38.557+03:00  INFO 26004 --- [SpringTest] [    Test worker] o.f.c.i.s.JdbcTableSchemaHistory         : Creating Schema History table "test"."flyway_schema_history" ...
+2026-04-19T15:28:38.725+03:00  INFO 26004 --- [SpringTest] [    Test worker] o.f.core.internal.command.DbMigrate      : Current version of schema "test": null
+2026-04-19T15:28:38.756+03:00  INFO 26004 --- [SpringTest] [    Test worker] o.f.core.internal.command.DbMigrate      : Migrating schema "test" to version "1 - create tables and triggers"
+2026-04-19T15:28:38.771+03:00  WARN 26004 --- [SpringTest] [    Test worker] o.f.c.i.s.DefaultSqlScriptExecutor       : DB: schema "test" already exists, skipping (SQL State: 42P06 - Error Code: 0)
+2026-04-19T15:28:38.856+03:00  INFO 26004 --- [SpringTest] [    Test worker] o.f.core.internal.command.DbMigrate      : Successfully applied 1 migration to schema "test", now at version v1 (execution time 00:00.075s)
+2026-04-19T15:28:39.057+03:00  INFO 26004 --- [SpringTest] [    Test worker] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-04-19T15:28:39.153+03:00  INFO 26004 --- [SpringTest] [    Test worker] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.4.Final
+2026-04-19T15:28:40.157+03:00  INFO 26004 --- [SpringTest] [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-19T15:28:40.218+03:00  INFO 26004 --- [SpringTest] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-04-19T15:28:40.262+03:00  INFO 26004 --- [SpringTest] [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@22f756c5
+2026-04-19T15:28:40.266+03:00  INFO 26004 --- [SpringTest] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-04-19T15:28:40.389+03:00  INFO 26004 --- [SpringTest] [    Test worker] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:49467/test?loggerLevel=OFF]
 	Database driver: PostgreSQL JDBC Driver
 	Database dialect: PostgreSQLDialect
 	Database version: 18.3
@@ -67,11 +67,11 @@
 	Pool: DataSourceConnectionProvider
 	Minimum pool size: undefined/unknown
 	Maximum pool size: undefined/unknown
-2026-04-14T16:21:10.917+03:00  INFO 37952 --- [SpringTest] [    Test worker] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-04-14T16:21:11.024+03:00  INFO 37952 --- [SpringTest] [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-04-14T16:21:11.183+03:00  INFO 37952 --- [SpringTest] [    Test worker] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-04-14T16:21:12.073+03:00  WARN 37952 --- [SpringTest] [    Test worker] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-04-14T16:21:13.148+03:00  INFO 37952 --- [SpringTest] [    Test worker] s.r.s.SpringTestApplicationTests         : Started SpringTestApplicationTests in 23.907 seconds (process running for 26.393)
+2026-04-19T15:28:42.275+03:00  INFO 26004 --- [SpringTest] [    Test worker] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-04-19T15:28:42.369+03:00  INFO 26004 --- [SpringTest] [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-19T15:28:42.508+03:00  INFO 26004 --- [SpringTest] [    Test worker] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-04-19T15:28:43.333+03:00  WARN 26004 --- [SpringTest] [    Test worker] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-04-19T15:28:44.340+03:00  INFO 26004 --- [SpringTest] [    Test worker] s.r.s.SpringTestApplicationTests         : Started SpringTestApplicationTests in 17.667 seconds (process running for 20.09)
 ]]></system-out>
   <system-err><![CDATA[Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
 WARNING: A Java agent has been loaded dynamically (C:\Users\Asus\.gradle\caches\modules-2\files-2.1\net.bytebuddy\byte-buddy-agent\1.17.8\f09415827a71be7ed621c7bd02550678f28bc81c\byte-buddy-agent-1.17.8.jar)

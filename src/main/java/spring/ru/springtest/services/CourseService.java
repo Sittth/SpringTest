@@ -2,14 +2,16 @@ package spring.ru.springtest.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import spring.ru.springtest.dto.CourseRequestCreate;
-import spring.ru.springtest.dto.CourseRequestUpdate;
-import spring.ru.springtest.dto.CourseResponse;
-import spring.ru.springtest.dto.StudentRequestUpdate;
+import spring.ru.springtest.dto.*;
 import spring.ru.springtest.exceptions.EntityNotFoundException;
 import spring.ru.springtest.mapper.CourseMapper;
+import spring.ru.springtest.models.AuthorModel;
 import spring.ru.springtest.models.CourseModel;
 import spring.ru.springtest.models.StudentModel;
 import spring.ru.springtest.repositories.CourseRepository;
@@ -56,6 +58,24 @@ public class CourseService {
         CourseModel courseModel = findExistingCourse(id);
 
         return courseMapper.toResponse(courseModel);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<CourseResponse> findAll(int page, int size) {
+
+        log.debug("Fetching courses page {} with size {}", page, size);
+
+        int validatedPage = Math.max(page, 0);
+        int validatedSize = Math.min(Math.max(size, 1), 50);
+
+        Pageable pageable = PageRequest.of(
+                validatedPage,
+                validatedSize,
+                Sort.by("id").descending());
+
+        Page<CourseModel> coursePage = courseRepository.findAllByIsDeletedFalse(pageable);
+
+        return coursePage.map(courseMapper::toResponse);
     }
 
     @Transactional

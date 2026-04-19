@@ -316,6 +316,7 @@ paths:
 components:
   schemas:
     UserResponse:
+      x-package: "spring.ru.springtest.dto.response"
       type: object
       properties:
         id:
@@ -326,6 +327,7 @@ components:
         profile:
           $ref: '#/components/schemas/ProfileResponse'
     UserRequestCreate:
+      x-package: "spring.ru.springtest.dto.create"
       type: object
       required:
         - username
@@ -338,6 +340,7 @@ components:
         profile:
           $ref: '#/components/schemas/ProfileRequestCreate'
     UserRequestUpdate:
+      x-package: "spring.ru.springtest.dto.update"
       type: object
       properties:
         username:
@@ -349,6 +352,7 @@ components:
           $ref: '#/components/schemas/ProfileRequestUpdate'
 
     ProfileResponse:
+      x-package: "spring.ru.springtest.dto.response"
       type: object
       properties:
         id:
@@ -357,6 +361,7 @@ components:
         bio:
           type: string
     ProfileRequestCreate:
+      x-package: "spring.ru.springtest.dto.create"
       type: object
       required:
         - bio
@@ -366,6 +371,7 @@ components:
           minLength: 1
           maxLength: 500
     ProfileRequestUpdate:
+      x-package: "spring.ru.springtest.dto.update"
       type: object
       properties:
         bio:
@@ -374,6 +380,7 @@ components:
           maxLength: 500
 
     AuthorResponse:
+      x-package: "spring.ru.springtest.dto.response"
       type: object
       properties:
         id:
@@ -386,6 +393,7 @@ components:
           items:
             $ref: '#/components/schemas/BookResponse'
     AuthorRequestCreate:
+      x-package: "spring.ru.springtest.dto.create"
       type: object
       required:
         - name
@@ -400,6 +408,7 @@ components:
           items:
             $ref: '#/components/schemas/BookRequestCreate'
     AuthorRequestUpdate:
+      x-package: "spring.ru.springtest.dto.update"
       type: object
       properties:
         name:
@@ -413,6 +422,7 @@ components:
             $ref: '#/components/schemas/BookRequestUpdate'
 
     BookResponse:
+      x-package: "spring.ru.springtest.dto.response"
       type: object
       properties:
         id:
@@ -421,6 +431,7 @@ components:
         title:
           type: string
     BookRequestCreate:
+      x-package: "spring.ru.springtest.dto.create"
       type: object
       required:
         - title
@@ -430,6 +441,7 @@ components:
           minLength: 1
           maxLength: 100
     BookRequestUpdate:
+      x-package: "spring.ru.springtest.dto.update"
       type: object
       properties:
         id:
@@ -441,6 +453,7 @@ components:
           maxLength: 100
 
     CourseResponse:
+      x-package: "spring.ru.springtest.dto.response"
       type: object
       properties:
         id:
@@ -453,6 +466,7 @@ components:
           items:
             $ref: '#/components/schemas/StudentResponse'
     CourseRequestCreate:
+      x-package: "spring.ru.springtest.dto.create"
       type: object
       required:
         - title
@@ -467,6 +481,7 @@ components:
           items:
             $ref: '#/components/schemas/StudentRequestCreate'
     CourseRequestUpdate:
+      x-package: "spring.ru.springtest.dto.update"
       type: object
       properties:
         title:
@@ -480,6 +495,7 @@ components:
             $ref: '#/components/schemas/StudentRequestUpdate'
 
     StudentResponse:
+      x-package: "spring.ru.springtest.dto.response"
       type: object
       properties:
         id:
@@ -488,6 +504,7 @@ components:
         name:
           type: string
     StudentRequestCreate:
+      x-package: "spring.ru.springtest.dto.create"
       type: object
       required:
         - name
@@ -497,6 +514,7 @@ components:
           minLength: 2
           maxLength: 50
     StudentRequestUpdate:
+      x-package: "spring.ru.springtest.dto.update"
       type: object
       properties:
         id:

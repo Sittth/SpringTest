@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS users (
     username text,
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ,
     is_deleted BOOLEAN NOT NULL DEFAULT false
 );
 
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS profiles (
     user_id uuid UNIQUE,
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ,
     is_deleted BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT fk_profiles_user
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS authors (
     name text,
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ,
     is_deleted BOOLEAN NOT NULL DEFAULT false
 );
 
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS books (
     author_id uuid,
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ,
     is_deleted BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT fk_books_author
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS courses (
     title text NOT NULL,
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ,
     is_deleted BOOLEAN NOT NULL DEFAULT false
 );
 
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS students (
     name text NOT NULL,
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ,
     is_deleted BOOLEAN NOT NULL DEFAULT false
 );
 

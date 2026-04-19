@@ -2,6 +2,10 @@ package spring.ru.springtest.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spring.ru.springtest.dto.*;
@@ -62,6 +66,24 @@ public class AuthorService {
         AuthorModel authorModel = findExistingAuthor(id);
 
         return authorMapper.toResponse(authorModel);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<AuthorResponse> findAll(int page, int size) {
+
+        log.debug("Fetching authors page {} with size {}", page, size);
+
+        int validatedPage = Math.max(page, 0);
+        int validatedSize = Math.min(Math.max(size, 1), 50);
+
+        Pageable pageable = PageRequest.of(
+                validatedPage,
+                validatedSize,
+                Sort.by("id").descending());
+
+        Page<AuthorModel> authorsPage = authorRepository.findAllByIsDeletedFalse(pageable);
+
+        return authorsPage.map(authorMapper::toResponse);
     }
 
     @Transactional
