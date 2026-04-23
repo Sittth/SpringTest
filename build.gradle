@@ -76,6 +76,7 @@ openApiGenerate {
             interfaceOnly: "true",
             useSpringBoot3: "true",
             useJakartaEe: 'true',
+            useBeanValidation: "true",
             dateLibrary: "java8",
             performBeanValidation: 'true'
     ]

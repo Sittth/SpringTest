@@ -51,4 +51,14 @@ public class CourseModel {
     public void onUpdate() {
         updatedAt = OffsetDateTime.now();
     }
+
+    public void addStudent(StudentModel student) {
+        this.students.add(student);
+        student.getCourses().add(this);
+    }
+
+    public void removeStudent(StudentModel student) {
+        this.students.remove(student);
+        student.getCourses().remove(this);
+    }
 }

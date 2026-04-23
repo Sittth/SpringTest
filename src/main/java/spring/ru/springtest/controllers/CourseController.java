@@ -3,11 +3,11 @@ package spring.ru.springtest.controllers;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import spring.ru.springtest.api.CoursesApi;
-import spring.ru.springtest.dto.CourseRequestCreate;
-import spring.ru.springtest.dto.CourseRequestUpdate;
-import spring.ru.springtest.dto.CourseResponse;
+import spring.ru.springtest.dto.*;
 import spring.ru.springtest.services.CourseService;
 
 import java.util.UUID;
@@ -26,6 +26,15 @@ public class CourseController implements CoursesApi {
     @Override
     public ResponseEntity<CourseResponse> createCourse(@Valid CourseRequestCreate requestCreate) {
         CourseResponse created = courseService.save(requestCreate);
+
+        return ResponseEntity.status(201).body(created);
+    }
+
+    @Override
+    public ResponseEntity<StudentResponse> createStudentForCourse(
+            @PathVariable("id") UUID id,
+            @Valid @RequestBody StudentRequestCreate requestCreate) {
+        StudentResponse created = courseService.createStudent(id, requestCreate);
 
         return ResponseEntity.status(201).body(created);
     }

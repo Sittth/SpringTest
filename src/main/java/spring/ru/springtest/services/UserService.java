@@ -8,15 +8,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import spring.ru.springtest.dto.CourseResponse;
 import spring.ru.springtest.dto.UserRequestCreate;
 import spring.ru.springtest.dto.UserRequestUpdate;
 import spring.ru.springtest.dto.UserResponse;
 import spring.ru.springtest.exceptions.EntityNotFoundException;
 import spring.ru.springtest.mapper.ProfileMapper;
 import spring.ru.springtest.mapper.UserMapper;
-import spring.ru.springtest.models.CourseModel;
-import spring.ru.springtest.models.ProfileModel;
 import spring.ru.springtest.models.UserModel;
 import spring.ru.springtest.repositories.UserRepository;
 
@@ -33,24 +30,18 @@ public class UserService {
 
     private void applyCreateProfile(UserModel userModel, UserRequestCreate dto) {
         if (dto.getProfile() != null) {
-            ProfileModel profile = profileMapper.toEntity(dto.getProfile());
-            profile.setUser(userModel);
-            userModel.setProfile(profile);
+            userModel.setProfile(profileMapper.toEntity(dto.getProfile(), userModel));
         }
     }
 
     private void applyUpdateProfile(UserModel userModel, UserRequestUpdate dto) {
-        if (dto.getProfile() == null) {
-            return;
-        }
+        if (dto.getProfile() != null) {
 
-        if (userModel.getProfile() == null) {
-            ProfileModel profile = profileMapper.toEntity(dto.getProfile());
-            profile.setUser(userModel);
-            userModel.setProfile(profile);
-        } else {
-            profileMapper.updateEntityFromDto(dto.getProfile(), userModel.getProfile());
-            userModel.getProfile().setUser(userModel);
+            if (userModel.getProfile() == null) {
+                userModel.setProfile(profileMapper.toEntity(dto.getProfile(), userModel));
+            } else {
+                profileMapper.updateEntity(dto.getProfile(), userModel.getProfile(), userModel);
+            }
         }
     }
 

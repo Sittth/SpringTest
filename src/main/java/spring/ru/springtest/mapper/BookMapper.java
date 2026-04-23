@@ -6,6 +6,7 @@ import org.mapstruct.MappingConstants;
 import spring.ru.springtest.dto.BookRequestCreate;
 import spring.ru.springtest.dto.BookRequestUpdate;
 import spring.ru.springtest.dto.BookResponse;
+import spring.ru.springtest.models.AuthorModel;
 import spring.ru.springtest.models.BookModel;
 
 import java.util.List;
@@ -24,4 +25,10 @@ public interface BookMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "author", ignore = true)
     BookModel toEntity(BookRequestUpdate dto);
+
+    default BookModel toEntity(BookRequestCreate dto, AuthorModel author) {
+        BookModel book = toEntity(dto);
+        book.setAuthor(author);
+        return book;
+    }
 }

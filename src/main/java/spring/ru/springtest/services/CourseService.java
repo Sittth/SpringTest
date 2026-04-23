@@ -11,12 +11,14 @@ import org.springframework.transaction.annotation.Transactional;
 import spring.ru.springtest.dto.*;
 import spring.ru.springtest.exceptions.EntityNotFoundException;
 import spring.ru.springtest.mapper.CourseMapper;
+import spring.ru.springtest.mapper.StudentMapper;
 import spring.ru.springtest.models.AuthorModel;
 import spring.ru.springtest.models.CourseModel;
 import spring.ru.springtest.models.StudentModel;
 import spring.ru.springtest.repositories.CourseRepository;
 import spring.ru.springtest.repositories.StudentRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,6 +30,7 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final CourseMapper courseMapper;
     private final StudentRepository studentRepository;
+    private final StudentMapper studentMapper;
 
     private StudentModel findStudent(UUID id) {
         return studentRepository.findById(id)
@@ -43,10 +46,6 @@ public class CourseService {
     }
 
     private StudentModel processStudent(StudentRequestUpdate dto) {
-        if (dto.getId() == null) {
-            throw new IllegalArgumentException("Student id is required");
-        }
-
         return findStudent(dto.getId());
     }
 
@@ -79,6 +78,19 @@ public class CourseService {
     }
 
     @Transactional
+    public StudentResponse createStudent(UUID id, StudentRequestCreate request) {
+        CourseModel course = findExistingCourse(id);
+
+        StudentModel student = studentMapper.toEntity(request);
+
+        course.addStudent(student);
+
+        studentRepository.save(student);
+
+        return studentMapper.toResponse(student);
+    }
+
+    @Transactional
     public CourseResponse save(CourseRequestCreate requestCreate) {
 
         log.debug("Save course {}", requestCreate);
@@ -102,21 +114,16 @@ public class CourseService {
 
         if (requestUpdate.getStudents() != null) {
 
-            for (StudentModel student : existingCourse.getStudents()) {
-                student.getCourses().remove(existingCourse);
+            for (StudentModel student : new ArrayList<>(existingCourse.getStudents())) {
+                existingCourse.removeStudent(student);
             }
-
-            existingCourse.getStudents().clear();
 
             List<StudentModel> students = requestUpdate.getStudents().stream()
                     .map(this::processStudent)
                     .toList();
 
-            existingCourse.getStudents().clear();
-
             for (StudentModel student : students) {
-                existingCourse.getStudents().add(student);
-                student.getCourses().add(existingCourse);
+                existingCourse.addStudent(student);
             }
         }
 

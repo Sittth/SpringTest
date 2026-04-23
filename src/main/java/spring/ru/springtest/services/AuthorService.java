@@ -30,24 +30,16 @@ public class AuthorService {
 
     private BookModel processBook(BookRequestUpdate dto, AuthorModel author) {
 
-        if (dto.getId() != null) {
+        BookModel existing = author.getBooks().stream()
+                .filter(book -> book.getId().equals(dto.getId()))
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("Book", dto.getId()));
 
-            BookModel existing = author.getBooks().stream()
-                    .filter(book -> book.getId().equals(dto.getId()))
-                    .findFirst()
-                    .orElseThrow(() -> new EntityNotFoundException("Book", dto.getId()));
-
-            if (dto.getTitle() != null) {
-                existing.setTitle(dto.getTitle());
-            }
-
-            return existing;
-
-        } else {
-            BookModel newBook = bookMapper.toEntity(dto);
-            newBook.setAuthor(author);
-            return newBook;
+        if (dto.getTitle() != null) {
+            existing.setTitle(dto.getTitle());
         }
+
+        return existing;
     }
 
     private AuthorModel findExistingAuthor(UUID id) {
@@ -84,6 +76,19 @@ public class AuthorService {
         Page<AuthorModel> authorsPage = authorRepository.findAllByIsDeletedFalse(pageable);
 
         return authorsPage.map(authorMapper::toResponse);
+    }
+
+    @Transactional
+    public BookResponse createBook(UUID authorId, BookRequestCreate request) {
+        AuthorModel author = findExistingAuthor(authorId);
+
+        BookModel book = bookMapper.toEntity(request, author);
+
+        author.getBooks().add(book);
+
+        authorRepository.save(author);
+
+        return bookMapper.toResponse(book);
     }
 
     @Transactional

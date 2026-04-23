@@ -8,6 +8,7 @@ import spring.ru.springtest.dto.ProfileRequestCreate;
 import spring.ru.springtest.dto.ProfileRequestUpdate;
 import spring.ru.springtest.dto.ProfileResponse;
 import spring.ru.springtest.models.ProfileModel;
+import spring.ru.springtest.models.UserModel;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ProfileMapper {
@@ -24,4 +25,21 @@ public interface ProfileMapper {
 
     @Mapping(target = "user", ignore = true)
     void updateEntityFromDto(ProfileRequestUpdate dto, @MappingTarget ProfileModel model);
+
+    default ProfileModel toEntity(ProfileRequestCreate dto, UserModel user) {
+        ProfileModel profile = toEntity(dto);
+        profile.setUser(user);
+        return profile;
+    }
+
+    default ProfileModel toEntity(ProfileRequestUpdate dto, UserModel user) {
+        ProfileModel profile = toEntity(dto);
+        profile.setUser(user);
+        return profile;
+    }
+
+    default void updateEntity(ProfileRequestUpdate dto, ProfileModel model, UserModel user) {
+        updateEntityFromDto(dto, model);
+        model.setUser(user);
+    }
 }
