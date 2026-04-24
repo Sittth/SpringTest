@@ -2,7 +2,7 @@ package spring.ru.springtest.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,6 +22,20 @@ public class AuthorController implements AuthorsApi {
     @Override
     public ResponseEntity<AuthorResponse> getAuthorById(UUID id) {
         return ResponseEntity.ok(authorService.findById(id));
+    }
+
+    @Override
+    public ResponseEntity<GetAuthors200Response> getAuthors(Integer page, Integer size) {
+
+        Page<AuthorResponse> result = authorService.findAll(page, size);
+
+        GetAuthors200Response response = new GetAuthors200Response()
+                .content(result.getContent())
+                .page(result.getNumber())
+                .size(result.getSize())
+                .totalElements(result.getTotalElements());
+
+        return ResponseEntity.ok(response);
     }
 
     @Override

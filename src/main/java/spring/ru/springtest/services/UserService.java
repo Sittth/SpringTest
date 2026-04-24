@@ -68,13 +68,7 @@ public class UserService {
 
         log.info("Fetching users page {} with size {}", page, size);
 
-        int validatedPage = Math.max(page, 0);
-        int validatedSize = Math.min(Math.max(size, 1), 50);
-
-        Pageable pageable = PageRequest.of(
-                validatedPage,
-                validatedSize,
-                Sort.by("id").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id"));
 
         Page<UserModel> userPage = userRepository.findAllByIsDeletedFalse(pageable);
 
