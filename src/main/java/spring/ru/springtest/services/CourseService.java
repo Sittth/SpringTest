@@ -52,7 +52,7 @@ public class CourseService {
     @Transactional(readOnly = true)
     public CourseResponse findById(UUID id) {
 
-        log.debug("Search course by id {}", id);
+        log.info("Search course by id {}", id);
 
         CourseModel courseModel = findExistingCourse(id);
 
@@ -62,7 +62,7 @@ public class CourseService {
     @Transactional(readOnly = true)
     public Page<CourseResponse> findAll(int page, int size) {
 
-        log.debug("Fetching courses page {} with size {}", page, size);
+        log.info("Fetching courses page {} with size {}", page, size);
 
         int validatedPage = Math.max(page, 0);
         int validatedSize = Math.min(Math.max(size, 1), 50);
@@ -79,6 +79,9 @@ public class CourseService {
 
     @Transactional
     public StudentResponse createStudent(UUID id, StudentRequestCreate request) {
+
+        log.info("Creating student for course id: {}", id);
+
         CourseModel course = findExistingCourse(id);
 
         StudentModel student = studentMapper.toEntity(request);
@@ -87,13 +90,15 @@ public class CourseService {
 
         studentRepository.save(student);
 
+        log.info("Created student with id: {} for course id: {}", student.getId(), id);
+
         return studentMapper.toResponse(student);
     }
 
     @Transactional
     public CourseResponse save(CourseRequestCreate requestCreate) {
 
-        log.debug("Save course {}", requestCreate);
+        log.info("Save course {}", requestCreate);
 
         CourseModel entity = courseMapper.toEntity(requestCreate);
         CourseModel saved = courseRepository.save(entity);
@@ -106,7 +111,7 @@ public class CourseService {
     @Transactional
     public CourseResponse update(UUID id, CourseRequestUpdate requestUpdate) {
 
-        log.debug("Update course with id: {}", id);
+        log.info("Update course with id: {}", id);
 
         CourseModel existingCourse = findExistingCourse(id);
 
@@ -135,7 +140,7 @@ public class CourseService {
     @Transactional
     public void delete(UUID id) {
 
-        log.debug("Delete course with id {}", id);
+        log.info("Delete course with id {}", id);
 
         CourseModel courseModel = findExistingCourse(id);
 

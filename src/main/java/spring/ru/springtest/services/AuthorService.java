@@ -53,7 +53,7 @@ public class AuthorService {
     @Transactional(readOnly = true)
     public AuthorResponse findById(UUID id) {
 
-        log.debug("Finding author by id: {}", id);
+        log.info("Finding author by id: {}", id);
 
         AuthorModel authorModel = findExistingAuthor(id);
 
@@ -63,7 +63,7 @@ public class AuthorService {
     @Transactional(readOnly = true)
     public Page<AuthorResponse> findAll(int page, int size) {
 
-        log.debug("Fetching authors page {} with size {}", page, size);
+        log.info("Fetching authors page {} with size {}", page, size);
 
         int validatedPage = Math.max(page, 0);
         int validatedSize = Math.min(Math.max(size, 1), 50);
@@ -80,6 +80,9 @@ public class AuthorService {
 
     @Transactional
     public BookResponse createBook(UUID authorId, BookRequestCreate request) {
+
+        log.info("Creating book with id {}", authorId);
+
         AuthorModel author = findExistingAuthor(authorId);
 
         BookModel book = bookMapper.toEntity(request, author);
@@ -88,13 +91,15 @@ public class AuthorService {
 
         authorRepository.save(author);
 
+        log.info("Created book with id: {} for author id: {}", book.getId(), authorId);
+
         return bookMapper.toResponse(book);
     }
 
     @Transactional
     public AuthorResponse save(AuthorRequestCreate requestCreate) {
 
-        log.debug("Saving author: {}", requestCreate);
+        log.info("Saving author: {}", requestCreate);
 
         AuthorModel entity = authorMapper.toEntity(requestCreate);
         AuthorModel saved = authorRepository.save(entity);
@@ -107,7 +112,7 @@ public class AuthorService {
     @Transactional
     public AuthorResponse update(UUID id, AuthorRequestUpdate requestUpdate) {
 
-        log.debug("Update author with id: {}", id);
+        log.info("Update author with id: {}", id);
 
         AuthorModel existingAuthor = findExistingAuthor(id);
 
@@ -136,7 +141,7 @@ public class AuthorService {
     @Transactional
     public void delete(UUID id) {
 
-        log.debug("Delete author with id {}", id);
+        log.info("Delete author with id {}", id);
 
         AuthorModel authorModel = findExistingAuthor(id);
 

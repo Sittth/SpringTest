@@ -56,7 +56,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserResponse findById(UUID id) {
 
-        log.debug("Search user by id {}", id);
+        log.info("Search user by id {}", id);
 
         UserModel user = findExistingUser(id);
 
@@ -66,7 +66,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public Page<UserResponse> findAll(int page, int size) {
 
-        log.debug("Fetching users page {} with size {}", page, size);
+        log.info("Fetching users page {} with size {}", page, size);
 
         int validatedPage = Math.max(page, 0);
         int validatedSize = Math.min(Math.max(size, 1), 50);
@@ -84,7 +84,7 @@ public class UserService {
     @Transactional
     public UserResponse save(UserRequestCreate requestCreate) {
 
-        log.debug("Save user {}", requestCreate);
+        log.info("Save user {}", requestCreate);
 
         UserModel user = userMapper.toEntity(requestCreate);
         applyCreateProfile(user, requestCreate);
@@ -98,7 +98,7 @@ public class UserService {
     @Transactional
     public UserResponse update(UUID id, UserRequestUpdate requestUpdate) {
 
-        log.debug("Update user with id: {}", id);
+        log.info("Update user with id: {}", id);
 
         UserModel existingUser = findExistingUser(id);
 
@@ -114,7 +114,7 @@ public class UserService {
     @Transactional
     public void delete(UUID id) {
 
-        log.debug("Delete user with id {}", id);
+        log.info("Delete user with id {}", id);
 
         UserModel userModel = findExistingUser(id);
 
