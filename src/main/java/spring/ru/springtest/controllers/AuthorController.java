@@ -65,6 +65,6 @@ public class AuthorController implements AuthorsApi {
     public ResponseEntity<Void> deleteAuthorById(UUID id) {
         authorService.delete(id);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

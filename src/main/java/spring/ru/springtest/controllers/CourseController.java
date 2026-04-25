@@ -65,6 +65,6 @@ public class CourseController implements CoursesApi {
     public ResponseEntity<Void> deleteCourseById(UUID id) {
         courseService.delete(id);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

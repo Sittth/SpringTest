@@ -54,6 +54,6 @@ public class UserController implements UsersApi {
     public ResponseEntity<Void> deleteUserById(UUID id) {
         userService.delete(id);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }
