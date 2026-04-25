@@ -46,4 +46,17 @@ public class StudentModel {
     public void onUpdate() {
         updatedAt = OffsetDateTime.now();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof StudentModel)) return false;
+        StudentModel that = (StudentModel) o;
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

@@ -113,16 +113,14 @@ public class CourseService {
 
         if (requestUpdate.getStudents() != null) {
 
-            for (StudentModel student : new ArrayList<>(existingCourse.getStudents())) {
-                existingCourse.removeStudent(student);
-            }
-
             List<StudentModel> students = requestUpdate.getStudents().stream()
                     .map(this::processStudent)
                     .toList();
 
             for (StudentModel student : students) {
-                existingCourse.addStudent(student);
+                if (!existingCourse.getStudents().contains(student)) {
+                    existingCourse.addStudent(student);
+                }
             }
         }
 
