@@ -57,7 +57,7 @@ tasks.named('test') {
 sourceSets {
     main {
         java {
-            srcDir "$buildDir/generated/src/main/java"
+            srcDir "$projectDir/src/generated/src/main/java"
         }
     }
 }
@@ -67,7 +67,7 @@ openApiGenerate {
 
     inputSpec = file("src/main/resources/openapi/api.yaml").toURI().toString()
 
-    outputDir = "$buildDir/generated"
+    outputDir = "$projectDir/src/generated"
 
     apiPackage = "spring.ru.springtest.api"
     modelPackage = "spring.ru.springtest.dto"

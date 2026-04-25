@@ -37,3 +37,7 @@ out/
 
 build/generated/.openapi-generator/FILES
 build/generated/.openapi-generator/VERSION
+
+### Gradle ###
+build/
+.gradle/
