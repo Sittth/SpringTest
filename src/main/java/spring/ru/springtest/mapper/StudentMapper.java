@@ -3,9 +3,9 @@ package spring.ru.springtest.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
-import spring.ru.springtest.dto.StudentRequestCreate;
-import spring.ru.springtest.dto.StudentRequestUpdate;
-import spring.ru.springtest.dto.StudentResponse;
+import spring.ru.springtest.dto.create.StudentCreateRequest;
+import spring.ru.springtest.dto.response.StudentResponse;
+import spring.ru.springtest.dto.update.StudentUpdateRequest;
 import spring.ru.springtest.models.StudentModel;
 
 import java.util.List;
@@ -19,11 +19,11 @@ public interface StudentMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "courses", ignore = true)
-    StudentModel toEntity(StudentRequestCreate requestCreate);
+    StudentModel toEntity(StudentCreateRequest requestCreate);
 
-    List<StudentModel> toEntity(List<StudentRequestCreate> requests);
+    List<StudentModel> toEntity(List<StudentCreateRequest> requests);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "courses", ignore = true)
-    StudentModel toEntity(StudentRequestUpdate requestUpdate);
+    StudentModel toEntity(StudentUpdateRequest requestUpdate);
 }

@@ -1,9 +1,9 @@
 package spring.ru.springtest.mapper;
 
 import org.mapstruct.*;
-import spring.ru.springtest.dto.AuthorRequestCreate;
-import spring.ru.springtest.dto.AuthorRequestUpdate;
-import spring.ru.springtest.dto.AuthorResponse;
+import spring.ru.springtest.dto.create.AuthorCreateRequest;
+import spring.ru.springtest.dto.response.AuthorResponse;
+import spring.ru.springtest.dto.update.AuthorUpdateRequest;
 import spring.ru.springtest.models.AuthorModel;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = BookMapper.class)
@@ -13,8 +13,8 @@ public interface AuthorMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "books", ignore = true)
-    AuthorModel toEntity(AuthorRequestCreate requestCreate);
+    AuthorModel toEntity(AuthorCreateRequest requestCreate);
 
     @Mapping(target = "books", ignore = true)
-    void updateEntityFromDto(AuthorRequestUpdate dto, @MappingTarget AuthorModel author);
+    void updateEntityFromDto(AuthorUpdateRequest dto, @MappingTarget AuthorModel author);
 }

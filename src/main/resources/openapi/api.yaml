@@ -43,7 +43,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserRequestUpdate'
+              $ref: '#/components/schemas/UserUpdateRequest'
       responses:
         '200':
           description: Updated
@@ -130,7 +130,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserRequestCreate'
+              $ref: '#/components/schemas/UserCreateRequest'
       responses:
         '201':
           description: Created
@@ -184,7 +184,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthorRequestUpdate'
+              $ref: '#/components/schemas/AuthorUpdateRequest'
       responses:
         '200':
           description: Updated
@@ -271,7 +271,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthorRequestCreate'
+              $ref: '#/components/schemas/AuthorCreateRequest'
       responses:
         '201':
           description: Created
@@ -302,7 +302,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BookRequestCreate'
+              $ref: '#/components/schemas/BookCreateRequest'
       responses:
         '201':
           description: Created
@@ -350,7 +350,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CourseRequestUpdate'
+              $ref: '#/components/schemas/CourseUpdateRequest'
       responses:
         '200':
           description: Updated
@@ -437,7 +437,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CourseRequestCreate'
+              $ref: '#/components/schemas/CourseCreateRequest'
       responses:
         '201':
           description: Created
@@ -467,7 +467,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/StudentRequestCreate'
+              $ref: '#/components/schemas/StudentCreateRequest'
       responses:
         '201':
           description: Created
@@ -478,6 +478,49 @@ paths:
 
 components:
   schemas:
+    GetUsers200Response:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserResponse'
+        page:
+          type: integer
+        size:
+          type: integer
+        totalElements:
+          type: integer
+          format: int64
+    GetAuthors200Response:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuthorResponse'
+        page:
+          type: integer
+        size:
+          type: integer
+        totalElements:
+          type: integer
+          format: int64
+    GetCourses200Response:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/CourseResponse'
+        page:
+          type: integer
+        size:
+          type: integer
+        totalElements:
+          type: integer
+          format: int64
+
     UserResponse:
       type: object
       properties:
@@ -488,7 +531,7 @@ components:
           type: string
         profile:
           $ref: '#/components/schemas/ProfileResponse'
-    UserRequestCreate:
+    UserCreateRequest:
       type: object
       required:
         - username
@@ -499,8 +542,8 @@ components:
           maxLength: 50
           pattern: '^[a-zA-Z0-9_]+$'
         profile:
-          $ref: '#/components/schemas/ProfileRequestCreate'
-    UserRequestUpdate:
+          $ref: '#/components/schemas/ProfileCreateRequest'
+    UserUpdateRequest:
       type: object
       properties:
         username:
@@ -509,7 +552,7 @@ components:
           maxLength: 50
           pattern: '^[a-zA-Z0-9_]+$'
         profile:
-          $ref: '#/components/schemas/ProfileRequestUpdate'
+          $ref: '#/components/schemas/ProfileUpdateRequest'
 
     ProfileResponse:
       type: object
@@ -519,7 +562,7 @@ components:
           format: uuid
         bio:
           type: string
-    ProfileRequestCreate:
+    ProfileCreateRequest:
       type: object
       required:
         - bio
@@ -528,7 +571,7 @@ components:
           type: string
           minLength: 1
           maxLength: 500
-    ProfileRequestUpdate:
+    ProfileUpdateRequest:
       type: object
       properties:
         bio:
@@ -548,7 +591,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/BookResponse'
-    AuthorRequestCreate:
+    AuthorCreateRequest:
       type: object
       required:
         - name
@@ -557,7 +600,7 @@ components:
           type: string
           minLength: 2
           maxLength: 50
-    AuthorRequestUpdate:
+    AuthorUpdateRequest:
       type: object
       properties:
         name:
@@ -568,7 +611,7 @@ components:
           type: array
           maxItems: 200
           items:
-            $ref: '#/components/schemas/BookRequestUpdate'
+            $ref: '#/components/schemas/BookUpdateRequest'
 
     BookResponse:
       type: object
@@ -578,7 +621,7 @@ components:
           format: uuid
         title:
           type: string
-    BookRequestCreate:
+    BookCreateRequest:
       type: object
       required:
         - title
@@ -587,7 +630,7 @@ components:
           type: string
           minLength: 1
           maxLength: 100
-    BookRequestUpdate:
+    BookUpdateRequest:
       type: object
       required:
         - id
@@ -612,7 +655,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/StudentResponse'
-    CourseRequestCreate:
+    CourseCreateRequest:
       type: object
       required:
         - title
@@ -621,7 +664,7 @@ components:
           type: string
           minLength: 3
           maxLength: 100
-    CourseRequestUpdate:
+    CourseUpdateRequest:
       type: object
       properties:
         title:
@@ -632,7 +675,7 @@ components:
           type: array
           maxItems: 200
           items:
-            $ref: '#/components/schemas/StudentRequestUpdate'
+            $ref: '#/components/schemas/StudentUpdateRequest'
 
     StudentResponse:
       type: object
@@ -642,7 +685,7 @@ components:
           format: uuid
         name:
           type: string
-    StudentRequestCreate:
+    StudentCreateRequest:
       type: object
       required:
         - name
@@ -651,7 +694,7 @@ components:
           type: string
           minLength: 2
           maxLength: 50
-    StudentRequestUpdate:
+    StudentUpdateRequest:
       type: object
       required:
         - id

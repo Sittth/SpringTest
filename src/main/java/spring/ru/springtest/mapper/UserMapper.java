@@ -1,9 +1,9 @@
 package spring.ru.springtest.mapper;
 
 import org.mapstruct.*;
-import spring.ru.springtest.dto.UserRequestCreate;
-import spring.ru.springtest.dto.UserRequestUpdate;
-import spring.ru.springtest.dto.UserResponse;
+import spring.ru.springtest.dto.create.UserCreateRequest;
+import spring.ru.springtest.dto.response.UserResponse;
+import spring.ru.springtest.dto.update.UserUpdateRequest;
 import spring.ru.springtest.models.UserModel;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = ProfileMapper.class)
@@ -13,8 +13,8 @@ public interface UserMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "profile", ignore = true)
-    UserModel toEntity(UserRequestCreate dto);
+    UserModel toEntity(UserCreateRequest dto);
 
     @Mapping(target = "profile", ignore = true)
-    void updateEntityFromDto(UserRequestUpdate dto, @MappingTarget UserModel user);
+    void updateEntityFromDto(UserUpdateRequest dto, @MappingTarget UserModel user);
 }

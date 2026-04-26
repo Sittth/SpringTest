@@ -8,7 +8,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import spring.ru.springtest.dto.*;
+import spring.ru.springtest.dto.create.AuthorCreateRequest;
+import spring.ru.springtest.dto.create.BookCreateRequest;
+import spring.ru.springtest.dto.response.AuthorResponse;
+import spring.ru.springtest.dto.response.BookResponse;
+import spring.ru.springtest.dto.update.AuthorUpdateRequest;
+import spring.ru.springtest.dto.update.BookUpdateRequest;
 import spring.ru.springtest.exceptions.EntityNotFoundException;
 import spring.ru.springtest.mapper.AuthorMapper;
 import spring.ru.springtest.mapper.BookMapper;
@@ -28,7 +33,7 @@ public class AuthorService {
     private final AuthorMapper authorMapper;
     private final BookMapper bookMapper;
 
-    private BookModel processBook(BookRequestUpdate dto, AuthorModel author) {
+    private BookModel processBook(BookUpdateRequest dto, AuthorModel author) {
 
         BookModel existing = author.getBooks().stream()
                 .filter(book -> book.getId().equals(dto.getId()))
@@ -73,7 +78,7 @@ public class AuthorService {
     }
 
     @Transactional
-    public BookResponse createBook(UUID authorId, BookRequestCreate request) {
+    public BookResponse createBook(UUID authorId, BookCreateRequest request) {
 
         log.info("Creating book with id {}", authorId);
 
@@ -91,7 +96,7 @@ public class AuthorService {
     }
 
     @Transactional
-    public AuthorResponse save(AuthorRequestCreate requestCreate) {
+    public AuthorResponse save(AuthorCreateRequest requestCreate) {
 
         log.info("Saving author: {}", requestCreate);
 
@@ -104,7 +109,7 @@ public class AuthorService {
     }
 
     @Transactional
-    public AuthorResponse update(UUID id, AuthorRequestUpdate requestUpdate) {
+    public AuthorResponse update(UUID id, AuthorUpdateRequest requestUpdate) {
 
         log.info("Update author with id: {}", id);
 

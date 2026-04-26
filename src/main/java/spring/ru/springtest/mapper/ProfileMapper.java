@@ -4,9 +4,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
-import spring.ru.springtest.dto.ProfileRequestCreate;
-import spring.ru.springtest.dto.ProfileRequestUpdate;
-import spring.ru.springtest.dto.ProfileResponse;
+import spring.ru.springtest.dto.create.ProfileCreateRequest;
+import spring.ru.springtest.dto.response.ProfileResponse;
+import spring.ru.springtest.dto.update.ProfileUpdateRequest;
 import spring.ru.springtest.models.ProfileModel;
 import spring.ru.springtest.models.UserModel;
 
@@ -17,28 +17,28 @@ public interface ProfileMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
-    ProfileModel toEntity(ProfileRequestCreate dto);
+    ProfileModel toEntity(ProfileCreateRequest dto);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
-    ProfileModel toEntity(ProfileRequestUpdate dto);
+    ProfileModel toEntity(ProfileUpdateRequest dto);
 
     @Mapping(target = "user", ignore = true)
-    void updateEntityFromDto(ProfileRequestUpdate dto, @MappingTarget ProfileModel model);
+    void updateEntityFromDto(ProfileUpdateRequest dto, @MappingTarget ProfileModel model);
 
-    default ProfileModel toEntity(ProfileRequestCreate dto, UserModel user) {
+    default ProfileModel toEntity(ProfileCreateRequest dto, UserModel user) {
         ProfileModel profile = toEntity(dto);
         profile.setUser(user);
         return profile;
     }
 
-    default ProfileModel toEntity(ProfileRequestUpdate dto, UserModel user) {
+    default ProfileModel toEntity(ProfileUpdateRequest dto, UserModel user) {
         ProfileModel profile = toEntity(dto);
         profile.setUser(user);
         return profile;
     }
 
-    default void updateEntity(ProfileRequestUpdate dto, ProfileModel model, UserModel user) {
+    default void updateEntity(ProfileUpdateRequest dto, ProfileModel model, UserModel user) {
         updateEntityFromDto(dto, model);
         model.setUser(user);
     }

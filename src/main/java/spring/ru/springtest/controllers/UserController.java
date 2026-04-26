@@ -6,7 +6,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import spring.ru.springtest.api.UsersApi;
-import spring.ru.springtest.dto.*;
+import spring.ru.springtest.dto.create.UserCreateRequest;
+import spring.ru.springtest.dto.response.UserResponse;
+import spring.ru.springtest.dto.update.UserUpdateRequest;
+import spring.ru.springtest.dto.response.GetUsers200Response;
 import spring.ru.springtest.services.UserService;
 
 import java.util.UUID;
@@ -37,14 +40,14 @@ public class UserController implements UsersApi {
     }
 
     @Override
-    public ResponseEntity<UserResponse> createUser(@Valid UserRequestCreate requestCreate) {
+    public ResponseEntity<UserResponse> createUser(@Valid UserCreateRequest requestCreate) {
         UserResponse created = userService.save(requestCreate);
 
         return ResponseEntity.status(201).body(created);
     }
 
     @Override
-    public ResponseEntity<UserResponse> updateUserById(UUID id, @Valid UserRequestUpdate requestUpdate) {
+    public ResponseEntity<UserResponse> updateUserById(UUID id, @Valid UserUpdateRequest requestUpdate) {
         UserResponse updated = userService.update(id, requestUpdate);
 
         return ResponseEntity.ok(updated);

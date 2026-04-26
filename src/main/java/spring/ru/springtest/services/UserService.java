@@ -8,9 +8,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import spring.ru.springtest.dto.UserRequestCreate;
-import spring.ru.springtest.dto.UserRequestUpdate;
-import spring.ru.springtest.dto.UserResponse;
+import spring.ru.springtest.dto.create.UserCreateRequest;
+import spring.ru.springtest.dto.response.UserResponse;
+import spring.ru.springtest.dto.update.UserUpdateRequest;
 import spring.ru.springtest.exceptions.EntityNotFoundException;
 import spring.ru.springtest.mapper.ProfileMapper;
 import spring.ru.springtest.mapper.UserMapper;
@@ -28,13 +28,13 @@ public class UserService {
     private final UserMapper userMapper;
     private final ProfileMapper profileMapper;
 
-    private void applyCreateProfile(UserModel userModel, UserRequestCreate dto) {
+    private void applyCreateProfile(UserModel userModel, UserCreateRequest dto) {
         if (dto.getProfile() != null) {
             userModel.setProfile(profileMapper.toEntity(dto.getProfile(), userModel));
         }
     }
 
-    private void applyUpdateProfile(UserModel userModel, UserRequestUpdate dto) {
+    private void applyUpdateProfile(UserModel userModel, UserUpdateRequest dto) {
         if (dto.getProfile() != null) {
 
             if (userModel.getProfile() == null) {
@@ -76,7 +76,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponse save(UserRequestCreate requestCreate) {
+    public UserResponse save(UserCreateRequest requestCreate) {
 
         log.info("Save user {}", requestCreate);
 
@@ -90,7 +90,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponse update(UUID id, UserRequestUpdate requestUpdate) {
+    public UserResponse update(UUID id, UserUpdateRequest requestUpdate) {
 
         log.info("Update user with id: {}", id);
 

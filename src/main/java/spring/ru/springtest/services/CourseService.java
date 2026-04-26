@@ -8,17 +8,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import spring.ru.springtest.dto.*;
+import spring.ru.springtest.dto.create.CourseCreateRequest;
+import spring.ru.springtest.dto.create.StudentCreateRequest;
+import spring.ru.springtest.dto.response.CourseResponse;
+import spring.ru.springtest.dto.response.StudentResponse;
+import spring.ru.springtest.dto.update.CourseUpdateRequest;
+import spring.ru.springtest.dto.update.StudentUpdateRequest;
 import spring.ru.springtest.exceptions.EntityNotFoundException;
 import spring.ru.springtest.mapper.CourseMapper;
 import spring.ru.springtest.mapper.StudentMapper;
-import spring.ru.springtest.models.AuthorModel;
 import spring.ru.springtest.models.CourseModel;
 import spring.ru.springtest.models.StudentModel;
 import spring.ru.springtest.repositories.CourseRepository;
 import spring.ru.springtest.repositories.StudentRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,7 +48,7 @@ public class CourseService {
                 });
     }
 
-    private StudentModel processStudent(StudentRequestUpdate dto) {
+    private StudentModel processStudent(StudentUpdateRequest dto) {
         return findStudent(dto.getId());
     }
 
@@ -72,7 +75,7 @@ public class CourseService {
     }
 
     @Transactional
-    public StudentResponse createStudent(UUID id, StudentRequestCreate request) {
+    public StudentResponse createStudent(UUID id, StudentCreateRequest request) {
 
         log.info("Creating student for course id: {}", id);
 
@@ -90,7 +93,7 @@ public class CourseService {
     }
 
     @Transactional
-    public CourseResponse save(CourseRequestCreate requestCreate) {
+    public CourseResponse save(CourseCreateRequest requestCreate) {
 
         log.info("Save course {}", requestCreate);
 
@@ -103,7 +106,7 @@ public class CourseService {
     }
 
     @Transactional
-    public CourseResponse update(UUID id, CourseRequestUpdate requestUpdate) {
+    public CourseResponse update(UUID id, CourseUpdateRequest requestUpdate) {
 
         log.info("Update course with id: {}", id);
 

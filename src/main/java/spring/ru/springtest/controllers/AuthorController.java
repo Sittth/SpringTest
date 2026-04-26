@@ -8,7 +8,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import spring.ru.springtest.api.AuthorsApi;
-import spring.ru.springtest.dto.*;
+import spring.ru.springtest.dto.create.AuthorCreateRequest;
+import spring.ru.springtest.dto.create.BookCreateRequest;
+import spring.ru.springtest.dto.response.AuthorResponse;
+import spring.ru.springtest.dto.response.BookResponse;
+import spring.ru.springtest.dto.update.AuthorUpdateRequest;
+import spring.ru.springtest.dto.response.GetAuthors200Response;
 import spring.ru.springtest.services.AuthorService;
 
 import java.util.UUID;
@@ -39,7 +44,7 @@ public class AuthorController implements AuthorsApi {
     }
 
     @Override
-    public ResponseEntity<AuthorResponse> createAuthor(@Valid AuthorRequestCreate requestCreate) {
+    public ResponseEntity<AuthorResponse> createAuthor(@Valid AuthorCreateRequest requestCreate) {
         AuthorResponse created = authorService.save(requestCreate);
 
         return ResponseEntity.status(201).body(created);
@@ -48,14 +53,14 @@ public class AuthorController implements AuthorsApi {
     @Override
     public ResponseEntity<BookResponse> createBookForAuthor(
             @PathVariable("id") UUID id,
-            @Valid @RequestBody BookRequestCreate requestCreate) {
+            @Valid @RequestBody BookCreateRequest requestCreate) {
         BookResponse created = authorService.createBook(id, requestCreate);
 
         return ResponseEntity.status(201).body(created);
     }
 
     @Override
-    public ResponseEntity<AuthorResponse> updateAuthorById(UUID id, @Valid AuthorRequestUpdate requestUpdate) {
+    public ResponseEntity<AuthorResponse> updateAuthorById(UUID id, @Valid AuthorUpdateRequest requestUpdate) {
         AuthorResponse updated = authorService.update(id, requestUpdate);
 
         return ResponseEntity.ok(updated);

@@ -62,24 +62,148 @@ sourceSets {
     }
 }
 
-openApiGenerate {
+tasks.register("generateCreateDto", org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
     generatorName = "spring"
-
     inputSpec = file("src/main/resources/openapi/api.yaml").toURI().toString()
-
     outputDir = "$projectDir/src/generated"
 
     apiPackage = "spring.ru.springtest.api"
-    modelPackage = "spring.ru.springtest.dto"
+    modelPackage = "spring.ru.springtest.dto.create"
+
+    globalProperties = [
+            apis: "false",
+            models: "UserCreateRequest," +
+                    "ProfileCreateRequest," +
+                    "AuthorCreateRequest," +
+                    "BookCreateRequest," +
+                    "CourseCreateRequest," +
+                    "StudentCreateRequest"
+    ]
+
+    configOptions = [
+            interfaceOnly: "true",
+            useSpringBoot3: "true",
+            useJakartaEe: 'true',
+            useBeanValidation: "true"
+    ]
+}
+
+tasks.register("generateUpdateDto", org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
+    generatorName = "spring"
+    inputSpec = file("src/main/resources/openapi/api.yaml").toURI().toString()
+    outputDir = "$projectDir/src/generated"
+
+    apiPackage = "spring.ru.springtest.api"
+    modelPackage = "spring.ru.springtest.dto.update"
+
+    globalProperties = [
+            apis: "false",
+            models: "UserUpdateRequest," +
+                    "ProfileUpdateRequest," +
+                    "AuthorUpdateRequest," +
+                    "BookUpdateRequest," +
+                    "CourseUpdateRequest," +
+                    "StudentUpdateRequest"
+    ]
+
+    configOptions = [
+            interfaceOnly: "true",
+            useSpringBoot3: "true",
+            useJakartaEe: 'true',
+            useBeanValidation: "true"
+    ]
+}
+
+tasks.register("generateResponseDto", org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
+    generatorName = "spring"
+    inputSpec = file("src/main/resources/openapi/api.yaml").toURI().toString()
+    outputDir = "$projectDir/src/generated"
+
+    apiPackage = "spring.ru.springtest.api"
+    modelPackage = "spring.ru.springtest.dto.response"
+
+    globalProperties = [
+            apis: "false",
+            models: "UserResponse," +
+                    "ProfileResponse," +
+                    "AuthorResponse," +
+                    "BookResponse," +
+                    "CourseResponse," +
+                    "StudentResponse," +
+                    "ErrorResponse," +
+                    "GetUsers200Response," +
+                    "GetAuthors200Response," +
+                    "GetCourses200Response"
+    ]
 
     configOptions = [
             interfaceOnly: "true",
             useSpringBoot3: "true",
             useJakartaEe: 'true',
             useBeanValidation: "true",
-            dateLibrary: "java8",
-            performBeanValidation: 'true'
+            useBuilder: "true"
     ]
 }
 
-compileJava.dependsOn tasks.openApiGenerate
+tasks.register("generateApi", org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
+    generatorName = "spring"
+    inputSpec = file("src/main/resources/openapi/api.yaml").toURI().toString()
+    outputDir = "$projectDir/src/generated"
+
+    importMappings = [
+            "AuthorCreateRequest": "spring.ru.springtest.dto.create.AuthorCreateRequest",
+            "AuthorUpdateRequest": "spring.ru.springtest.dto.update.AuthorUpdateRequest",
+            "AuthorResponse": "spring.ru.springtest.dto.response.AuthorResponse",
+
+            "BookCreateRequest": "spring.ru.springtest.dto.create.BookCreateRequest",
+            "BookUpdateRequest": "spring.ru.springtest.dto.update.BookUpdateRequest",
+            "BookResponse": "spring.ru.springtest.dto.response.BookResponse",
+
+            "UserCreateRequest": "spring.ru.springtest.dto.create.UserCreateRequest",
+            "UserUpdateRequest": "spring.ru.springtest.dto.update.UserUpdateRequest",
+            "UserResponse": "spring.ru.springtest.dto.response.UserResponse",
+
+            "CourseCreateRequest": "spring.ru.springtest.dto.create.CourseCreateRequest",
+            "CourseUpdateRequest": "spring.ru.springtest.dto.update.CourseUpdateRequest",
+            "CourseResponse": "spring.ru.springtest.dto.response.CourseResponse",
+
+            "StudentCreateRequest": "spring.ru.springtest.dto.create.StudentCreateRequest",
+            "StudentUpdateRequest": "spring.ru.springtest.dto.update.StudentUpdateRequest",
+            "StudentResponse": "spring.ru.springtest.dto.response.StudentResponse",
+
+            "ProfileCreateRequest": "spring.ru.springtest.dto.create.ProfileCreateRequest",
+            "ProfileUpdateRequest": "spring.ru.springtest.dto.update.ProfileUpdateRequest",
+            "ProfileResponse": "spring.ru.springtest.dto.response.ProfileResponse",
+
+            "ErrorResponse": "spring.ru.springtest.dto.response.ErrorResponse",
+            "GetUsers200Response": "spring.ru.springtest.dto.response.GetUsers200Response",
+            "GetAuthors200Response": "spring.ru.springtest.dto.response.GetAuthors200Response",
+            "GetCourses200Response": "spring.ru.springtest.dto.response.GetCourses200Response"
+    ]
+
+    apiPackage = "spring.ru.springtest.api"
+    modelPackage = "spring.ru.springtest.dto"
+
+    globalProperties = [
+            apis: "",
+            models: "false",
+            supportingFiles: "ApiUtil.java"
+    ]
+
+    configOptions = [
+            interfaceOnly: "true",
+            useSpringBoot3: "true",
+            useJakartaEe: 'true'
+    ]
+}
+
+tasks.register("generateAllDto") {
+    dependsOn(
+            "generateCreateDto",
+            "generateUpdateDto",
+            "generateResponseDto",
+            "generateApi"
+    )
+}
+
+compileJava.dependsOn tasks.generateAllDto
