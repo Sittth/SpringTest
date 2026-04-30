@@ -11,10 +11,7 @@ public interface AuthorMapper {
 
     AuthorResponse toResponse(AuthorModel author);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "books", ignore = true)
     AuthorModel toEntity(AuthorCreateRequest requestCreate);
 
-    @Mapping(target = "books", ignore = true)
     void updateEntityFromDto(AuthorUpdateRequest dto, @MappingTarget AuthorModel author);
 }

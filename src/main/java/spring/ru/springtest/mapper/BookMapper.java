@@ -18,12 +18,8 @@ public interface BookMapper {
 
     List<BookResponse> toResponse(List<BookModel> books);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "author", ignore = true)
     BookModel toEntity(BookCreateRequest dto);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "author", ignore = true)
     BookModel toEntity(BookUpdateRequest dto);
 
     default BookModel toEntity(BookCreateRequest dto, AuthorModel author) {

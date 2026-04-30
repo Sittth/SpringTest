@@ -23,7 +23,10 @@ public class AuthorModel {
 
     private String name;
 
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "author",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            orphanRemoval = true)
     @JsonManagedReference
     private List<BookModel> books;
 

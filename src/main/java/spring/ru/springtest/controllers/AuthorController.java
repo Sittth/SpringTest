@@ -4,14 +4,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import spring.ru.springtest.api.AuthorsApi;
 import spring.ru.springtest.dto.create.AuthorCreateRequest;
-import spring.ru.springtest.dto.create.BookCreateRequest;
 import spring.ru.springtest.dto.response.AuthorResponse;
-import spring.ru.springtest.dto.response.BookResponse;
 import spring.ru.springtest.dto.update.AuthorUpdateRequest;
 import spring.ru.springtest.dto.response.GetAuthors200Response;
 import spring.ru.springtest.services.AuthorService;
@@ -46,15 +42,6 @@ public class AuthorController implements AuthorsApi {
     @Override
     public ResponseEntity<AuthorResponse> createAuthor(@Valid AuthorCreateRequest requestCreate) {
         AuthorResponse created = authorService.save(requestCreate);
-
-        return ResponseEntity.status(201).body(created);
-    }
-
-    @Override
-    public ResponseEntity<BookResponse> createBookForAuthor(
-            @PathVariable("id") UUID id,
-            @Valid @RequestBody BookCreateRequest requestCreate) {
-        BookResponse created = authorService.createBook(id, requestCreate);
 
         return ResponseEntity.status(201).body(created);
     }
