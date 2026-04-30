@@ -2,6 +2,7 @@ package spring.ru.springtest.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
@@ -24,6 +25,7 @@ public class UserModel {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
+    @Setter(AccessLevel.NONE)
     private ProfileModel profile;
 
     @Column(nullable = false, updatable = false)
@@ -43,5 +45,17 @@ public class UserModel {
     @PreUpdate
     public void onUpdate() {
         updatedAt = OffsetDateTime.now();
+    }
+
+    public void setProfile(ProfileModel profile) {
+        if (this.profile != null) {
+            this.profile.setUser(null);
+        }
+
+        this.profile = profile;
+
+        if (profile != null) {
+            profile.setUser(this);
+        }
     }
 }

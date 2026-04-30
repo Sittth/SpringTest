@@ -14,6 +14,7 @@ import spring.ru.springtest.dto.update.UserUpdateRequest;
 import spring.ru.springtest.exceptions.EntityNotFoundException;
 import spring.ru.springtest.mapper.ProfileMapper;
 import spring.ru.springtest.mapper.UserMapper;
+import spring.ru.springtest.models.ProfileModel;
 import spring.ru.springtest.models.UserModel;
 import spring.ru.springtest.repositories.UserRepository;
 
@@ -27,23 +28,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final ProfileMapper profileMapper;
-
-    private void applyCreateProfile(UserModel userModel, UserCreateRequest dto) {
-        if (dto.getProfile() != null) {
-            userModel.setProfile(profileMapper.toEntity(dto.getProfile(), userModel));
-        }
-    }
-
-    private void applyUpdateProfile(UserModel userModel, UserUpdateRequest dto) {
-        if (dto.getProfile() != null) {
-
-            if (userModel.getProfile() == null) {
-                userModel.setProfile(profileMapper.toEntity(dto.getProfile(), userModel));
-            } else {
-                profileMapper.updateEntity(dto.getProfile(), userModel.getProfile(), userModel);
-            }
-        }
-    }
 
     private UserModel findExistingUser(UUID id) {
         return userRepository.findByIdAndIsDeletedFalse(id)
@@ -81,7 +65,11 @@ public class UserService {
         log.info("Save user {}", requestCreate);
 
         UserModel user = userMapper.toEntity(requestCreate);
-        applyCreateProfile(user, requestCreate);
+
+        if (user.getProfile() != null) {
+            user.setProfile(user.getProfile());
+        }
+
         UserModel saved  = userRepository.save(user);
 
         log.info("Saved user with id {}", saved.getId());
@@ -97,7 +85,18 @@ public class UserService {
         UserModel existingUser = findExistingUser(id);
 
         userMapper.updateEntityFromDto(requestUpdate, existingUser);
-        applyUpdateProfile(existingUser, requestUpdate);
+
+        if (requestUpdate.getProfile() != null) {
+            if (existingUser == null) {
+                existingUser.setProfile(profileMapper.toEntity(requestUpdate.getProfile()));
+            } else {
+                profileMapper.updateEntityFromDto(
+                        requestUpdate.getProfile(),
+                        existingUser.getProfile()
+                );
+            }
+        }
+
         UserModel saved = userRepository.save(existingUser);
 
         log.info("Updated user with id {}", id);

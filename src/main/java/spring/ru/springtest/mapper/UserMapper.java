@@ -12,9 +12,7 @@ public interface UserMapper {
     UserResponse toResponse(UserModel user);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "profile", ignore = true)
     UserModel toEntity(UserCreateRequest dto);
 
-    @Mapping(target = "profile", ignore = true)
     void updateEntityFromDto(UserUpdateRequest dto, @MappingTarget UserModel user);
 }

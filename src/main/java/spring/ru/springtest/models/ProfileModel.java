@@ -2,6 +2,7 @@ package spring.ru.springtest.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
@@ -25,6 +26,7 @@ public class ProfileModel {
     @OneToOne
     @JsonBackReference
     @JoinColumn(name = "user_id")
+    @Setter(AccessLevel.PACKAGE)
     private UserModel user;
 
     @Column(nullable = false, updatable = false)

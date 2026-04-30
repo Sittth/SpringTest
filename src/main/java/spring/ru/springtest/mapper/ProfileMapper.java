@@ -25,21 +25,4 @@ public interface ProfileMapper {
 
     @Mapping(target = "user", ignore = true)
     void updateEntityFromDto(ProfileUpdateRequest dto, @MappingTarget ProfileModel model);
-
-    default ProfileModel toEntity(ProfileCreateRequest dto, UserModel user) {
-        ProfileModel profile = toEntity(dto);
-        profile.setUser(user);
-        return profile;
-    }
-
-    default ProfileModel toEntity(ProfileUpdateRequest dto, UserModel user) {
-        ProfileModel profile = toEntity(dto);
-        profile.setUser(user);
-        return profile;
-    }
-
-    default void updateEntity(ProfileUpdateRequest dto, ProfileModel model, UserModel user) {
-        updateEntityFromDto(dto, model);
-        model.setUser(user);
-    }
 }
