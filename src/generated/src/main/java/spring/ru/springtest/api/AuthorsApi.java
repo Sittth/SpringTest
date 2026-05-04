@@ -37,7 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-04-30T16:13:16.950794300+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-01T15:49:47.587845400+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 @Validated
 @Tag(name = "authors", description = "the authors API")
 public interface AuthorsApi {

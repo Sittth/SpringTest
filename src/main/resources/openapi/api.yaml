@@ -426,30 +426,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /courses/{id}/students:
-    post:
-      summary: Create student for course
-      operationId: createStudentForCourse
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/StudentCreateRequest'
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/StudentResponse'
 
 components:
   schemas:
@@ -641,6 +617,10 @@ components:
           type: string
           minLength: 3
           maxLength: 100
+        students:
+          type: array
+          items:
+            $ref: '#/components/schemas/StudentCreateRequest'
     CourseUpdateRequest:
       type: object
       properties:
@@ -673,8 +653,6 @@ components:
           maxLength: 50
     StudentUpdateRequest:
       type: object
-      required:
-        - id
       properties:
         id:
           type: string

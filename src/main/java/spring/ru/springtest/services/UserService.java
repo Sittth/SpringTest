@@ -12,9 +12,7 @@ import spring.ru.springtest.dto.create.UserCreateRequest;
 import spring.ru.springtest.dto.response.UserResponse;
 import spring.ru.springtest.dto.update.UserUpdateRequest;
 import spring.ru.springtest.exceptions.EntityNotFoundException;
-import spring.ru.springtest.mapper.ProfileMapper;
 import spring.ru.springtest.mapper.UserMapper;
-import spring.ru.springtest.models.ProfileModel;
 import spring.ru.springtest.models.UserModel;
 import spring.ru.springtest.repositories.UserRepository;
 
@@ -27,7 +25,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final ProfileMapper profileMapper;
 
     private UserModel findExistingUser(UUID id) {
         return userRepository.findByIdAndIsDeletedFalse(id)
@@ -66,10 +63,6 @@ public class UserService {
 
         UserModel user = userMapper.toEntity(requestCreate);
 
-        if (user.getProfile() != null) {
-            user.setProfile(user.getProfile());
-        }
-
         UserModel saved  = userRepository.save(user);
 
         log.info("Saved user with id {}", saved.getId());
@@ -85,17 +78,6 @@ public class UserService {
         UserModel existingUser = findExistingUser(id);
 
         userMapper.updateEntityFromDto(requestUpdate, existingUser);
-
-        if (requestUpdate.getProfile() != null) {
-            if (existingUser == null) {
-                existingUser.setProfile(profileMapper.toEntity(requestUpdate.getProfile()));
-            } else {
-                profileMapper.updateEntityFromDto(
-                        requestUpdate.getProfile(),
-                        existingUser.getProfile()
-                );
-            }
-        }
 
         UserModel saved = userRepository.save(existingUser);
 

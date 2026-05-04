@@ -23,7 +23,6 @@ public interface StudentMapper {
 
     List<StudentModel> toEntity(List<StudentCreateRequest> requests);
 
-    @Mapping(target = "id", ignore = true)
     @Mapping(target = "courses", ignore = true)
     StudentModel toEntity(StudentUpdateRequest requestUpdate);
 }

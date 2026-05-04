@@ -14,7 +14,6 @@ import spring.ru.springtest.dto.update.AuthorUpdateRequest;
 import spring.ru.springtest.dto.update.BookUpdateRequest;
 import spring.ru.springtest.exceptions.EntityNotFoundException;
 import spring.ru.springtest.mapper.AuthorMapper;
-import spring.ru.springtest.mapper.BookMapper;
 import spring.ru.springtest.models.AuthorModel;
 import spring.ru.springtest.models.BookModel;
 import spring.ru.springtest.repositories.AuthorRepository;
@@ -32,7 +31,6 @@ public class AuthorService {
 
     private final AuthorRepository authorRepository;
     private final AuthorMapper authorMapper;
-    private final BookMapper bookMapper;
 
     private AuthorModel findExistingAuthor(UUID id) {
         return authorRepository.findByIdAndIsDeletedFalse(id)
@@ -71,10 +69,6 @@ public class AuthorService {
 
         AuthorModel entity = authorMapper.toEntity(requestCreate);
 
-        if (entity.getBooks() != null) {
-            entity.getBooks().forEach(book -> book.setAuthor(entity));
-        }
-
         AuthorModel saved = authorRepository.save(entity);
 
         log.info("Saved author with id {}", saved.getId());
@@ -91,43 +85,11 @@ public class AuthorService {
 
         authorMapper.updateEntityFromDto(requestUpdate, existingAuthor);
 
-        if (requestUpdate.getBooks() != null) {
-
-            Map<UUID, BookModel> existingBooks = existingAuthor.getBooks().stream()
-                    .collect(Collectors.toMap(BookModel::getId, book -> book));
-
-            List<BookModel> updatedBooks = new ArrayList<>();
-
-            for (BookUpdateRequest dto : requestUpdate.getBooks()) {
-
-                if (dto.getId() == null) {
-                    BookModel newBook = bookMapper.toEntity(dto);
-                    newBook.setAuthor(existingAuthor);
-                    updatedBooks.add(newBook);
-                    continue;
-                }
-
-                BookModel book = existingBooks.get(dto.getId());
-
-                if (book == null) {
-                    throw new EntityNotFoundException("Book", dto.getId());
-                }
-
-                if (dto.getTitle() != null) {
-                    book.setTitle(dto.getTitle());
-                }
-
-                book.setAuthor(existingAuthor);
-                updatedBooks.add(book);
-            }
-
-            existingAuthor.getBooks().clear();
-            existingAuthor.getBooks().addAll(updatedBooks);
-        }
+        AuthorModel saved = authorRepository.save(existingAuthor);
 
         log.info("Updated author with id {}", id);
 
-        return authorMapper.toResponse(authorRepository.save(existingAuthor));
+        return authorMapper.toResponse(saved);
     }
 
     @Transactional
@@ -137,13 +99,7 @@ public class AuthorService {
 
         AuthorModel authorModel = findExistingAuthor(id);
 
-        if (authorModel.getBooks() != null) {
-            authorModel.getBooks().forEach(bookModel -> bookModel.setDeleted(true));
-        }
-
-        authorModel.setDeleted(true);
-
-        authorRepository.save(authorModel);
+        authorRepository.delete(authorModel);
 
         log.info("Deleted author with id {}", id);
     }

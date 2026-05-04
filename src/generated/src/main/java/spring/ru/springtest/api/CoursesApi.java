@@ -10,8 +10,6 @@ import spring.ru.springtest.dto.response.CourseResponse;
 import spring.ru.springtest.dto.update.CourseUpdateRequest;
 import spring.ru.springtest.dto.response.ErrorResponse;
 import spring.ru.springtest.dto.response.GetCourses200Response;
-import spring.ru.springtest.dto.create.StudentCreateRequest;
-import spring.ru.springtest.dto.response.StudentResponse;
 import java.util.UUID;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,7 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-04-30T16:13:16.950794300+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-01T15:49:47.587845400+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 @Validated
 @Tag(name = "courses", description = "the courses API")
 public interface CoursesApi {
@@ -86,47 +84,6 @@ public interface CoursesApi {
                 }
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"code\" : \"code\", \"details\" : [ \"details\", \"details\" ], \"message\" : \"message\", \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }";
-                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
-                    break;
-                }
-            }
-        });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-
-    }
-
-
-    /**
-     * POST /courses/{id}/students : Create student for course
-     *
-     * @param id  (required)
-     * @param studentCreateRequest  (required)
-     * @return Created (status code 201)
-     */
-    @Operation(
-        operationId = "createStudentForCourse",
-        summary = "Create student for course",
-        responses = {
-            @ApiResponse(responseCode = "201", description = "Created", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = StudentResponse.class))
-            })
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.POST,
-        value = "/courses/{id}/students",
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
-    
-    default ResponseEntity<StudentResponse> createStudentForCourse(
-        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id,
-        @Parameter(name = "StudentCreateRequest", description = "", required = true) @Valid @RequestBody StudentCreateRequest studentCreateRequest
-    ) {
-        getRequest().ifPresent(request -> {
-            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
-                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"name\" : \"name\", \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }

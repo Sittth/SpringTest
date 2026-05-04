@@ -19,23 +19,12 @@ import jakarta.annotation.Generated;
  * StudentUpdateRequest
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-04-30T16:13:17.904382200+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-01T15:49:51.508429200+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 public class StudentUpdateRequest {
 
   private UUID id;
 
   private String name;
-
-  public StudentUpdateRequest() {
-    super();
-  }
-
-  /**
-   * Constructor with only required parameters
-   */
-  public StudentUpdateRequest(UUID id) {
-    this.id = id;
-  }
 
   public StudentUpdateRequest id(UUID id) {
     this.id = id;
@@ -46,8 +35,8 @@ public class StudentUpdateRequest {
    * Get id
    * @return id
   */
-  @NotNull @Valid 
-  @Schema(name = "id", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Valid 
+  @Schema(name = "id", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("id")
   public UUID getId() {
     return id;

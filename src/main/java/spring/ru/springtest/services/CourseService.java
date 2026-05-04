@@ -22,6 +22,7 @@ import spring.ru.springtest.models.StudentModel;
 import spring.ru.springtest.repositories.CourseRepository;
 import spring.ru.springtest.repositories.StudentRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,7 +34,6 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final CourseMapper courseMapper;
     private final StudentRepository studentRepository;
-    private final StudentMapper studentMapper;
 
     private StudentModel findStudent(UUID id) {
         return studentRepository.findById(id)
@@ -75,30 +75,17 @@ public class CourseService {
     }
 
     @Transactional
-    public StudentResponse createStudent(UUID id, StudentCreateRequest request) {
-
-        log.info("Creating student for course id: {}", id);
-
-        CourseModel course = findExistingCourse(id);
-
-        StudentModel student = studentMapper.toEntity(request);
-
-        course.addStudent(student);
-
-        studentRepository.save(student);
-
-        log.info("Created student with id: {} for course id: {}", student.getId(), id);
-
-        return studentMapper.toResponse(student);
-    }
-
-    @Transactional
     public CourseResponse save(CourseCreateRequest requestCreate) {
 
         log.info("Save course {}", requestCreate);
 
-        CourseModel entity = courseMapper.toEntity(requestCreate);
-        CourseModel saved = courseRepository.save(entity);
+        CourseModel course = courseMapper.toEntity(requestCreate);
+
+        if (course.getStudents() != null && !course.getStudents().isEmpty()) {
+            studentRepository.saveAll(course.getStudents());
+        }
+
+        CourseModel saved = courseRepository.save(course);
 
         log.info("Saved course with id {}", saved.getId());
 
@@ -114,22 +101,15 @@ public class CourseService {
 
         courseMapper.updateEntityFromDto(requestUpdate, existingCourse);
 
-        if (requestUpdate.getStudents() != null) {
-
-            List<StudentModel> students = requestUpdate.getStudents().stream()
-                    .map(this::processStudent)
-                    .toList();
-
-            for (StudentModel student : students) {
-                if (!existingCourse.getStudents().contains(student)) {
-                    existingCourse.addStudent(student);
-                }
-            }
+        if (existingCourse.getStudents() != null && !existingCourse.getStudents().isEmpty()) {
+            studentRepository.saveAll(existingCourse.getStudents());
         }
+
+        CourseModel saved = courseRepository.save(existingCourse);
 
         log.info("Updated course with id {}", id);
 
-        return courseMapper.toResponse(courseRepository.save(existingCourse));
+        return courseMapper.toResponse(saved);
     }
 
     @Transactional

@@ -11,10 +11,7 @@ public interface CourseMapper {
 
     CourseResponse toResponse(CourseModel course);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "students", ignore = true)
     CourseModel toEntity(CourseCreateRequest requestCreate);
 
-    @Mapping(target = "students", ignore = true)
     void updateEntityFromDto(CourseUpdateRequest dto, @MappingTarget CourseModel course);
 }
