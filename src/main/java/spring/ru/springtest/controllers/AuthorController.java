@@ -1,9 +1,13 @@
 package spring.ru.springtest.controllers;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 import spring.ru.springtest.api.AuthorsApi;
 import spring.ru.springtest.dto.create.AuthorCreateRequest;
@@ -16,6 +20,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 public class AuthorController implements AuthorsApi {
 
     private final AuthorService authorService;
@@ -26,7 +31,9 @@ public class AuthorController implements AuthorsApi {
     }
 
     @Override
-    public ResponseEntity<GetAuthors200Response> getAuthors(Integer page, Integer size) {
+    public ResponseEntity<GetAuthors200Response> getAuthors(
+            @Min(0) @NotNull Integer page,
+            @Min(1) @Max(50) @NotNull Integer size) {
 
         Page<AuthorResponse> result = authorService.findAll(page, size);
 

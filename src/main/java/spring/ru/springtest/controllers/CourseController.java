@@ -1,9 +1,13 @@
 package spring.ru.springtest.controllers;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 import spring.ru.springtest.api.CoursesApi;
 import spring.ru.springtest.dto.create.CourseCreateRequest;
@@ -16,6 +20,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 public class CourseController implements CoursesApi {
 
     private final CourseService courseService;
@@ -26,7 +31,9 @@ public class CourseController implements CoursesApi {
     }
 
     @Override
-    public ResponseEntity<GetCourses200Response> getCourses(Integer page, Integer size) {
+    public ResponseEntity<GetCourses200Response> getCourses(
+            @Min(0) @NotNull Integer page,
+            @Min(1) @Max(50) @NotNull Integer size) {
 
         Page<CourseResponse> result = courseService.findAll(page, size);
 

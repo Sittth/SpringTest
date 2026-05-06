@@ -1,9 +1,13 @@
 package spring.ru.springtest.controllers;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 import spring.ru.springtest.api.UsersApi;
 import spring.ru.springtest.dto.create.UserCreateRequest;
@@ -16,6 +20,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 public class UserController implements UsersApi {
 
     private final UserService userService;
@@ -26,7 +31,9 @@ public class UserController implements UsersApi {
     }
 
     @Override
-    public ResponseEntity<GetUsers200Response> getUsers(Integer page, Integer size) {
+    public ResponseEntity<GetUsers200Response> getUsers(
+            @Min(0) @NotNull Integer page,
+            @Min(1) @Max(50) @NotNull Integer size) {
 
         Page<UserResponse> result = userService.findAll(page, size);
 
