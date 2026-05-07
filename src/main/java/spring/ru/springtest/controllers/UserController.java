@@ -26,12 +26,13 @@ public class UserController implements UsersApi {
     private final UserService userService;
 
     @Override
-    public ResponseEntity<UserResponse> getUserById(UUID id) {
-        return ResponseEntity.ok(userService.findById(id));
+    public UserResponse getUserById(UUID id) {
+
+        return userService.findById(id);
     }
 
     @Override
-    public ResponseEntity<GetUsers200Response> getUsers(
+    public GetUsers200Response getUsers(
             @Min(0) @NotNull Integer page,
             @Min(1) @Max(50) @NotNull Integer size) {
 
@@ -43,27 +44,24 @@ public class UserController implements UsersApi {
                 .size(result.getSize())
                 .totalElements(result.getTotalElements());
 
-        return ResponseEntity.ok(response);
+        return response;
     }
 
     @Override
-    public ResponseEntity<UserResponse> createUser(@Valid UserCreateRequest requestCreate) {
-        UserResponse created = userService.save(requestCreate);
+    public UserResponse createUser(@Valid UserCreateRequest requestCreate) {
 
-        return ResponseEntity.status(201).body(created);
+        return userService.save(requestCreate);
     }
 
     @Override
-    public ResponseEntity<UserResponse> updateUserById(UUID id, @Valid UserUpdateRequest requestUpdate) {
-        UserResponse updated = userService.update(id, requestUpdate);
+    public UserResponse updateUserById(UUID id, @Valid UserUpdateRequest requestUpdate) {
 
-        return ResponseEntity.ok(updated);
+        return userService.update(id, requestUpdate);
     }
 
     @Override
-    public ResponseEntity<Void> deleteUserById(UUID id) {
+    public void deleteUserById(UUID id) {
+
         userService.delete(id);
-
-        return ResponseEntity.noContent().build();
     }
 }

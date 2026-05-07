@@ -22,7 +22,7 @@ import jakarta.annotation.Generated;
  * GetCourses200Response
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-01T15:49:50.251183500+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T16:15:05.825918500+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 public class GetCourses200Response {
 
   @Valid

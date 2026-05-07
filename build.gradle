@@ -84,7 +84,8 @@ tasks.register("generateCreateDto", org.openapitools.generator.gradle.plugin.tas
             interfaceOnly: "true",
             useSpringBoot3: "true",
             useJakartaEe: 'true',
-            useBeanValidation: "true"
+            useBeanValidation: "true",
+            useResponseEntity: "false"
     ]
 }
 
@@ -110,7 +111,8 @@ tasks.register("generateUpdateDto", org.openapitools.generator.gradle.plugin.tas
             interfaceOnly: "true",
             useSpringBoot3: "true",
             useJakartaEe: 'true',
-            useBeanValidation: "true"
+            useBeanValidation: "true",
+            useResponseEntity: "false"
     ]
 }
 
@@ -141,7 +143,8 @@ tasks.register("generateResponseDto", org.openapitools.generator.gradle.plugin.t
             useSpringBoot3: "true",
             useJakartaEe: 'true',
             useBeanValidation: "true",
-            useBuilder: "true"
+            useBuilder: "true",
+            useResponseEntity: "false"
     ]
 }
 
@@ -193,7 +196,8 @@ tasks.register("generateApi", org.openapitools.generator.gradle.plugin.tasks.Gen
     configOptions = [
             interfaceOnly: "true",
             useSpringBoot3: "true",
-            useJakartaEe: 'true'
+            useJakartaEe: 'true',
+            useResponseEntity: "false"
     ]
 }
 

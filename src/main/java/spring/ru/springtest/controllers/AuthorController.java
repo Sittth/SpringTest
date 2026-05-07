@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 import spring.ru.springtest.api.AuthorsApi;
@@ -26,12 +25,13 @@ public class AuthorController implements AuthorsApi {
     private final AuthorService authorService;
 
     @Override
-    public ResponseEntity<AuthorResponse> getAuthorById(UUID id) {
-        return ResponseEntity.ok(authorService.findById(id));
+    public AuthorResponse getAuthorById(UUID id) {
+
+        return authorService.findById(id);
     }
 
     @Override
-    public ResponseEntity<GetAuthors200Response> getAuthors(
+    public GetAuthors200Response getAuthors(
             @Min(0) @NotNull Integer page,
             @Min(1) @Max(50) @NotNull Integer size) {
 
@@ -43,27 +43,24 @@ public class AuthorController implements AuthorsApi {
                 .size(result.getSize())
                 .totalElements(result.getTotalElements());
 
-        return ResponseEntity.ok(response);
+        return response;
     }
 
     @Override
-    public ResponseEntity<AuthorResponse> createAuthor(@Valid AuthorCreateRequest requestCreate) {
-        AuthorResponse created = authorService.save(requestCreate);
+    public AuthorResponse createAuthor(@Valid AuthorCreateRequest requestCreate) {
 
-        return ResponseEntity.status(201).body(created);
+        return authorService.save(requestCreate);
     }
 
     @Override
-    public ResponseEntity<AuthorResponse> updateAuthorById(UUID id, @Valid AuthorUpdateRequest requestUpdate) {
-        AuthorResponse updated = authorService.update(id, requestUpdate);
+    public AuthorResponse updateAuthorById(UUID id, @Valid AuthorUpdateRequest requestUpdate) {
 
-        return ResponseEntity.ok(updated);
+        return authorService.update(id, requestUpdate);
     }
 
     @Override
-    public ResponseEntity<Void> deleteAuthorById(UUID id) {
+    public void deleteAuthorById(UUID id) {
+
         authorService.delete(id);
-
-        return ResponseEntity.noContent().build();
     }
 }

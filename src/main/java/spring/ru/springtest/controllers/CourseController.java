@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 import spring.ru.springtest.api.CoursesApi;
@@ -26,12 +25,13 @@ public class CourseController implements CoursesApi {
     private final CourseService courseService;
 
     @Override
-    public ResponseEntity<CourseResponse> getCourseById(UUID id) {
-        return ResponseEntity.ok(courseService.findById(id));
+    public CourseResponse getCourseById(UUID id) {
+
+        return courseService.findById(id);
     }
 
     @Override
-    public ResponseEntity<GetCourses200Response> getCourses(
+    public GetCourses200Response getCourses(
             @Min(0) @NotNull Integer page,
             @Min(1) @Max(50) @NotNull Integer size) {
 
@@ -43,27 +43,24 @@ public class CourseController implements CoursesApi {
                 .size(result.getSize())
                 .totalElements(result.getTotalElements());
 
-        return ResponseEntity.ok(response);
+        return response;
     }
 
     @Override
-    public ResponseEntity<CourseResponse> createCourse(@Valid CourseCreateRequest requestCreate) {
-        CourseResponse created = courseService.save(requestCreate);
+    public CourseResponse createCourse(@Valid CourseCreateRequest requestCreate) {
 
-        return ResponseEntity.status(201).body(created);
+        return courseService.save(requestCreate);
     }
 
     @Override
-    public ResponseEntity<CourseResponse> updateCourseById(UUID id, @Valid CourseUpdateRequest requestUpdate) {
-        CourseResponse updated = courseService.update(id, requestUpdate);
+    public CourseResponse updateCourseById(UUID id, @Valid CourseUpdateRequest requestUpdate) {
 
-        return ResponseEntity.ok(updated);
+        return courseService.update(id, requestUpdate);
     }
 
     @Override
-    public ResponseEntity<Void> deleteCourseById(UUID id) {
+    public void deleteCourseById(UUID id) {
+
         courseService.delete(id);
-
-        return ResponseEntity.noContent().build();
     }
 }

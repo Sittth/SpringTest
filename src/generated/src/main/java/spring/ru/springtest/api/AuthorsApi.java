@@ -24,7 +24,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -37,7 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-01T15:49:47.587845400+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T16:15:04.329459300+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 @Validated
 @Tag(name = "authors", description = "the authors API")
 public interface AuthorsApi {
@@ -71,8 +71,9 @@ public interface AuthorsApi {
         produces = { "application/json" },
         consumes = { "application/json" }
     )
+    @ResponseStatus(HttpStatus.CREATED)
     
-    default ResponseEntity<AuthorResponse> createAuthor(
+    default AuthorResponse createAuthor(
         @Parameter(name = "AuthorCreateRequest", description = "", required = true) @Valid @RequestBody AuthorCreateRequest authorCreateRequest
     ) {
         getRequest().ifPresent(request -> {
@@ -89,7 +90,7 @@ public interface AuthorsApi {
                 }
             }
         });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        throw new IllegalArgumentException("Not implemented");
 
     }
 
@@ -116,8 +117,9 @@ public interface AuthorsApi {
         value = "/authors/{id}",
         produces = { "application/json" }
     )
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     
-    default ResponseEntity<Void> deleteAuthorById(
+    default void deleteAuthorById(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id
     ) {
         getRequest().ifPresent(request -> {
@@ -129,7 +131,7 @@ public interface AuthorsApi {
                 }
             }
         });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        throw new IllegalArgumentException("Not implemented");
 
     }
 
@@ -158,8 +160,9 @@ public interface AuthorsApi {
         value = "/authors/{id}",
         produces = { "application/json" }
     )
+    @ResponseStatus(HttpStatus.OK)
     
-    default ResponseEntity<AuthorResponse> getAuthorById(
+    default AuthorResponse getAuthorById(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id
     ) {
         getRequest().ifPresent(request -> {
@@ -176,7 +179,7 @@ public interface AuthorsApi {
                 }
             }
         });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        throw new IllegalArgumentException("Not implemented");
 
     }
 
@@ -202,8 +205,9 @@ public interface AuthorsApi {
         value = "/authors",
         produces = { "application/json" }
     )
+    @ResponseStatus(HttpStatus.OK)
     
-    default ResponseEntity<GetAuthors200Response> getAuthors(
+    default GetAuthors200Response getAuthors(
         @Min(0) @Parameter(name = "page", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
         @Min(1) @Max(50) @Parameter(name = "size", description = "", in = ParameterIn.QUERY) @Valid @RequestParam(value = "size", required = false, defaultValue = "10") Integer size
     ) {
@@ -216,7 +220,7 @@ public interface AuthorsApi {
                 }
             }
         });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        throw new IllegalArgumentException("Not implemented");
 
     }
 
@@ -251,8 +255,9 @@ public interface AuthorsApi {
         produces = { "application/json" },
         consumes = { "application/json" }
     )
+    @ResponseStatus(HttpStatus.OK)
     
-    default ResponseEntity<AuthorResponse> updateAuthorById(
+    default AuthorResponse updateAuthorById(
         @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id,
         @Parameter(name = "AuthorUpdateRequest", description = "", required = true) @Valid @RequestBody AuthorUpdateRequest authorUpdateRequest
     ) {
@@ -275,7 +280,7 @@ public interface AuthorsApi {
                 }
             }
         });
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        throw new IllegalArgumentException("Not implemented");
 
     }
 
