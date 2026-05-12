@@ -9,77 +9,109 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import spring.ru.springtest.exceptions.EntityNotFoundException;
+import spring.ru.springtest.exceptions.dto.ErrorResponse;
+import spring.ru.springtest.exceptions.dto.ValidationErrorResponse;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<?> handleEntityNotFound(EntityNotFoundException ex) {
+    public ResponseEntity<ErrorResponse> handleEntityNotFound(
+            EntityNotFoundException ex) {
+
         log.warn("Entity not found: {}", ex.getMessage());
+
+        ErrorResponse response = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.NOT_FOUND.value())
+                .error("Not Found")
+                .message(ex.getMessage())
+                .requestId(MDC.get("requestId"))
+                .build();
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of(
-                        "timestamp", LocalDateTime.now(),
-                        "status", HttpStatus.NOT_FOUND.value(),
-                        "error", "Not Found",
-                        "message", ex.getMessage(),
-                        "requestId", MDC.get("requestId")
-                ));
+                .body(response);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleGenericException(Exception ex) {
+    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
+
         log.error("Unexpected error", ex);
+
+        ErrorResponse response = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .error("Internal server error")
+                .message("An internal server error occurred")
+                .requestId(MDC.get("requestId"))
+                .build();
+
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of(
-                        "timestamp", LocalDateTime.now(),
-                        "status", HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                        "error", "Internal server error",
-                        "message", "An internal server error occurred",
-                        "requestId", MDC.get("requestId")
-                ));
+                .body(response);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ValidationErrorResponse> handleConstraintViolation(
+            ConstraintViolationException ex) {
+
+        Map<String, List<String>> errors = new HashMap<>();
+
+        ex.getConstraintViolations().forEach(violation -> {
+
+            String field = violation.getPropertyPath().toString();
+            String message = violation.getMessage();
+
+            errors.computeIfAbsent(field, k -> new ArrayList<>())
+                    .add(message);
+        });
+
+        log.warn("Constraint violation: {}", errors);
+
+        ValidationErrorResponse response =
+                ValidationErrorResponse.builder()
+                        .timestamp(LocalDateTime.now())
+                        .status(HttpStatus.BAD_REQUEST.value())
+                        .error("Constraint violation")
+                        .errors(errors)
+                        .requestId(MDC.get("requestId"))
+                        .build();
+
+        return ResponseEntity.badRequest().body(response);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleValidationException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ValidationErrorResponse> handleValidationException(
+            MethodArgumentNotValidException ex) {
+
         Map<String, List<String>> errors = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach((error) -> {
+
+        ex.getBindingResult().getFieldErrors().forEach(error -> {
+
             String fieldName = error.getField();
             String errorMessage = error.getDefaultMessage();
-            errors.computeIfAbsent(fieldName, k -> new ArrayList<>()).add(errorMessage);
+
+            errors.computeIfAbsent(fieldName, k -> new ArrayList<>())
+                    .add(errorMessage);
         });
 
         log.warn("Validation failed: {}", errors);
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
-                "timestamp", LocalDateTime.now(),
-                "status", HttpStatus.BAD_REQUEST.value(),
-                "error", "Validation failed",
-                "errors", errors,
-                "requestId", MDC.get("requestId")
-        ));
-    }
+        ValidationErrorResponse response =
+                ValidationErrorResponse.builder()
+                        .timestamp(LocalDateTime.now())
+                        .status(HttpStatus.BAD_REQUEST.value())
+                        .error("Validation failed")
+                        .errors(errors)
+                        .requestId(MDC.get("requestId"))
+                        .build();
 
-    public ResponseEntity<?> handleConstraintViolation(ConstraintViolationException ex) {
-        List<String> errors = ex.getConstraintViolations().stream()
-                .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
-                .collect(Collectors.toList());
-
-        log.warn("Constraint violation: {}", errors);
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
-                "timestamp", LocalDateTime.now(),
-                "status", HttpStatus.BAD_REQUEST.value(),
-                "error", "Constraint Violation",
-                "errors", errors,
-                "requestId", MDC.get("requestId")
-        ));
+        return ResponseEntity.badRequest().body(response);
     }
 }
