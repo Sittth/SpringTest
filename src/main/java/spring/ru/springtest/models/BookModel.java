@@ -1,6 +1,5 @@
 package spring.ru.springtest.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +22,6 @@ public class BookModel {
     private String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     private AuthorModel author;
 

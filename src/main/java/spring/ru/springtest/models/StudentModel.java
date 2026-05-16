@@ -25,7 +25,6 @@ public class StudentModel {
     private String name;
 
     @ManyToMany(mappedBy = "students")
-    @JsonBackReference
     private List<CourseModel> courses = new ArrayList<>();
 
     @Column(nullable = false, updatable = false)

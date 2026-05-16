@@ -24,7 +24,6 @@ public class UserModel {
     private String username;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference
     @Setter(AccessLevel.NONE)
     private ProfileModel profile;
 

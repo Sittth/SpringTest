@@ -9,14 +9,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spring.ru.springtest.dto.create.CourseCreateRequest;
-import spring.ru.springtest.dto.create.StudentCreateRequest;
 import spring.ru.springtest.dto.response.CourseResponse;
-import spring.ru.springtest.dto.response.StudentResponse;
 import spring.ru.springtest.dto.update.CourseUpdateRequest;
 import spring.ru.springtest.dto.update.StudentUpdateRequest;
 import spring.ru.springtest.exceptions.EntityNotFoundException;
 import spring.ru.springtest.mapper.CourseMapper;
-import spring.ru.springtest.mapper.StudentMapper;
 import spring.ru.springtest.models.CourseModel;
 import spring.ru.springtest.models.StudentModel;
 import spring.ru.springtest.repositories.CourseRepository;
@@ -79,11 +76,18 @@ public class CourseService {
 
         log.info("Save course {}", requestCreate);
 
-        CourseModel course = courseMapper.toEntity(requestCreate);
+        CourseModel course = new CourseModel();
 
-        if (course.getStudents() != null && !course.getStudents().isEmpty()) {
-            studentRepository.saveAll(course.getStudents());
+        course.setTitle(requestCreate.getTitle());
+
+        List<StudentModel> students =
+                studentRepository.findAllById(requestCreate.getStudentIds());
+
+        if (students.size() != requestCreate.getStudentIds().size()) {
+            throw new EntityNotFoundException("Some students not found");
         }
+
+        students.forEach(course::addStudent);
 
         CourseModel saved = courseRepository.save(course);
 
@@ -99,11 +103,19 @@ public class CourseService {
 
         CourseModel existingCourse = findExistingCourse(id);
 
-        courseMapper.updateEntityFromDto(requestUpdate, existingCourse);
+        existingCourse.setTitle(requestUpdate.getTitle());
 
-        if (existingCourse.getStudents() != null && !existingCourse.getStudents().isEmpty()) {
-            studentRepository.saveAll(existingCourse.getStudents());
+        new ArrayList<>(existingCourse.getStudents())
+                .forEach(existingCourse::removeStudent);
+
+        List<StudentModel> students =
+                studentRepository.findAllById(requestUpdate.getStudentIds());
+
+        if (students.size() != requestUpdate.getStudentIds().size()) {
+            throw new EntityNotFoundException("Some students not found");
         }
+
+        students.forEach(existingCourse::addStudent);
 
         CourseModel saved = courseRepository.save(existingCourse);
 

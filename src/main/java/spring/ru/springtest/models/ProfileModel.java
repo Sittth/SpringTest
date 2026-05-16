@@ -24,7 +24,6 @@ public class ProfileModel {
     private String bio;
 
     @OneToOne
-    @JsonBackReference
     @JoinColumn(name = "user_id")
     @Setter(AccessLevel.PACKAGE)
     private UserModel user;

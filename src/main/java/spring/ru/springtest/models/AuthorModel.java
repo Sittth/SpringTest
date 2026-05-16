@@ -27,7 +27,6 @@ public class AuthorModel {
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
             orphanRemoval = true)
-    @JsonManagedReference
     private List<BookModel> books;
 
     @Column(nullable = false, updatable = false)

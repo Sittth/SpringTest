@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import spring.ru.springtest.dto.update.StudentUpdateRequest;
+import java.util.UUID;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
@@ -22,13 +22,13 @@ import jakarta.annotation.Generated;
  * CourseUpdateRequest
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-07T16:15:06.259510600+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-05-16T19:56:50.520546900+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 public class CourseUpdateRequest {
 
   private String title;
 
   @Valid
-  private List<@Valid StudentUpdateRequest> students = new ArrayList<>();
+  private List<UUID> studentIds = new ArrayList<>();
 
   public CourseUpdateRequest title(String title) {
     this.title = title;
@@ -50,32 +50,32 @@ public class CourseUpdateRequest {
     this.title = title;
   }
 
-  public CourseUpdateRequest students(List<@Valid StudentUpdateRequest> students) {
-    this.students = students;
+  public CourseUpdateRequest studentIds(List<UUID> studentIds) {
+    this.studentIds = studentIds;
     return this;
   }
 
-  public CourseUpdateRequest addStudentsItem(StudentUpdateRequest studentsItem) {
-    if (this.students == null) {
-      this.students = new ArrayList<>();
+  public CourseUpdateRequest addStudentIdsItem(UUID studentIdsItem) {
+    if (this.studentIds == null) {
+      this.studentIds = new ArrayList<>();
     }
-    this.students.add(studentsItem);
+    this.studentIds.add(studentIdsItem);
     return this;
   }
 
   /**
-   * Get students
-   * @return students
+   * Get studentIds
+   * @return studentIds
   */
   @Valid @Size(max = 200) 
-  @Schema(name = "students", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("students")
-  public List<@Valid StudentUpdateRequest> getStudents() {
-    return students;
+  @Schema(name = "studentIds", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("studentIds")
+  public List<UUID> getStudentIds() {
+    return studentIds;
   }
 
-  public void setStudents(List<@Valid StudentUpdateRequest> students) {
-    this.students = students;
+  public void setStudentIds(List<UUID> studentIds) {
+    this.studentIds = studentIds;
   }
 
   @Override
@@ -88,12 +88,12 @@ public class CourseUpdateRequest {
     }
     CourseUpdateRequest courseUpdateRequest = (CourseUpdateRequest) o;
     return Objects.equals(this.title, courseUpdateRequest.title) &&
-        Objects.equals(this.students, courseUpdateRequest.students);
+        Objects.equals(this.studentIds, courseUpdateRequest.studentIds);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(title, students);
+    return Objects.hash(title, studentIds);
   }
 
   @Override
@@ -101,7 +101,7 @@ public class CourseUpdateRequest {
     StringBuilder sb = new StringBuilder();
     sb.append("class CourseUpdateRequest {\n");
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
-    sb.append("    students: ").append(toIndentedString(students)).append("\n");
+    sb.append("    studentIds: ").append(toIndentedString(studentIds)).append("\n");
     sb.append("}");
     return sb.toString();
   }

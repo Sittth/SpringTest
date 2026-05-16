@@ -7,9 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "courses", schema = "test")
@@ -25,13 +23,12 @@ public class CourseModel {
     private String title;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JsonManagedReference
     @JoinTable(
             name = "Course_Student",
             joinColumns = @JoinColumn(name = "course_id"),
             inverseJoinColumns = @JoinColumn(name = "student_id")
     )
-    private List<StudentModel> students = new ArrayList<>();
+    Set<StudentModel> students = new HashSet<>();
 
     @Column(nullable = false, updatable = false)
     private OffsetDateTime createdAt;
