@@ -40,6 +40,14 @@ public class AuthorService {
                 });
     }
 
+    private AuthorModel findExistingAuthorForUpdate(UUID id) {
+        return authorRepository.findByIdAndIsDeletedFalseForUpdate(id)
+                .orElseThrow(() -> {
+                    log.error("Author not found with id {}", id);
+                    return new EntityNotFoundException("Author ", id);
+                });
+    }
+
     @Transactional(readOnly = true)
     public AuthorResponse findById(UUID id) {
 
@@ -81,15 +89,13 @@ public class AuthorService {
 
         log.info("Update author with id: {}", id);
 
-        AuthorModel existingAuthor = findExistingAuthor(id);
+        AuthorModel existingAuthor = findExistingAuthorForUpdate(id);
 
         authorMapper.updateEntityFromDto(requestUpdate, existingAuthor);
 
-        AuthorModel saved = authorRepository.save(existingAuthor);
-
         log.info("Updated author with id {}", id);
 
-        return authorMapper.toResponse(saved);
+        return authorMapper.toResponse(existingAuthor);
     }
 
     @Transactional
@@ -97,7 +103,7 @@ public class AuthorService {
 
         log.info("Delete author with id {}", id);
 
-        AuthorModel authorModel = findExistingAuthor(id);
+        AuthorModel authorModel = findExistingAuthorForUpdate(id);
 
         authorRepository.delete(authorModel);
 

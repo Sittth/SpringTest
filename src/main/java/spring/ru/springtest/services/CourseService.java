@@ -45,6 +45,14 @@ public class CourseService {
                 });
     }
 
+    private CourseModel findExistingCourseForUpdate(UUID id) {
+        return courseRepository.findByIdAndIsDeletedFalseForUpdate(id)
+                .orElseThrow(() -> {
+                    log.error("Course not found with id {}", id);
+                    return new EntityNotFoundException("Course " + id);
+                });
+    }
+
     private StudentModel processStudent(StudentUpdateRequest dto) {
         return findStudent(dto.getId());
     }
@@ -101,7 +109,7 @@ public class CourseService {
 
         log.info("Update course with id: {}", id);
 
-        CourseModel existingCourse = findExistingCourse(id);
+        CourseModel existingCourse = findExistingCourseForUpdate(id);
 
         existingCourse.setTitle(requestUpdate.getTitle());
 
@@ -117,11 +125,9 @@ public class CourseService {
 
         students.forEach(existingCourse::addStudent);
 
-        CourseModel saved = courseRepository.save(existingCourse);
-
         log.info("Updated course with id {}", id);
 
-        return courseMapper.toResponse(saved);
+        return courseMapper.toResponse(existingCourse);
     }
 
     @Transactional
@@ -129,7 +135,7 @@ public class CourseService {
 
         log.info("Delete course with id {}", id);
 
-        CourseModel courseModel = findExistingCourse(id);
+        CourseModel courseModel = findExistingCourseForUpdate(id);
 
         courseRepository.delete(courseModel);
 

@@ -34,6 +34,14 @@ public class UserService {
                 });
     }
 
+    private UserModel findExistingUserForUpdate(UUID id) {
+        return userRepository.findByIdAndIsDeletedFalseForUpdate(id)
+                .orElseThrow(() -> {
+                    log.error("User not found with id {}", id);
+                    return new EntityNotFoundException("User " + id);
+        });
+    }
+
     @Transactional(readOnly = true)
     public UserResponse findById(UUID id) {
 
@@ -75,15 +83,13 @@ public class UserService {
 
         log.info("Update user with id: {}", id);
 
-        UserModel existingUser = findExistingUser(id);
+        UserModel existingUser = findExistingUserForUpdate(id);
 
         userMapper.updateEntityFromDto(requestUpdate, existingUser);
 
-        UserModel saved = userRepository.save(existingUser);
-
         log.info("Updated user with id {}", id);
 
-        return userMapper.toResponse(saved);
+        return userMapper.toResponse(existingUser);
     }
 
     @Transactional
@@ -91,7 +97,7 @@ public class UserService {
 
         log.info("Delete user with id {}", id);
 
-        UserModel userModel = findExistingUser(id);
+        UserModel userModel = findExistingUserForUpdate(id);
 
         userRepository.delete(userModel);
 
