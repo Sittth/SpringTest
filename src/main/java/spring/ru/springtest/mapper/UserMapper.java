@@ -13,18 +13,33 @@ public interface UserMapper {
 
     UserResponse toResponse(UserModel user);
 
-    ProfileResponse toProfileResponse(ProfileModel profile);
-
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "isDeleted", ignore = true)
     UserModel toEntity(UserCreateRequest dto);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "isDeleted", ignore = true)
     ProfileModel toProfileEntity(UserCreateRequest dto);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "profile", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "isDeleted", ignore = true)
     void updateEntityFromDto(UserUpdateRequest dto, @MappingTarget UserModel user);
 
-    @AfterMapping
-    default void linkProfile(@MappingTarget UserModel user) {
-        user.setProfile(user.getProfile());
+    default ProfileResponse toProfileResponse(ProfileModel profileModel) {
+        if (profileModel == null) return null;
+
+        ProfileResponse profileResponse = new ProfileResponse();
+        profileResponse.setId(profileModel.getId());
+        profileResponse.setBio(profileModel.getBio());
+
+        return profileResponse;
     }
 }

@@ -32,11 +32,6 @@ public class CourseService {
     private final CourseMapper courseMapper;
     private final StudentRepository studentRepository;
 
-    private StudentModel findStudent(UUID id) {
-        return studentRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Student", id));
-    }
-
     private CourseModel findExistingCourse(UUID id) {
         return courseRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> {
@@ -51,10 +46,6 @@ public class CourseService {
                     log.error("Course not found with id {}", id);
                     return new EntityNotFoundException("Course " + id);
                 });
-    }
-
-    private StudentModel processStudent(StudentUpdateRequest dto) {
-        return findStudent(dto.getId());
     }
 
     @Transactional(readOnly = true)
@@ -84,18 +75,15 @@ public class CourseService {
 
         log.info("Save course {}", requestCreate);
 
-        CourseModel course = new CourseModel();
+        CourseModel course = courseMapper.toEntity(requestCreate);
 
-        course.setTitle(requestCreate.getTitle());
-
-        List<StudentModel> students =
-                studentRepository.findAllById(requestCreate.getStudentIds());
-
-        if (students.size() != requestCreate.getStudentIds().size()) {
-            throw new EntityNotFoundException("Some students not found");
+        if (requestCreate.getStudentIds() != null && !requestCreate.getStudentIds().isEmpty()) {
+            List<StudentModel> students = studentRepository.findAllById(requestCreate.getStudentIds());
+            if (students.size() != requestCreate.getStudentIds().size()) {
+                throw new EntityNotFoundException("Some students not found");
+            }
+            students.forEach(course::addStudent);
         }
-
-        students.forEach(course::addStudent);
 
         CourseModel saved = courseRepository.save(course);
 
@@ -111,7 +99,7 @@ public class CourseService {
 
         CourseModel existingCourse = findExistingCourseForUpdate(id);
 
-        existingCourse.setTitle(requestUpdate.getTitle());
+        courseMapper.updateEntityFromDto(requestUpdate, existingCourse);
 
         new ArrayList<>(existingCourse.getStudents())
                 .forEach(existingCourse::removeStudent);

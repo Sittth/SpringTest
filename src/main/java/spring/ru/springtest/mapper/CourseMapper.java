@@ -2,21 +2,36 @@ package spring.ru.springtest.mapper;
 
 import org.mapstruct.*;
 import spring.ru.springtest.dto.create.CourseCreateRequest;
-import spring.ru.springtest.dto.create.StudentCreateRequest;
 import spring.ru.springtest.dto.response.CourseResponse;
 import spring.ru.springtest.dto.response.StudentResponse;
 import spring.ru.springtest.dto.update.CourseUpdateRequest;
 import spring.ru.springtest.models.CourseModel;
 import spring.ru.springtest.models.StudentModel;
 
-import java.util.List;
-
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CourseMapper {
 
     CourseResponse toResponse(CourseModel course);
 
-    StudentResponse toStudentResponse(StudentModel student);
+    @Mapping(target = "students", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "isDeleted", ignore = true)
+    CourseModel toEntity(CourseCreateRequest request);
 
-    List<StudentResponse> toStudentResponses(List<StudentModel> students);
+    @Mapping(target = "students", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "isDeleted", ignore = true)
+    void updateEntityFromDto(CourseUpdateRequest dto, @MappingTarget CourseModel course);
+
+    default StudentResponse toStudentResponse(StudentModel student) {
+        if (student == null) return null;
+
+        StudentResponse studentResponse = new StudentResponse();
+        studentResponse.setId(student.getId());
+        studentResponse.setName(student.getName());
+
+        return studentResponse;
+    }
 }

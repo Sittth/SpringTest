@@ -9,22 +9,41 @@ import spring.ru.springtest.dto.update.AuthorUpdateRequest;
 import spring.ru.springtest.models.AuthorModel;
 import spring.ru.springtest.models.BookModel;
 
-import java.util.List;
-
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface AuthorMapper {
 
     AuthorResponse toResponse(AuthorModel author);
 
-    List<BookResponse> toBookResponses(List<BookModel> books);
-
-    BookResponse toBookResponse(BookModel book);
-
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "isDeleted", ignore = true)
     AuthorModel toEntity(AuthorCreateRequest requestCreate);
 
-    BookModel toBookEntity(BookCreateRequest requestCreate);
-
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "isDeleted", ignore = true)
     void updateEntityFromDto(AuthorUpdateRequest dto, @MappingTarget AuthorModel author);
+
+    default BookResponse toBookResponse(BookModel bookModel) {
+        if (bookModel == null) return null;
+
+        BookResponse bookResponse = new BookResponse();
+        bookResponse.setId(bookModel.getId());
+        bookResponse.setTitle(bookModel.getTitle());
+
+        return bookResponse;
+    }
+
+    default BookModel toBookEntity(BookCreateRequest requestCreate) {
+        if (requestCreate == null) return null;
+
+        BookModel bookModel = new BookModel();
+        bookModel.setTitle(requestCreate.getTitle());
+
+        return bookModel;
+    }
 
     @AfterMapping
     default void linkBooks(@MappingTarget AuthorModel author) {
