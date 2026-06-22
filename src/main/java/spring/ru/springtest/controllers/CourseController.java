@@ -36,7 +36,7 @@ public class CourseController implements CoursesApi {
             @Min(0) @NotNull Integer page,
             @Min(1) @Max(50) @NotNull Integer size) {
 
-        return courseMapper.toPageResponse(courseService.findAll(page, size));
+        return courseMapper.toPageResponse(courseService.findAllPaginated(page, size));
     }
 
     @Override

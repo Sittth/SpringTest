@@ -61,7 +61,7 @@ public class CourseService {
     }
 
     @Transactional(readOnly = true)
-    public Page<CourseResponse> findAll(int page, int size) {
+    public Page<CourseResponse> findAllPaginated(int page, int size) {
 
         log.info("Fetching courses page {} with size {}", page, size);
 
