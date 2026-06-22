@@ -1,8 +1,10 @@
 package spring.ru.springtest.mapper;
 
 import org.mapstruct.*;
+import org.springframework.data.domain.Page;
 import spring.ru.springtest.dto.create.CourseCreateRequest;
 import spring.ru.springtest.dto.response.CourseResponse;
+import spring.ru.springtest.dto.response.GetCourses200Response;
 import spring.ru.springtest.dto.response.StudentResponse;
 import spring.ru.springtest.dto.update.CourseUpdateRequest;
 import spring.ru.springtest.models.CourseModel;
@@ -33,5 +35,13 @@ public interface CourseMapper {
         studentResponse.setName(student.getName());
 
         return studentResponse;
+    }
+
+    default GetCourses200Response toPageResponse(Page<CourseResponse> page) {
+        return new GetCourses200Response()
+            .content(page.getContent())
+            .page(page.getNumber())
+            .size(page.getSize())
+            .totalElements(page.getTotalElements());
     }
 }

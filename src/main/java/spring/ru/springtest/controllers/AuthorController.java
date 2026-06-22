@@ -13,6 +13,7 @@ import spring.ru.springtest.dto.create.AuthorCreateRequest;
 import spring.ru.springtest.dto.response.AuthorResponse;
 import spring.ru.springtest.dto.update.AuthorUpdateRequest;
 import spring.ru.springtest.dto.response.GetAuthors200Response;
+import spring.ru.springtest.mapper.AuthorMapper;
 import spring.ru.springtest.services.AuthorService;
 
 import java.util.UUID;
@@ -23,6 +24,7 @@ import java.util.UUID;
 public class AuthorController implements AuthorsApi {
 
     private final AuthorService authorService;
+    private final AuthorMapper authorMapper;
 
     @Override
     public AuthorResponse getAuthorById(UUID id) {
@@ -35,15 +37,7 @@ public class AuthorController implements AuthorsApi {
             @Min(0) @NotNull Integer page,
             @Min(1) @Max(50) @NotNull Integer size) {
 
-        Page<AuthorResponse> result = authorService.findAll(page, size);
-
-        GetAuthors200Response response = new GetAuthors200Response()
-                .content(result.getContent())
-                .page(result.getNumber())
-                .size(result.getSize())
-                .totalElements(result.getTotalElements());
-
-        return response;
+        return authorMapper.toPageResponse(authorService.findAll(page, size));
     }
 
     @Override

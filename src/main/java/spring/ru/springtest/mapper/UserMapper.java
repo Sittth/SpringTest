@@ -1,7 +1,9 @@
 package spring.ru.springtest.mapper;
 
 import org.mapstruct.*;
+import org.springframework.data.domain.Page;
 import spring.ru.springtest.dto.create.UserCreateRequest;
+import spring.ru.springtest.dto.response.GetUsers200Response;
 import spring.ru.springtest.dto.response.ProfileResponse;
 import spring.ru.springtest.dto.response.UserResponse;
 import spring.ru.springtest.dto.update.UserUpdateRequest;
@@ -41,5 +43,13 @@ public interface UserMapper {
         profileResponse.setBio(profileModel.getBio());
 
         return profileResponse;
+    }
+
+    default GetUsers200Response toPageResponse(Page<UserResponse> page) {
+        return new GetUsers200Response()
+            .content(page.getContent())
+            .page(page.getNumber())
+            .size(page.getSize())
+            .totalElements(page.getTotalElements());
     }
 }

@@ -1,10 +1,12 @@
 package spring.ru.springtest.mapper;
 
 import org.mapstruct.*;
+import org.springframework.data.domain.Page;
 import spring.ru.springtest.dto.create.AuthorCreateRequest;
 import spring.ru.springtest.dto.create.BookCreateRequest;
 import spring.ru.springtest.dto.response.AuthorResponse;
 import spring.ru.springtest.dto.response.BookResponse;
+import spring.ru.springtest.dto.response.GetAuthors200Response;
 import spring.ru.springtest.dto.update.AuthorUpdateRequest;
 import spring.ru.springtest.models.AuthorModel;
 import spring.ru.springtest.models.BookModel;
@@ -43,6 +45,14 @@ public interface AuthorMapper {
         bookModel.setTitle(requestCreate.getTitle());
 
         return bookModel;
+    }
+
+    default GetAuthors200Response toPageResponse(Page<AuthorResponse> page) {
+        return new GetAuthors200Response()
+            .content(page.getContent())
+            .page(page.getNumber())
+            .size(page.getSize())
+            .totalElements(page.getTotalElements());
     }
 
     @AfterMapping
