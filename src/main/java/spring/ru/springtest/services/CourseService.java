@@ -21,7 +21,9 @@ import spring.ru.springtest.repositories.StudentRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -99,19 +101,31 @@ public class CourseService {
 
         CourseModel existingCourse = findExistingCourseForUpdate(id);
 
-        courseMapper.updateEntityFromDto(requestUpdate, existingCourse);
-
-        new ArrayList<>(existingCourse.getStudents())
-                .forEach(existingCourse::removeStudent);
-
         List<StudentModel> students =
                 studentRepository.findAllById(requestUpdate.getStudentIds());
 
         if (students.size() != requestUpdate.getStudentIds().size()) {
-            throw new EntityNotFoundException("Some students not found");
+            List<UUID> foundIds = students.stream()
+                    .map(StudentModel::getId)
+                    .toList();
+            List<UUID> missingIds = requestUpdate.getStudentIds().stream()
+                    .filter(studentId -> !foundIds.contains(studentId))
+                    .toList();
+
+            log.error("Students not found with ids {}", missingIds);
+
+            throw new EntityNotFoundException("Students not found: " + missingIds);
         }
 
-        students.forEach(existingCourse::addStudent);
+        courseMapper.updateEntityFromDto(requestUpdate, existingCourse);
+
+        Set<UUID> existingStudentIds = existingCourse.getStudents().stream()
+                .map(StudentModel::getId)
+                .collect(Collectors.toSet());
+
+        students.stream()
+                .filter(student -> !existingStudentIds.contains(student.getId()))
+                .forEach(existingCourse::addStudent);
 
         log.info("Updated course with id {}", id);
 
