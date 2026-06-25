@@ -22,13 +22,6 @@ public interface UserMapper {
     UserModel toEntity(UserCreateRequest dto);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "user", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "deleted", ignore = true)
-    ProfileModel toProfileEntity(UserCreateRequest dto);
-
-    @Mapping(target = "id", ignore = true)
     @Mapping(target = "profile", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
