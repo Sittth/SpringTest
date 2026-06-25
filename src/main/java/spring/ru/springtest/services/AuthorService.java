@@ -36,7 +36,7 @@ public class AuthorService {
         return authorRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> {
                     log.error("Author not found with id {}", id);
-                    return new EntityNotFoundException("Author ", id);
+                    return new EntityNotFoundException("Author " + id);
                 });
     }
 
@@ -44,7 +44,7 @@ public class AuthorService {
         return authorRepository.findByIdAndIsDeletedFalseForUpdate(id)
                 .orElseThrow(() -> {
                     log.error("Author not found with id {}", id);
-                    return new EntityNotFoundException("Author ", id);
+                    return new EntityNotFoundException("Author " + id);
                 });
     }
 
@@ -59,7 +59,7 @@ public class AuthorService {
     }
 
     @Transactional(readOnly = true)
-    public Page<AuthorResponse> findAll(int page, int size) {
+    public Page<AuthorResponse> findAllPaginated(int page, int size) {
 
         log.info("Fetching authors page {} with size {}", page, size);
 

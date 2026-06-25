@@ -53,7 +53,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Page<UserResponse> findAll(int page, int size) {
+    public Page<UserResponse> findAllPaginated(int page, int size) {
 
         log.info("Fetching users page {} with size {}", page, size);
 

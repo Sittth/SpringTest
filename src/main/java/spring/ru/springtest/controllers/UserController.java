@@ -36,7 +36,7 @@ public class UserController implements UsersApi {
             @Min(0) @NotNull Integer page,
             @Min(1) @Max(50) @NotNull Integer size) {
 
-        return userMapper.toPageResponse(userService.findAll(page, size));
+        return userMapper.toPageResponse(userService.findAllPaginated(page, size));
     }
 
     @Override

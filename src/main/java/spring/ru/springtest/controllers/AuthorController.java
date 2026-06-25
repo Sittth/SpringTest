@@ -37,7 +37,7 @@ public class AuthorController implements AuthorsApi {
             @Min(0) @NotNull Integer page,
             @Min(1) @Max(50) @NotNull Integer size) {
 
-        return authorMapper.toPageResponse(authorService.findAll(page, size));
+        return authorMapper.toPageResponse(authorService.findAllPaginated(page, size));
     }
 
     @Override
