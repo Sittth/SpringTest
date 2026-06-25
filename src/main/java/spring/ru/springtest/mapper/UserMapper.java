@@ -15,27 +15,24 @@ public interface UserMapper {
 
     UserResponse toResponse(UserModel user);
 
-    @BeanMapping(unmappedTargetPolicy = ReportingPolicy.ERROR)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "isDeleted", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
     UserModel toEntity(UserCreateRequest dto);
 
-    @BeanMapping(unmappedTargetPolicy = ReportingPolicy.ERROR)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "isDeleted", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
     ProfileModel toProfileEntity(UserCreateRequest dto);
 
-    @BeanMapping(unmappedTargetPolicy = ReportingPolicy.ERROR)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "profile", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "isDeleted", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
     void updateEntityFromDto(UserUpdateRequest dto, @MappingTarget UserModel user);
 
     default ProfileResponse toProfileResponse(ProfileModel profileModel) {

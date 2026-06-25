@@ -16,19 +16,17 @@ public interface AuthorMapper {
 
     AuthorResponse toResponse(AuthorModel author);
 
-    @BeanMapping(unmappedTargetPolicy = ReportingPolicy.ERROR)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "isDeleted", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "books", source = "books")
     AuthorModel toEntity(AuthorCreateRequest requestCreate);
 
-    @BeanMapping(unmappedTargetPolicy = ReportingPolicy.ERROR)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "isDeleted", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "books", source = "books")
     void updateEntityFromDto(AuthorUpdateRequest dto, @MappingTarget AuthorModel author);
 

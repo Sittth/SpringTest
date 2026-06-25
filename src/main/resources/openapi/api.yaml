@@ -617,12 +617,6 @@ components:
           type: string
           minLength: 3
           maxLength: 100
-        studentIds:
-          type: array
-          maxItems: 200
-          items:
-            type: string
-            format: uuid
     CourseUpdateRequest:
       type: object
       properties:

@@ -79,14 +79,6 @@ public class CourseService {
 
         CourseModel course = courseMapper.toEntity(requestCreate);
 
-        if (requestCreate.getStudentIds() != null && !requestCreate.getStudentIds().isEmpty()) {
-            List<StudentModel> students = studentRepository.findAllById(requestCreate.getStudentIds());
-            if (students.size() != requestCreate.getStudentIds().size()) {
-                throw new EntityNotFoundException("Some students not found");
-            }
-            students.forEach(course::addStudent);
-        }
-
         CourseModel saved = courseRepository.save(course);
 
         log.info("Saved course with id {}", saved.getId());
