@@ -15,12 +15,14 @@ public interface UserMapper {
 
     UserResponse toResponse(UserModel user);
 
+    @BeanMapping(unmappedTargetPolicy = ReportingPolicy.ERROR)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "isDeleted", ignore = true)
     UserModel toEntity(UserCreateRequest dto);
 
+    @BeanMapping(unmappedTargetPolicy = ReportingPolicy.ERROR)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
@@ -28,6 +30,7 @@ public interface UserMapper {
     @Mapping(target = "isDeleted", ignore = true)
     ProfileModel toProfileEntity(UserCreateRequest dto);
 
+    @BeanMapping(unmappedTargetPolicy = ReportingPolicy.ERROR)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "profile", ignore = true)
     @Mapping(target = "createdAt", ignore = true)

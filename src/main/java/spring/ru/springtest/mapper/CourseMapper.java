@@ -15,12 +15,16 @@ public interface CourseMapper {
 
     CourseResponse toResponse(CourseModel course);
 
+    @BeanMapping(unmappedTargetPolicy = ReportingPolicy.ERROR)
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "students", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "isDeleted", ignore = true)
     CourseModel toEntity(CourseCreateRequest request);
 
+    @BeanMapping(unmappedTargetPolicy = ReportingPolicy.ERROR)
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "students", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
