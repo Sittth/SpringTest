@@ -1,5 +1,6 @@
 package spring.ru.springtest.services;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,7 +33,7 @@ public class CourseService {
 
     private final CourseRepository courseRepository;
     private final CourseMapper courseMapper;
-    private final StudentRepository studentRepository;
+    private final EntityManager entityManager;
 
     private CourseModel findExistingCourse(UUID id) {
         return courseRepository.findByIdAndIsDeletedFalse(id)
@@ -93,30 +94,15 @@ public class CourseService {
 
         CourseModel existingCourse = findExistingCourseForUpdate(id);
 
-        List<StudentModel> students =
-                studentRepository.findAllById(requestUpdate.getStudentIds());
-
-        if (students.size() != requestUpdate.getStudentIds().size()) {
-            List<UUID> foundIds = students.stream()
-                    .map(StudentModel::getId)
-                    .toList();
-            List<UUID> missingIds = requestUpdate.getStudentIds().stream()
-                    .filter(studentId -> !foundIds.contains(studentId))
-                    .toList();
-
-            log.error("Students not found with ids {}", missingIds);
-
-            throw new EntityNotFoundException("Students not found: " + missingIds);
-        }
-
         courseMapper.updateEntityFromDto(requestUpdate, existingCourse);
 
         Set<UUID> existingStudentIds = existingCourse.getStudents().stream()
                 .map(StudentModel::getId)
                 .collect(Collectors.toSet());
 
-        students.stream()
-                .filter(student -> !existingStudentIds.contains(student.getId()))
+        requestUpdate.getStudentIds().stream()
+                .filter(studentId -> !existingStudentIds.contains(studentId))
+                .map(studentId -> entityManager.getReference(StudentModel.class, studentId))
                 .forEach(existingCourse::addStudent);
 
         log.info("Updated course with id {}", id);
