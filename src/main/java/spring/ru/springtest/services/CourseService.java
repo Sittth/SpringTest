@@ -43,14 +43,6 @@ public class CourseService {
                 });
     }
 
-    private CourseModel findExistingCourseForUpdate(UUID id) {
-        return courseRepository.findByIdAndIsDeletedFalseForUpdate(id)
-                .orElseThrow(() -> {
-                    log.error("Course not found with id {}", id);
-                    return new EntityNotFoundException("Course " + id);
-                });
-    }
-
     @Transactional(readOnly = true)
     public CourseResponse findById(UUID id) {
 
@@ -92,18 +84,17 @@ public class CourseService {
 
         log.info("Update course with id: {}", id);
 
-        CourseModel existingCourse = findExistingCourseForUpdate(id);
+        CourseModel existingCourse = findExistingCourse(id);
 
         courseMapper.updateEntityFromDto(requestUpdate, existingCourse);
 
-        Set<UUID> existingStudentIds = existingCourse.getStudents().stream()
-                .map(StudentModel::getId)
-                .collect(Collectors.toSet());
+        entityManager.flush();
 
-        requestUpdate.getStudentIds().stream()
-                .filter(studentId -> !existingStudentIds.contains(studentId))
-                .map(studentId -> entityManager.getReference(StudentModel.class, studentId))
-                .forEach(existingCourse::addStudent);
+        requestUpdate.getStudentIds()
+                .forEach(studentId ->
+                        courseRepository.insertStudentToCourse(id, studentId));
+
+        entityManager.refresh(existingCourse);
 
         log.info("Updated course with id {}", id);
 
@@ -115,7 +106,7 @@ public class CourseService {
 
         log.info("Delete course with id {}", id);
 
-        CourseModel courseModel = findExistingCourseForUpdate(id);
+        CourseModel courseModel = findExistingCourse(id);
 
         courseRepository.delete(courseModel);
 
