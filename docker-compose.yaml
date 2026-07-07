@@ -14,19 +14,41 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-  app:
-    build: .
+
+  redis:
+    image: redis:7.4-alpine
+    container_name: redis_cache
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+  main-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: main_service
     ports:
       - "8080:8080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_DATASOURCE_PASSWORD: 123
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
     depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - app-network
+      - postgres
+      - redis
+
+  second-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.second
+    container_name: second_service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
 
 networks:
   app-network:
