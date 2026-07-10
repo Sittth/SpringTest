@@ -212,3 +212,32 @@ tasks.register("generateAllDto") {
 }
 
 compileJava.dependsOn tasks.generateAllDto
+
+tasks.register("generateBookMetadataClient", org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
+    generatorName = "java"
+    library = "spring-cloud"
+    inputSpec = project(':second-service')
+            .file("src/main/resources/openapi/api.yaml")
+            .toURI().toString()
+    outputDir = "$projectDir/src/generated-client"
+
+    apiPackage = "spring.ru.springtest.client.metadata"
+    modelPackage = "spring.ru.springtest.client.metadata.dto"
+
+    configOptions = [
+            interfaceOnly: "true",
+            useSpringBoot3: "true",
+            useJakartaEe: "true",
+            useBeanValidation: "true"
+    ]
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir "$projectDir/src/generated-client/src/main/java"
+        }
+    }
+}
+
+compileJava.dependsOn tasks.generateBookMetadataClient
