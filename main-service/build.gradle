@@ -214,7 +214,7 @@ tasks.register("generateAllDto") {
 compileJava.dependsOn tasks.generateAllDto
 
 tasks.register("generateBookMetadataClient", org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
-    generatorName = "java"
+    generatorName = "spring"
     library = "spring-cloud"
     inputSpec = project(':second-service')
             .file("src/main/resources/openapi/api.yaml")

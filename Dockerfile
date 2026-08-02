@@ -4,7 +4,9 @@ WORKDIR /app
 COPY . .
 
 RUN chmod +x gradlew
-RUN ./gradlew :main-service:bootJar --no-daemon
+RUN ./gradlew :main-service:bootJar --no-daemon --configure-on-demand
+RUN --mount=type=cache,target=/root/.gradle \
+    ./gradlew :second-service:bootJar --no-daemon --configure-on-demand
 
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app

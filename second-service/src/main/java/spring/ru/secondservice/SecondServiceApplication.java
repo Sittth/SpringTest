@@ -1,4 +1,4 @@
-package spring.ru.springtest;
+package spring.ru.secondservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
