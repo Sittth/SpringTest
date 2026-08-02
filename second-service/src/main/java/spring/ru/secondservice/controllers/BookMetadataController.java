@@ -13,7 +13,6 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@Validated
 public class BookMetadataController implements BookMetadataApi {
 
     private final BookMetadataService bookMetadataService;
