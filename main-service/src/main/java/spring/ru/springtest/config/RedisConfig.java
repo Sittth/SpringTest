@@ -19,7 +19,7 @@ import java.util.Map;
 @EnableCaching
 public class RedisConfig {
 
-    public static final String BOOK_CACHE = "books";
+    public static final String AUTHOR_CACHE = "authors";
 
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
@@ -42,7 +42,7 @@ public class RedisConfig {
                         .fromSerializer(jsonSerializer));
 
         Map<String, RedisCacheConfiguration> perCacheConfigs = Map.of(
-                BOOK_CACHE, defaultConfig
+                AUTHOR_CACHE, defaultConfig
         );
 
         return RedisCacheManager.builder(connectionFactory)

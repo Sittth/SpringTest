@@ -2,27 +2,25 @@ package spring.ru.springtest.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import spring.ru.springtest.config.RedisConfig;
 import spring.ru.springtest.dto.create.AuthorCreateRequest;
 import spring.ru.springtest.dto.response.AuthorResponse;
 import spring.ru.springtest.dto.update.AuthorUpdateRequest;
-import spring.ru.springtest.dto.update.BookUpdateRequest;
 import spring.ru.springtest.exceptions.EntityNotFoundException;
 import spring.ru.springtest.mapper.AuthorMapper;
 import spring.ru.springtest.models.AuthorModel;
-import spring.ru.springtest.models.BookModel;
 import spring.ru.springtest.repositories.AuthorRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +46,7 @@ public class AuthorService {
                 });
     }
 
+    @Cacheable(value = RedisConfig.AUTHOR_CACHE, key = "#id")
     @Transactional(readOnly = true)
     public AuthorResponse findById(UUID id) {
 
@@ -84,6 +83,7 @@ public class AuthorService {
         return authorMapper.toResponse(saved);
     }
 
+    @CachePut(value = RedisConfig.AUTHOR_CACHE, key = "#id")
     @Transactional
     public AuthorResponse update(UUID id, AuthorUpdateRequest requestUpdate) {
 
@@ -98,6 +98,7 @@ public class AuthorService {
         return authorMapper.toResponse(existingAuthor);
     }
 
+    @CacheEvict(value = RedisConfig.AUTHOR_CACHE, key = "#id")
     @Transactional
     public void delete(UUID id) {
 
