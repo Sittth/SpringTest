@@ -576,15 +576,28 @@ components:
           format: uuid
         title:
           type: string
+        publisher:
+          type: string
+        price:
+          type: number
     BookCreateRequest:
       type: object
       required:
         - title
+        - publisher
+        - price
       properties:
         title:
           type: string
           minLength: 1
           maxLength: 100
+        publisher:
+          type: string
+          minLength: 1
+          maxLength: 100
+        price:
+          type: number
+          minimum: 0
     BookUpdateRequest:
       type: object
       properties:

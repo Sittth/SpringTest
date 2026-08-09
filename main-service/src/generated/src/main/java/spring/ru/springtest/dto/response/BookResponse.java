@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import java.math.BigDecimal;
 import java.util.UUID;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
@@ -19,12 +20,16 @@ import jakarta.annotation.Generated;
  * BookResponse
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-25T18:57:05.418890800+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-08T17:49:56.934969400+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 public class BookResponse {
 
   private UUID id;
 
   private String title;
+
+  private String publisher;
+
+  private BigDecimal price;
 
   public BookResponse id(UUID id) {
     this.id = id;
@@ -66,6 +71,46 @@ public class BookResponse {
     this.title = title;
   }
 
+  public BookResponse publisher(String publisher) {
+    this.publisher = publisher;
+    return this;
+  }
+
+  /**
+   * Get publisher
+   * @return publisher
+  */
+  
+  @Schema(name = "publisher", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("publisher")
+  public String getPublisher() {
+    return publisher;
+  }
+
+  public void setPublisher(String publisher) {
+    this.publisher = publisher;
+  }
+
+  public BookResponse price(BigDecimal price) {
+    this.price = price;
+    return this;
+  }
+
+  /**
+   * Get price
+   * @return price
+  */
+  @Valid 
+  @Schema(name = "price", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("price")
+  public BigDecimal getPrice() {
+    return price;
+  }
+
+  public void setPrice(BigDecimal price) {
+    this.price = price;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -76,12 +121,14 @@ public class BookResponse {
     }
     BookResponse bookResponse = (BookResponse) o;
     return Objects.equals(this.id, bookResponse.id) &&
-        Objects.equals(this.title, bookResponse.title);
+        Objects.equals(this.title, bookResponse.title) &&
+        Objects.equals(this.publisher, bookResponse.publisher) &&
+        Objects.equals(this.price, bookResponse.price);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, title);
+    return Objects.hash(id, title, publisher, price);
   }
 
   @Override
@@ -90,6 +137,8 @@ public class BookResponse {
     sb.append("class BookResponse {\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    title: ").append(toIndentedString(title)).append("\n");
+    sb.append("    publisher: ").append(toIndentedString(publisher)).append("\n");
+    sb.append("    price: ").append(toIndentedString(price)).append("\n");
     sb.append("}");
     return sb.toString();
   }

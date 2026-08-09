@@ -22,7 +22,7 @@ import jakarta.annotation.Generated;
  * AuthorCreateRequest
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-25T18:57:05.042584+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-08T17:49:56.569065+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 public class AuthorCreateRequest {
 
   private String name;

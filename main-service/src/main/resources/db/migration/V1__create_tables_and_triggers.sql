@@ -122,3 +122,7 @@ CREATE TRIGGER trigger_students_updated_at
 BEFORE UPDATE ON students
 FOR EACH ROW
 EXECUTE FUNCTION set_updated_at();
+
+ALTER TABLE test.books
+    ADD COLUMN IF NOT EXISTS publisher text,
+    ADD COLUMN IF NOT EXISTS price NUMERIC(10, 2);

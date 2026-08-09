@@ -45,6 +45,8 @@ public interface AuthorMapper {
 
         BookModel bookModel = new BookModel();
         bookModel.setTitle(requestCreate.getTitle());
+        bookModel.setPublisher(requestCreate.getPublisher());
+        bookModel.setPrice(requestCreate.getPrice());
 
         return bookModel;
     }

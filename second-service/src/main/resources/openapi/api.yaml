@@ -6,6 +6,8 @@ info:
 paths:
   /book-metadata/{bookId}:
     get:
+      tags:
+        - BookMetadata
       summary: Get book metadata by book id
       operationId: getBookMetadataByBookId
       parameters:
@@ -31,6 +33,8 @@ paths:
 
   /book-metadata:
     post:
+      tags:
+        - BookMetadata
       summary: Create book metadata
       operationId: createBookMetadata
       parameters:
