@@ -35,9 +35,9 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-08T17:49:59.276796300+03:00[Europe/Moscow]", comments = "Generator version: 7.8.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-11T18:38:56.691868200+03:00[Europe/Moscow]", comments = "Generator version: 7.8.0")
 @Validated
-@Tag(name = "book-metadata", description = "the book-metadata API")
+@Tag(name = "BookMetadata", description = "the BookMetadata API")
 public interface BookMetadataApi {
 
     default Optional<NativeWebRequest> getRequest() {
@@ -55,6 +55,7 @@ public interface BookMetadataApi {
     @Operation(
         operationId = "createBookMetadata",
         summary = "Create book metadata",
+        tags = { "BookMetadata" },
         responses = {
             @ApiResponse(responseCode = "201", description = "Created", content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = BookMetadataResponse.class))
@@ -105,6 +106,7 @@ public interface BookMetadataApi {
     @Operation(
         operationId = "getBookMetadataByBookId",
         summary = "Get book metadata by book id",
+        tags = { "BookMetadata" },
         responses = {
             @ApiResponse(responseCode = "200", description = "Metadata found", content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = BookMetadataResponse.class))

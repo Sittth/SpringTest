@@ -18,7 +18,7 @@ import jakarta.annotation.Generated;
  * CourseCreateRequest
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-08T17:49:56.569065+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-11T18:37:10.654812+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 public class CourseCreateRequest {
 
   private String title;

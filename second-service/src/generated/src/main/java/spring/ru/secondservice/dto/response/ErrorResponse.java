@@ -23,7 +23,7 @@ import jakarta.annotation.Generated;
  * ErrorResponse
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-08T17:50:00.197418700+03:00[Europe/Moscow]", comments = "Generator version: 7.8.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-11T18:38:57.427700+03:00[Europe/Moscow]", comments = "Generator version: 7.8.0")
 public class ErrorResponse {
 
   private String message;

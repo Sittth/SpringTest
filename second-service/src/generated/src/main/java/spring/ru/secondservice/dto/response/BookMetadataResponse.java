@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import java.math.BigDecimal;
 import java.util.UUID;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
@@ -19,7 +20,7 @@ import jakarta.annotation.Generated;
  * BookMetadataResponse
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-08T17:50:00.197418700+03:00[Europe/Moscow]", comments = "Generator version: 7.8.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-11T18:38:57.427700+03:00[Europe/Moscow]", comments = "Generator version: 7.8.0")
 public class BookMetadataResponse {
 
   private UUID id;
@@ -28,7 +29,7 @@ public class BookMetadataResponse {
 
   private String publisher;
 
-  private Double price;
+  private BigDecimal price;
 
   public BookMetadataResponse id(UUID id) {
     this.id = id;
@@ -90,7 +91,7 @@ public class BookMetadataResponse {
     this.publisher = publisher;
   }
 
-  public BookMetadataResponse price(Double price) {
+  public BookMetadataResponse price(BigDecimal price) {
     this.price = price;
     return this;
   }
@@ -99,14 +100,14 @@ public class BookMetadataResponse {
    * Get price
    * @return price
    */
-  
+  @Valid 
   @Schema(name = "price", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("price")
-  public Double getPrice() {
+  public BigDecimal getPrice() {
     return price;
   }
 
-  public void setPrice(Double price) {
+  public void setPrice(BigDecimal price) {
     this.price = price;
   }
 
