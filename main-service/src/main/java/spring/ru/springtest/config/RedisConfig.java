@@ -27,6 +27,8 @@ public class RedisConfig {
         PolymorphicTypeValidator typeValidator = BasicPolymorphicTypeValidator.builder()
                 .allowIfSubType("spring.ru.springtest.dto.")
                 .allowIfSubType("java.util.")
+                .allowIfSubType("java.math.")
+                .allowIfBaseType(Object.class)
                 .build();
 
         GenericJacksonJsonRedisSerializer jsonSerializer = GenericJacksonJsonRedisSerializer.builder()

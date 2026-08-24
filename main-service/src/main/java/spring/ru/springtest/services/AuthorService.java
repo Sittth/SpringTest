@@ -50,26 +50,14 @@ public class AuthorService {
     }
 
     @Cacheable(value = RedisConfig.AUTHOR_CACHE, key = "#id")
-    @Transactional
+    @Transactional(readOnly = true)
     public AuthorResponse findById(UUID id) {
 
         log.info("Finding author by id: {}", id);
 
         AuthorModel authorModel = findExistingAuthor(id);
-        enrichBooksIfMissing(authorModel);
 
         return authorMapper.toResponse(authorModel);
-    }
-
-    private void enrichBooksIfMissing(AuthorModel author) {
-        if (author.getBooks() == null) return;
-        author.getBooks().stream()
-                .filter(book -> book.getPublisher() == null || book.getPrice() == null)
-                .forEach(book -> bookMetadataEnrichmentClient.fetchMetadata(book.getId())
-                        .ifPresent(meta -> {
-                            book.setPublisher(meta.getPublisher());
-                            book.setPrice(meta.getPrice());
-                        }));
     }
 
     @Transactional(readOnly = true)
