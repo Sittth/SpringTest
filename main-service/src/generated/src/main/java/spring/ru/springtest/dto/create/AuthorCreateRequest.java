@@ -22,7 +22,7 @@ import jakarta.annotation.Generated;
  * AuthorCreateRequest
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-11T18:37:10.654812+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-08-27T18:33:24.057069+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 public class AuthorCreateRequest {
 
   private String name;
@@ -37,8 +37,9 @@ public class AuthorCreateRequest {
   /**
    * Constructor with only required parameters
    */
-  public AuthorCreateRequest(String name) {
+  public AuthorCreateRequest(String name, List<@Valid BookCreateRequest> books) {
     this.name = name;
+    this.books = books;
   }
 
   public AuthorCreateRequest name(String name) {
@@ -78,8 +79,8 @@ public class AuthorCreateRequest {
    * Get books
    * @return books
   */
-  @Valid 
-  @Schema(name = "books", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @NotNull @Valid @Size(min = 1) 
+  @Schema(name = "books", requiredMode = Schema.RequiredMode.REQUIRED)
   @JsonProperty("books")
   public List<@Valid BookCreateRequest> getBooks() {
     return books;

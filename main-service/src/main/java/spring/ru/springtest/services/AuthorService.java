@@ -81,9 +81,7 @@ public class AuthorService {
 
         AuthorModel saved = authorRepository.save(entity);
 
-        if (entity.getBooks() != null) {
-            entity.getBooks().forEach(this::enrichNewBook);
-        }
+        entity.getBooks().forEach(this::enrichNewBook);
 
         log.info("Saved author with id {}", saved.getId());
 
