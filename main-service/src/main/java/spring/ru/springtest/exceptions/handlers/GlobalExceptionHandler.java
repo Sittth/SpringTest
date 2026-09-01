@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import spring.ru.springtest.exceptions.BookMetadataRegistrationException;
 import spring.ru.springtest.exceptions.EntityNotFoundException;
 import spring.ru.springtest.exceptions.dto.ErrorResponse;
 import spring.ru.springtest.exceptions.dto.ValidationErrorResponse;
@@ -149,6 +150,24 @@ public class GlobalExceptionHandler {
                 .build();
 
         return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(response);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleBookMetadataRegistrationFailure(
+            BookMetadataRegistrationException ex) {
+
+        log.error("Book metadata registration failed, author creation rolled back: {}", ex.getMessage(), ex);
+
+        ErrorResponse response = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.SERVICE_UNAVAILABLE.value())
+                .error("Service Unvailable")
+                .message("Failed to register book metadata with the external service; author creation was rolled back")
+                .requestId(MDC.get("requestId"))
+                .build();
+
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
                 .body(response);
     }
 }

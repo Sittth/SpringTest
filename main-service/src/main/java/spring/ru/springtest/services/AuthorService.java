@@ -16,6 +16,7 @@ import spring.ru.springtest.config.RedisConfig;
 import spring.ru.springtest.dto.create.AuthorCreateRequest;
 import spring.ru.springtest.dto.response.AuthorResponse;
 import spring.ru.springtest.dto.update.AuthorUpdateRequest;
+import spring.ru.springtest.exceptions.BookMetadataRegistrationException;
 import spring.ru.springtest.exceptions.EntityNotFoundException;
 import spring.ru.springtest.mapper.AuthorMapper;
 import spring.ru.springtest.models.AuthorModel;
@@ -92,10 +93,11 @@ public class AuthorService {
         bookMetadataEnrichmentClient.createMetadata(book.getId(), book.getPublisher(), book.getPrice())
                 .ifPresentOrElse(
                         meta -> {
-                            book.setPublisher(meta.getPublisher());
-                            book.setPrice(meta.getPrice());
+                            authorMapper.updateBookMetadata(meta, book);
                         },
-                        () -> log.warn("Failed to register book metadata '{}', save it with user data without confirmation", book.getTitle())
+                        () -> {
+                            throw new BookMetadataRegistrationException(book.getId(), null);
+                        }
                 );
     }
 

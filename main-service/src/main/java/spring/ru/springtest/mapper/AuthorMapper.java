@@ -3,6 +3,7 @@ package spring.ru.springtest.mapper;
 import jakarta.persistence.EntityNotFoundException;
 import org.mapstruct.*;
 import org.springframework.data.domain.Page;
+import spring.ru.springtest.client.metadata.dto.BookMetadataResponse;
 import spring.ru.springtest.dto.create.AuthorCreateRequest;
 import spring.ru.springtest.dto.create.BookCreateRequest;
 import spring.ru.springtest.dto.response.AuthorResponse;
@@ -38,6 +39,8 @@ public interface AuthorMapper {
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "books", ignore = true)
     void updateEntityFromDto(AuthorUpdateRequest dto, @MappingTarget AuthorModel author);
+
+    void updateBookMetadata(BookMetadataResponse source, @MappingTarget BookModel target);
 
     default BookResponse toBookResponse(BookModel bookModel) {
         if (bookModel == null) return null;
