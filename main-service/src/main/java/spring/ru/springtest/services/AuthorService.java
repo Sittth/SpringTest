@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 import spring.ru.springtest.client.BookMetadataEnrichmentClient;
 import spring.ru.springtest.config.RedisConfig;
 import spring.ru.springtest.dto.create.AuthorCreateRequest;
@@ -33,6 +34,7 @@ public class AuthorService {
     private final AuthorRepository authorRepository;
     private final AuthorMapper authorMapper;
     private final BookMetadataEnrichmentClient bookMetadataEnrichmentClient;
+    private final TransactionTemplate transactionTemplate;
 
     private AuthorModel findExistingAuthor(UUID id) {
         return authorRepository.findByIdAndIsDeletedFalse(id)
@@ -73,18 +75,22 @@ public class AuthorService {
         return authorsPage.map(authorMapper::toResponse);
     }
 
-    @Transactional
     public AuthorResponse save(AuthorCreateRequest requestCreate) {
 
         log.info("Saving author: {}", requestCreate);
 
-        AuthorModel entity = authorMapper.toEntity(requestCreate);
+        AuthorModel saved = transactionTemplate.execute(status -> {
+            AuthorModel entity = authorMapper.toEntity(requestCreate);
+            return authorRepository.save(entity);
+        });
 
-        AuthorModel saved = authorRepository.save(entity);
-
-        entity.getBooks().forEach(this::enrichNewBook);
-
-        log.info("Saved author with id {}", saved.getId());
+        try {
+            saved.getBooks().forEach(this::enrichNewBook);
+        } catch (BookMetadataRegistrationException e) {
+            log.error("Book metadata registration failed", e);
+            authorRepository.delete(saved);
+            throw e;
+        }
 
         return authorMapper.toResponse(saved);
     }
