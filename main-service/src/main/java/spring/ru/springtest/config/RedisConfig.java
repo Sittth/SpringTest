@@ -1,6 +1,9 @@
 package spring.ru.springtest.config;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.interceptor.CacheErrorHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -17,9 +20,12 @@ import java.util.Map;
 
 @Configuration
 @EnableCaching
-public class RedisConfig {
+@RequiredArgsConstructor
+public class RedisConfig implements CachingConfigurer {
 
     public static final String AUTHOR_CACHE = "authors";
+
+    private final CacheErrorHandler cacheErrorHandler;
 
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
@@ -51,5 +57,10 @@ public class RedisConfig {
                 .cacheDefaults(defaultConfig)
                 .withInitialCacheConfigurations(perCacheConfigs)
                 .build();
+    }
+
+    @Override
+    public CacheErrorHandler errorHandler() {
+        return cacheErrorHandler;
     }
 }
