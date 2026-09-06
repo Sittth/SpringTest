@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 
 @Transactional
 @ExtendWith(MockitoExtension.class)
-public class CourseServiceTest {
+class CourseServiceTest {
 
     @Mock
     private CourseRepository courseRepository;

@@ -12,7 +12,7 @@ import java.util.UUID;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class CourseControllerTest extends AbstractControllerTest {
+class CourseControllerTest extends AbstractControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
