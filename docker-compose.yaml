@@ -56,8 +56,8 @@ services:
 
   second-service:
     build:
-      context: .
-      dockerfile: Dockerfile.second
+      context: ../SpringTest-second-service
+      dockerfile: Dockerfile
     container_name: second_service
     ports:
       - "8081:8081"

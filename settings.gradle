@@ -1,3 +1,1 @@
-rootProject.name = 'SpringTest'
-include 'main-service'
-include 'second-service'
+rootProject.name = 'main-service'

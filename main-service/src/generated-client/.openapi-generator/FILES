@@ -1,9 +1,0 @@
-README.md
-pom.xml
-src/main/java/org/openapitools/configuration/ApiKeyRequestInterceptor.java
-src/main/java/org/openapitools/configuration/ClientConfiguration.java
-src/main/java/spring/ru/springtest/client/metadata/BookMetadataApi.java
-src/main/java/spring/ru/springtest/client/metadata/BookMetadataApiClient.java
-src/main/java/spring/ru/springtest/client/metadata/dto/BookMetadataCreateRequest.java
-src/main/java/spring/ru/springtest/client/metadata/dto/BookMetadataResponse.java
-src/main/java/spring/ru/springtest/client/metadata/dto/ErrorResponse.java
