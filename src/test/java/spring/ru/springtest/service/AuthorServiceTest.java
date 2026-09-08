@@ -1,12 +1,12 @@
 package spring.ru.springtest.service;
 
+import spring.ru.springtest.client.BookMetadataResilientClient;
 import spring.ru.springtest.exceptions.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import spring.ru.springtest.client.BookMetadataEnrichmentClient;
 import spring.ru.springtest.dto.response.AuthorResponse;
 import spring.ru.springtest.mapper.AuthorMapper;
 import spring.ru.springtest.models.AuthorModel;
@@ -28,7 +28,7 @@ class AuthorServiceTest {
     @Mock
     private AuthorMapper authorMapper;
     @Mock
-    private BookMetadataEnrichmentClient bookMetadataEnrichmentClient;
+    private BookMetadataResilientClient bookMetadataResilientClient;
 
     @InjectMocks
     private AuthorService authorService;
@@ -48,7 +48,7 @@ class AuthorServiceTest {
         AuthorResponse actual = authorService.findById(id);
 
         assertThat(actual).isEqualTo(expected);
-        verifyNoInteractions(bookMetadataEnrichmentClient);
+        verifyNoInteractions(bookMetadataResilientClient);
     }
 
     @Test

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import spring.ru.springtest.client.BookMetadataEnrichmentClient;
+import spring.ru.springtest.client.BookMetadataResilientClient;
 import spring.ru.springtest.client.metadata.dto.BookMetadataResponse;
 import spring.ru.springtest.dto.create.AuthorCreateRequest;
 import spring.ru.springtest.dto.create.BookCreateRequest;
@@ -30,7 +30,7 @@ class AuthorControllerTest extends AbstractControllerTest {
     private JsonMapper jsonMapper;
 
     @MockitoBean
-    private BookMetadataEnrichmentClient bookMetadataEnrichmentClient;
+    private BookMetadataResilientClient bookMetadataResilientClient;
 
     @Test
     void createAuthor_withValidData_shouldReturn201WithEnrichedBook() throws Exception {
@@ -41,10 +41,10 @@ class AuthorControllerTest extends AbstractControllerTest {
                         .publisher("Secker & Warburg")
                         .price(BigDecimal.valueOf(12.99))));
 
-        when(bookMetadataEnrichmentClient.createMetadata(any(UUID.class), eq("Secker & Warburg"), eq(BigDecimal.valueOf(12.99))))
-                .thenReturn(Optional.of(new BookMetadataResponse()
+        when(bookMetadataResilientClient.createWithResilience(any(UUID.class), eq("Secker & Warburg"), eq(BigDecimal.valueOf(12.99))))
+                .thenReturn(new BookMetadataResponse()
                         .publisher("Secker & Warburg")
-                        .price(BigDecimal.valueOf(12.99))));
+                        .price(BigDecimal.valueOf(12.99)));
 
         mockMvc.perform(post("/authors")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -66,8 +66,15 @@ class AuthorControllerTest extends AbstractControllerTest {
 
     @Test
     void getAuthorById_whenExists_shouldReturn200() throws Exception {
-        AuthorCreateRequest createRequest = new AuthorCreateRequest().name("Jane Austen");
-        when(bookMetadataEnrichmentClient.createMetadata(any(), any(), any())).thenReturn(Optional.empty());
+        AuthorCreateRequest createRequest = new AuthorCreateRequest()
+                .name("Jane Austen")
+                .books(List.of(new BookCreateRequest()
+                    .title("Some Book")
+                    .publisher("Some Publisher")
+                    .price(BigDecimal.TEN)));
+
+        when(bookMetadataResilientClient.createWithResilience(any(), any(), any()))
+                .thenReturn(new BookMetadataResponse().publisher("Some Publisher").price(BigDecimal.TEN));
 
         String response = mockMvc.perform(post("/authors")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -89,7 +96,16 @@ class AuthorControllerTest extends AbstractControllerTest {
 
     @Test
     void deleteAuthor_thenGet_shouldReturn404() throws Exception {
-        AuthorCreateRequest createRequest = new AuthorCreateRequest().name("To Delete");
+        AuthorCreateRequest createRequest = new AuthorCreateRequest()
+                .name("To Delete")
+                .books(List.of(new BookCreateRequest()
+                    .title("Some Book")
+                    .publisher("Some Publisher")
+                    .price(BigDecimal.TEN)));
+
+        when(bookMetadataResilientClient.createWithResilience(any(), any(), any()))
+                .thenReturn(new BookMetadataResponse().publisher("Some Publisher").price(BigDecimal.TEN));
+
         String response = mockMvc.perform(post("/authors")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonMapper.writeValueAsString(createRequest)))
