@@ -12,7 +12,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
-import spring.ru.springtest.client.BookMetadataEnrichmentClient;
+import spring.ru.springtest.client.BookMetadataResilientClient;
+import spring.ru.springtest.client.metadata.dto.BookMetadataResponse;
 import spring.ru.springtest.config.RedisConfig;
 import spring.ru.springtest.dto.create.AuthorCreateRequest;
 import spring.ru.springtest.dto.response.AuthorResponse;
@@ -33,7 +34,7 @@ public class AuthorService {
 
     private final AuthorRepository authorRepository;
     private final AuthorMapper authorMapper;
-    private final BookMetadataEnrichmentClient bookMetadataEnrichmentClient;
+    private final BookMetadataResilientClient bookMetadataResilientClient;
     private final TransactionTemplate transactionTemplate;
 
     private AuthorModel findExistingAuthor(UUID id) {
@@ -96,15 +97,12 @@ public class AuthorService {
     }
 
     private void enrichNewBook(BookModel book) {
-        bookMetadataEnrichmentClient.createMetadata(book.getId(), book.getPublisher(), book.getPrice())
-                .ifPresentOrElse(
-                        meta -> {
-                            authorMapper.updateBookMetadata(meta, book);
-                        },
-                        () -> {
-                            throw new BookMetadataRegistrationException(book.getId(), null);
-                        }
-                );
+        BookMetadataResponse meta = bookMetadataResilientClient.createWithResilience(
+                book.getId(),
+                book.getPublisher(),
+                book.getPrice());
+
+        authorMapper.updateBookMetadata(meta, book);
     }
 
     @CachePut(value = RedisConfig.AUTHOR_CACHE, key = "#id")
