@@ -14,20 +14,66 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-  app:
-    build: .
+
+  redis:
+    image: redis:7.4-alpine
+    container_name: redis_cache
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    networks:
+      - app-network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  main-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: main_service
     ports:
       - "8080:8080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SECOND_SERVICE_URL: http://second-service:8081
+    networks:
+      - app-network
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+      second-service:
+        condition: service_started
+
+  second-service:
+    build:
+      context: ../SpringTest-second-service
+      dockerfile: Dockerfile
+    container_name: second_service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 123456
     networks:
       - app-network
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  redisdata:

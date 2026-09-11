@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
+import spring.ru.springtest.models.enums.BookMetadataStatus;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -21,6 +23,12 @@ public class BookModel {
 
     private String title;
 
+    @Column(name = "publisher")
+    private String publisher;
+
+    @Column(name = "price", precision = 10, scale = 2)
+    private BigDecimal price;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     private AuthorModel author;
@@ -33,6 +41,10 @@ public class BookModel {
 
     @Column(nullable = false)
     private boolean isDeleted;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private BookMetadataStatus metadataStatus;
 
     @PrePersist
     public void onCreate() {
