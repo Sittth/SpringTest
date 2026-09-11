@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
+import spring.ru.springtest.models.enums.BookMetadataStatus;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -40,6 +41,10 @@ public class BookModel {
 
     @Column(nullable = false)
     private boolean isDeleted;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private BookMetadataStatus metadataStatus;
 
     @PrePersist
     public void onCreate() {

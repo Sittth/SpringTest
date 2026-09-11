@@ -13,6 +13,7 @@ import spring.ru.springtest.dto.update.AuthorUpdateRequest;
 import spring.ru.springtest.dto.update.BookUpdateRequest;
 import spring.ru.springtest.models.AuthorModel;
 import spring.ru.springtest.models.BookModel;
+import spring.ru.springtest.models.enums.BookMetadataStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +62,7 @@ public interface AuthorMapper {
         bookModel.setTitle(requestCreate.getTitle());
         bookModel.setPublisher(requestCreate.getPublisher());
         bookModel.setPrice(requestCreate.getPrice());
+        bookModel.setMetadataStatus(BookMetadataStatus.PENDING);
 
         return bookModel;
     }
