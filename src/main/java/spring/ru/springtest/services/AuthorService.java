@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -23,6 +24,7 @@ import spring.ru.springtest.exceptions.EntityNotFoundException;
 import spring.ru.springtest.mapper.AuthorMapper;
 import spring.ru.springtest.models.AuthorModel;
 import spring.ru.springtest.models.BookModel;
+import spring.ru.springtest.models.enums.BookMetadataStatus;
 import spring.ru.springtest.repositories.AuthorRepository;
 
 import java.util.UUID;
@@ -85,24 +87,25 @@ public class AuthorService {
             return authorRepository.save(entity);
         });
 
-        try {
-            saved.getBooks().forEach(this::enrichNewBook);
-        } catch (BookMetadataRegistrationException e) {
-            log.error("Book metadata registration failed", e);
-            authorRepository.delete(saved);
-            throw e;
-        }
+        saved.getBooks().forEach(this::enrichNewBook);
+
+        transactionTemplate.executeWithoutResult(status -> authorRepository.save(saved));
 
         return authorMapper.toResponse(saved);
     }
 
     private void enrichNewBook(BookModel book) {
-        BookMetadataResponse meta = bookMetadataResilientClient.createWithResilience(
-                book.getId(),
-                book.getPublisher(),
-                book.getPrice());
+        try {
+            BookMetadataResponse meta = bookMetadataResilientClient.createWithResilience(
+                    book.getId(),
+                    book.getPublisher(),
+                    book.getPrice());
 
-        authorMapper.updateBookMetadata(meta, book);
+            authorMapper.updateBookMetadata(meta, book);
+            book.setMetadataStatus(BookMetadataStatus.CONFIRMED);
+        } catch (BookMetadataRegistrationException e) {
+            log.warn("Book metadata registration failed for book {}, leaving status PENDING for later retry", book.getId(), e);
+        }
     }
 
     @CachePut(value = RedisConfig.AUTHOR_CACHE, key = "#id")

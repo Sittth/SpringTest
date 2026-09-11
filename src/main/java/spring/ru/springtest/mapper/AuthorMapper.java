@@ -41,6 +41,13 @@ public interface AuthorMapper {
     @Mapping(target = "books", ignore = true)
     void updateEntityFromDto(AuthorUpdateRequest dto, @MappingTarget AuthorModel author);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "author", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
+    @Mapping(target = "metadataStatus", ignore = true)
+    @Mapping(target = "title", ignore = true)
     void updateBookMetadata(BookMetadataResponse source, @MappingTarget BookModel target);
 
     default BookResponse toBookResponse(BookModel bookModel) {
