@@ -10,6 +10,7 @@ import spring.ru.springtest.client.metadata.dto.BookMetadataResponse;
 import spring.ru.springtest.exceptions.BookMetadataRegistrationException;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,7 +26,7 @@ public class BookMetadataResilientClient {
     public BookMetadataResponse createWithResilience(
             UUID bookId, String publisher, BigDecimal price) {
 
-        UUID idempotencyKey = UUID.nameUUIDFromBytes(bookId.toString().getBytes());
+        UUID idempotencyKey = UUID.nameUUIDFromBytes(bookId.toString().getBytes(StandardCharsets.UTF_8));
 
         BookMetadataCreateRequest request = new BookMetadataCreateRequest()
                 .bookId(bookId)
