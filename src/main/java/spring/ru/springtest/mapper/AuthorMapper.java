@@ -15,6 +15,7 @@ import spring.ru.springtest.models.AuthorModel;
 import spring.ru.springtest.models.BookModel;
 import spring.ru.springtest.models.enums.BookMetadataStatus;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -70,6 +71,8 @@ public interface AuthorMapper {
         bookModel.setPublisher(requestCreate.getPublisher());
         bookModel.setPrice(requestCreate.getPrice());
         bookModel.setMetadataStatus(BookMetadataStatus.PENDING);
+        bookModel.setAttempts(0);
+        bookModel.setNextRetryAt(OffsetDateTime.now());
 
         return bookModel;
     }

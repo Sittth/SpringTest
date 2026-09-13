@@ -38,6 +38,7 @@ public class AuthorService {
     private final AuthorMapper authorMapper;
     private final BookMetadataResilientClient bookMetadataResilientClient;
     private final TransactionTemplate transactionTemplate;
+    private final BookMetadataRetryPolicy bookMetadataRetryPolicy;
 
     private AuthorModel findExistingAuthor(UUID id) {
         return authorRepository.findByIdAndIsDeletedFalse(id)
@@ -104,7 +105,7 @@ public class AuthorService {
             authorMapper.updateBookMetadata(meta, book);
             book.setMetadataStatus(BookMetadataStatus.CONFIRMED);
         } catch (BookMetadataRegistrationException e) {
-            log.warn("Book metadata registration failed for book {}, leaving status PENDING for later retry", book.getId(), e);
+            bookMetadataRetryPolicy.recordFailure(book, e);
         }
     }
 

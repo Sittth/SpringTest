@@ -46,6 +46,12 @@ public class BookModel {
     @Column(nullable = false)
     private BookMetadataStatus metadataStatus;
 
+    @Column(nullable = false)
+    private int attempts;
+
+    @Column(nullable = false)
+    private OffsetDateTime nextRetryAt;
+
     @PrePersist
     public void onCreate() {
         createdAt = OffsetDateTime.now();
