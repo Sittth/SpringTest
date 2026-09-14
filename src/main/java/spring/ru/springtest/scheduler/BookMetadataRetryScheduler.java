@@ -40,7 +40,7 @@ public class BookMetadataRetryScheduler {
                 0, BATCH_SIZE, Sort.by("nextRetryAt").ascending());
 
         Page<BookModel> duePage =
-                bookRepository.findBuMetadataStatusAndNextRetryAtLessThanEqualAndIsDeletedFalse(
+                bookRepository.findByMetadataStatusAndNextRetryAtLessThanEqualAndIsDeletedFalse(
                         BookMetadataStatus.PENDING, OffsetDateTime.now(), pageable);
 
         for (BookModel book : duePage.getContent()) {

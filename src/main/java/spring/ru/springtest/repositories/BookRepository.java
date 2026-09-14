@@ -14,6 +14,6 @@ public interface BookRepository extends JpaRepository<BookModel, UUID> {
 
     List<BookModel> findByMetadataStatusAndIsDeletedFalse(BookMetadataStatus status);
 
-    Page<BookModel> findBuMetadataStatusAndNextRetryAtLessThanEqualAndIsDeletedFalse(
+    Page<BookModel> findByMetadataStatusAndNextRetryAtLessThanEqualAndIsDeletedFalse(
             BookMetadataStatus status, OffsetDateTime now, Pageable pageable);
 }
