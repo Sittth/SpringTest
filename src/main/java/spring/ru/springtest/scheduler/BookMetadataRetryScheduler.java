@@ -2,6 +2,7 @@ package spring.ru.springtest.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +34,8 @@ public class BookMetadataRetryScheduler {
     private final BookRepository bookRepository;
     private final BookMetadataRetryPolicy bookMetadataRetryPolicy;
 
-    @Scheduled(fixedDelay = 60_000)
+    @Scheduled(fixedDelayString = "${book-metadata.retry.scheduler.fixed-delay-ms:60000}")
+    @SchedulerLock(name = "bookMetadataRetryScheduler", lockAtLeastFor = "10s", lockAtMostFor = "5m")
     public void retryPendingMetadata() {
 
         Pageable pageable = PageRequest.of(

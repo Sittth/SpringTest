@@ -29,6 +29,11 @@ spring:
   flyway:
     default-schema: test
 
+book-metadata:
+  retry:
+    scheduler:
+      fixed-delay-ms: 60000
+
 services:
   second-service:
     url: ${SECOND_SERVICE_URL:http://localhost:8081}
