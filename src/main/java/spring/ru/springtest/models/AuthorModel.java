@@ -14,7 +14,7 @@ import java.util.UUID;
 @Table(name = "authors", schema = "test")
 @Getter
 @Setter
-@SQLDelete(sql = "UPDATE authors SET is_deleted = true, updated_at = now() WHERE id=?")
+@SQLDelete(sql = "UPDATE test.authors SET is_deleted = true, updated_at = now() WHERE id=?")
 public class AuthorModel {
 
     @Id
