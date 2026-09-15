@@ -1,5 +1,6 @@
 package spring.ru.springtest.scheduler;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
@@ -54,7 +55,7 @@ public class BookMetadataRetryScheduler {
 
                 authorMapper.updateBookMetadata(meta, book);
                 book.setMetadataStatus(BookMetadataStatus.CONFIRMED);
-            } catch (BookMetadataRegistrationException e) {
+            } catch (BookMetadataRegistrationException | FeignException e) {
                 bookMetadataRetryPolicy.recordFailure(book, e);
             }
 

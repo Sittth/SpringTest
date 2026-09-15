@@ -1,5 +1,6 @@
 package spring.ru.springtest.services;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -98,13 +99,11 @@ public class AuthorService {
     private void enrichNewBook(BookModel book) {
         try {
             BookMetadataResponse meta = bookMetadataResilientClient.createWithResilience(
-                    book.getId(),
-                    book.getPublisher(),
-                    book.getPrice());
+                    book.getId(), book.getPublisher(), book.getPrice());
 
             authorMapper.updateBookMetadata(meta, book);
             book.setMetadataStatus(BookMetadataStatus.CONFIRMED);
-        } catch (BookMetadataRegistrationException e) {
+        } catch (BookMetadataRegistrationException | FeignException e) {
             bookMetadataRetryPolicy.recordFailure(book, e);
         }
     }

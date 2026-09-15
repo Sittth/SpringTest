@@ -1,5 +1,7 @@
 package spring.ru.springtest.services;
 
+import feign.FeignException;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -18,6 +20,13 @@ public class BookMetadataRetryPolicy {
 
     public void recordFailure(BookModel book, Throwable cause) {
 
+        if (isPermanentFailure(cause)) {
+            book.setMetadataStatus(BookMetadataStatus.FAILED);
+            log.error("Book metadata registration rejected by second-service (4xx) for book {}, marking as FAILED immediately",
+                    book.getId(), cause);
+            return;
+        }
+
         int attempts = book.getAttempts() + 1;
         book.setAttempts(attempts);
 
@@ -31,5 +40,20 @@ public class BookMetadataRetryPolicy {
             log.warn("Book metadata registration failed for book {} (attempt {}/{}), next retry at {}",
                     book.getId(), attempts, MAX_ATTEMPTS, book.getNextRetryAt(), cause);
         }
+    }
+
+    private boolean isPermanentFailure(Throwable cause) {
+        Throwable current = cause;
+        while (current != null) {
+            if (current instanceof ConstraintViolationException) {
+                return true;
+            }
+            if (current instanceof FeignException feignException
+                    && feignException.status() >= 400 && feignException.status() < 500) {
+                return true;
+            }
+            current = current.getCause();
+        }
+        return false;
     }
 }
