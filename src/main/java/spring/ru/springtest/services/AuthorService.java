@@ -40,6 +40,7 @@ public class AuthorService {
     private final BookMetadataResilientClient bookMetadataResilientClient;
     private final TransactionTemplate transactionTemplate;
     private final BookMetadataRetryPolicy bookMetadataRetryPolicy;
+    private final CacheInvalidationQueueService cacheInvalidationQueueService;
 
     private AuthorModel findExistingAuthor(UUID id) {
         return authorRepository.findByIdAndIsDeletedFalse(id)
@@ -123,7 +124,6 @@ public class AuthorService {
         return authorMapper.toResponse(existingAuthor);
     }
 
-    @CacheEvict(value = RedisConfig.AUTHOR_CACHE, key = "#id")
     @Transactional
     public void delete(UUID id) {
 
@@ -132,6 +132,8 @@ public class AuthorService {
         AuthorModel authorModel = findExistingAuthorForUpdate(id);
 
         authorRepository.delete(authorModel);
+
+        cacheInvalidationQueueService.enqueue(RedisConfig.AUTHOR_CACHE, id.toString());
 
         log.info("Deleted author with id {}", id);
     }
