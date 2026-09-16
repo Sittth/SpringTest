@@ -1,0 +1,3 @@
+ALTER TABLE test.books
+    ADD COLUMN IF NOT EXISTS publisher text,
+    ADD COLUMN IF NOT EXISTS price NUMERIC(10, 2);
