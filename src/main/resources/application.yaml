@@ -29,6 +29,19 @@ spring:
   flyway:
     default-schema: test
 
+resilience4j:
+  retry:
+    instances:
+      bookMetadataPost:
+        ignore-exceptions:
+          - jakarta.validation.ConstraintViolationException
+          - java.lang.IllegalArgumentException
+          - feign.FeignException.BadRequest
+          - feign.FeignException.Unauthorized
+          - feign.FeignException.Forbidden
+          - feign.FeignException.NotFound
+          - feign.FeignException.MethodNotAllowed
+
 book-metadata:
   retry:
     scheduler:
