@@ -12,6 +12,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import spring.ru.springtest.models.CacheInvalidationQueueEntry;
 import spring.ru.springtest.repositories.CacheInvalidationQueueRepository;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Slf4j
@@ -29,8 +30,11 @@ public class CacheInvalidationRetryScheduler {
     @SchedulerLock(name = "cacheInvalidationRetryScheduler", lockAtLeastFor = "5s", lockAtMostFor = "2m")
     public void retryPendingInvalidations() {
 
+        OffsetDateTime now = OffsetDateTime.now();
+
         List<CacheInvalidationQueueEntry> pending = cacheInvalidationQueueRepository
-                .findAll(PageRequest.of(0, BATCH_SIZE)).getContent();
+                .findByNextRetryAtLessThanEqualOrderByNextRetryAtAsc(
+                        now, PageRequest.of(0, BATCH_SIZE));
 
         for (CacheInvalidationQueueEntry entry : pending) {
             try {
@@ -45,9 +49,35 @@ public class CacheInvalidationRetryScheduler {
                         cacheInvalidationQueueRepository.delete(entry));
 
             } catch (Exception e) {
-                log.warn("Retry of cache invalidation still failing for cache '{}', key '{}': {}",
-                        entry.getCacheName(), entry.getCacheKey(), e.getMessage());
+                transactionTemplate.executeWithoutResult(status -> {
+                    int attempts = entry.getAttempts() + 1;
+
+                    entry.setAttempts(attempts);
+                    entry.setNextRetryAt(calculateNextRetryAt(attempts));
+
+                    cacheInvalidationQueueRepository.save(entry);
+                });
+
+                log.warn(
+                        "Retry of cache invalidation failed for cache '{}', key '{}', attempt {}. " +
+                                "Next retry at {}: {}",
+                        entry.getCacheName(),
+                        entry.getCacheKey(),
+                        entry.getAttempts(),
+                        entry.getNextRetryAt(),
+                        e.getMessage(),
+                        e
+                );
             }
         }
+    }
+
+    private OffsetDateTime calculateNextRetryAt(int attempts) {
+        long delaySeconds = Math.min(
+                30L * (1L << Math.min(attempts - 1, 4)),
+                600L
+        );
+
+        return OffsetDateTime.now().plusSeconds(delaySeconds);
     }
 }

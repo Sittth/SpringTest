@@ -26,6 +26,7 @@ CREATE TABLE test.cache_invalidation_queue (
     cache_name text NOT NULL,
     cache_key text NOT NULL,
     attempts int NOT NULL DEFAULT 0,
+    next_retry_at timestamptz NOT NULL DEFAULT now(),
     created_at timestamptz NOT NULL DEFAULT now()
 );
 

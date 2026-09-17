@@ -26,11 +26,15 @@ public class CacheInvalidationQueueEntry {
     @Column(nullable = false)
     private int attempts;
 
+    @Column(nullable = false)
+    private OffsetDateTime nextRetryAt;
+
     @Column(nullable = false, updatable = false)
     private OffsetDateTime createdAt;
 
     @PrePersist
     public void onCreate() {
         createdAt = OffsetDateTime.now();
+        nextRetryAt = OffsetDateTime.now();
     }
 }
