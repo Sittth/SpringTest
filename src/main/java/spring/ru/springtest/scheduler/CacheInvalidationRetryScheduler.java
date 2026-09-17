@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class BookMetadataRetryScheduler {
+public class CacheInvalidationRetryScheduler {
 
     private static final int BATCH_SIZE = 10;
 
