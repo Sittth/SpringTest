@@ -1,6 +1,7 @@
 package spring.ru.springtest.services;
 
 import feign.FeignException;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +18,16 @@ import java.time.OffsetDateTime;
 public class BookMetadataRetryPolicy {
 
     private static final int MAX_ATTEMPTS = 5;
+    private static final int RETRY_INTERVAL_IN_MINUTES = 10;
 
     public void recordFailure(BookModel book, Throwable cause) {
+
+        if (isCircuitBreakerRejection(cause)) {
+            book.setNextRetryAt(OffsetDateTime.now().plusMinutes(RETRY_INTERVAL_IN_MINUTES));
+            log.warn("Book metadata registration rejected for book {} by {}, next attempt in {} minutes",
+                    book.getId(), cause.getMessage(), RETRY_INTERVAL_IN_MINUTES);
+            return;
+        }
 
         if (isPermanentFailure(cause)) {
             book.setMetadataStatus(BookMetadataStatus.FAILED);
@@ -50,6 +59,17 @@ public class BookMetadataRetryPolicy {
             }
             if (current instanceof FeignException feignException
                     && feignException.status() >= 400 && feignException.status() < 500) {
+                return true;
+            }
+            current = current.getCause();
+        }
+        return false;
+    }
+
+    private boolean isCircuitBreakerRejection(Throwable cause) {
+        Throwable current = cause;
+        while (current != null) {
+            if (current instanceof CallNotPermittedException) {
                 return true;
             }
             current = current.getCause();
