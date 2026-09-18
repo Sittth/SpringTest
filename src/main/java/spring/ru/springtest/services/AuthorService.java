@@ -1,31 +1,24 @@
 package spring.ru.springtest.services;
 
-import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 import spring.ru.springtest.client.BookMetadataResilientClient;
-import spring.ru.springtest.client.metadata.dto.BookMetadataResponse;
 import spring.ru.springtest.config.RedisConfig;
 import spring.ru.springtest.dto.create.AuthorCreateRequest;
 import spring.ru.springtest.dto.response.AuthorResponse;
 import spring.ru.springtest.dto.update.AuthorUpdateRequest;
-import spring.ru.springtest.exceptions.BookMetadataRegistrationException;
 import spring.ru.springtest.exceptions.EntityNotFoundException;
 import spring.ru.springtest.mapper.AuthorMapper;
 import spring.ru.springtest.models.AuthorModel;
-import spring.ru.springtest.models.BookModel;
-import spring.ru.springtest.models.enums.BookMetadataStatus;
 import spring.ru.springtest.repositories.AuthorRepository;
 
 import java.util.UUID;
@@ -37,10 +30,9 @@ public class AuthorService {
 
     private final AuthorRepository authorRepository;
     private final AuthorMapper authorMapper;
-    private final BookMetadataResilientClient bookMetadataResilientClient;
     private final TransactionTemplate transactionTemplate;
-    private final BookMetadataRetryPolicy bookMetadataRetryPolicy;
     private final CacheInvalidationQueueService cacheInvalidationQueueService;
+    private final BookMetadataEnrichmentService bookMetadataEnrichmentService;
 
     private AuthorModel findExistingAuthor(UUID id) {
         return authorRepository.findByIdAndIsDeletedFalse(id)
@@ -90,23 +82,11 @@ public class AuthorService {
             return authorRepository.save(entity);
         });
 
-        saved.getBooks().forEach(this::enrichNewBook);
+        saved.getBooks().forEach(bookMetadataEnrichmentService::enrichBook);
 
         transactionTemplate.executeWithoutResult(status -> authorRepository.save(saved));
 
         return authorMapper.toResponse(saved);
-    }
-
-    private void enrichNewBook(BookModel book) {
-        try {
-            BookMetadataResponse meta = bookMetadataResilientClient.createWithResilience(
-                    book.getId(), book.getPublisher(), book.getPrice());
-
-            authorMapper.updateBookMetadata(meta, book);
-            book.setMetadataStatus(BookMetadataStatus.CONFIRMED);
-        } catch (BookMetadataRegistrationException | FeignException e) {
-            bookMetadataRetryPolicy.recordFailure(book, e);
-        }
     }
 
     @CachePut(value = RedisConfig.AUTHOR_CACHE, key = "#id")
