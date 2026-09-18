@@ -37,12 +37,19 @@ public class CacheInvalidationRetryScheduler {
                         now, PageRequest.of(0, BATCH_SIZE));
 
         for (CacheInvalidationQueueEntry entry : pending) {
-            try {
-                Cache cache = cacheManager.getCache(entry.getCacheName());
-                if (cache == null) {
-                    throw new IllegalStateException("Cache not found: " + entry.getCacheName());
-                }
 
+            Cache cache = cacheManager.getCache(entry.getCacheName());
+            if (cache == null) {
+                log.error("Unknown cache '{}' referenced in invalidation queue (key '{}'), " +
+                                "removing entry as this is a configuration error, not a transient failure",
+                        entry.getCacheName(), entry.getCacheKey());
+
+                transactionTemplate.executeWithoutResult(status ->
+                        cacheInvalidationQueueRepository.delete(entry));
+                continue;
+            }
+
+            try {
                 cache.evict(entry.getCacheKey());
 
                 transactionTemplate.executeWithoutResult(status ->
@@ -51,16 +58,13 @@ public class CacheInvalidationRetryScheduler {
             } catch (Exception e) {
                 transactionTemplate.executeWithoutResult(status -> {
                     int attempts = entry.getAttempts() + 1;
-
                     entry.setAttempts(attempts);
                     entry.setNextRetryAt(calculateNextRetryAt(attempts));
-
                     cacheInvalidationQueueRepository.save(entry);
                 });
 
                 log.warn(
-                        "Retry of cache invalidation failed for cache '{}', key '{}', attempt {}. " +
-                                "Next retry at {}: {}",
+                        "Retry of cache invalidation failed for cache '{}', key '{}', attempt {}. Next retry at {}: {}",
                         entry.getCacheName(),
                         entry.getCacheKey(),
                         entry.getAttempts(),
