@@ -3,6 +3,7 @@ package spring.ru.springtest.models;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import spring.ru.springtest.models.enums.CacheInvalidationStatus;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -23,11 +24,21 @@ public class CacheInvalidationQueueEntry {
     @Column(nullable = false)
     private String cacheKey;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private CacheInvalidationStatus status = CacheInvalidationStatus.PENDING;
+
     @Column(nullable = false)
     private int attempts;
 
     @Column(nullable = false)
     private OffsetDateTime nextRetryAt;
+
+    @Column
+    private OffsetDateTime lockedUntil;
+
+    @Column(columnDefinition = "text")
+    private String lastError;
 
     @Column(nullable = false, updatable = false)
     private OffsetDateTime createdAt;

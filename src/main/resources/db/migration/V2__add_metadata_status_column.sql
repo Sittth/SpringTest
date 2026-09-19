@@ -56,4 +56,14 @@ ALTER TABLE test.books
     ADD COLUMN IF NOT EXISTS locked_until timestamptz;
 
 ALTER TABLE test.cache_invalidation_queue
-    ADD COLUMN IF NOT EXISTS locked_until timestamptz;
+    ADD COLUMN IF NOT EXISTS locked_until timestamptz,
+    ADD COLUMN IF NOT EXISTS status text NOT NULL DEFAULT 'PENDING',
+    ADD COLUMN IF NOT EXISTS last_error text;
+
+ALTER TABLE test.cache_invalidation_queue
+    ADD CONSTRAINT cache_invalidation_queue_status_check
+        CHECK (status IN ('PENDING', 'FAILED'));
+
+CREATE INDEX IF NOT EXISTS idx_cache_invalidation_queue_pending
+    ON test.cache_invalidation_queue (next_retry_at)
+    WHERE status = 'PENDING';
