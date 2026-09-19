@@ -20,7 +20,6 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@Validated
 public class AuthorController implements AuthorsApi {
 
     private final AuthorService authorService;
@@ -33,21 +32,19 @@ public class AuthorController implements AuthorsApi {
     }
 
     @Override
-    public GetAuthors200Response getAuthors(
-            @Min(0) @NotNull Integer page,
-            @Min(1) @Max(50) @NotNull Integer size) {
+    public GetAuthors200Response getAuthors(Integer page, Integer size) {
 
         return authorMapper.toPageResponse(authorService.findAllPaginated(page, size));
     }
 
     @Override
-    public AuthorResponse createAuthor(@Valid AuthorCreateRequest requestCreate) {
+    public AuthorResponse createAuthor(AuthorCreateRequest requestCreate) {
 
         return authorService.save(requestCreate);
     }
 
     @Override
-    public AuthorResponse updateAuthorById(UUID id, @Valid AuthorUpdateRequest requestUpdate) {
+    public AuthorResponse updateAuthorById(UUID id, AuthorUpdateRequest requestUpdate) {
 
         return authorService.update(id, requestUpdate);
     }

@@ -18,7 +18,7 @@ import jakarta.annotation.Generated;
  * ProfileUpdateRequest
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-06-25T18:57:05.843999200+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2026-09-06T16:20:52.447410600+03:00[Europe/Moscow]", comments = "Generator version: 7.6.0")
 public class ProfileUpdateRequest {
 
   private String bio;

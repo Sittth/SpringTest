@@ -19,7 +19,6 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@Validated
 public class CourseController implements CoursesApi {
 
     private final CourseService courseService;
@@ -32,21 +31,19 @@ public class CourseController implements CoursesApi {
     }
 
     @Override
-    public GetCourses200Response getCourses(
-            @Min(0) @NotNull Integer page,
-            @Min(1) @Max(50) @NotNull Integer size) {
+    public GetCourses200Response getCourses(Integer page, Integer size) {
 
         return courseMapper.toPageResponse(courseService.findAllPaginated(page, size));
     }
 
     @Override
-    public CourseResponse createCourse(@Valid CourseCreateRequest requestCreate) {
+    public CourseResponse createCourse(CourseCreateRequest requestCreate) {
 
         return courseService.save(requestCreate);
     }
 
     @Override
-    public CourseResponse updateCourseById(UUID id, @Valid CourseUpdateRequest requestUpdate) {
+    public CourseResponse updateCourseById(UUID id, CourseUpdateRequest requestUpdate) {
 
         return courseService.update(id, requestUpdate);
     }
