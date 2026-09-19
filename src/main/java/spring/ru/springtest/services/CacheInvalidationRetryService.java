@@ -6,6 +6,7 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
+import spring.ru.springtest.config.CacheInvalidationRetryProperties;
 import spring.ru.springtest.models.CacheInvalidationQueueEntry;
 import spring.ru.springtest.models.enums.CacheInvalidationStatus;
 import spring.ru.springtest.repositories.CacheInvalidationQueueRepository;
@@ -19,25 +20,22 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CacheInvalidationRetryService {
 
-    private static final int BATCH_SIZE = 10;
-    private static final int MAX_ATTEMPTS = 10;
-
-    private static final Duration LEASE = Duration.ofMinutes(5);
-
-    private static final long BASE_DELAY_SECONDS = 30L;
-    private static final long MAX_DELAY_SECONDS = 600L;
+    private static final int MAX_BACKOFF_SHIFT = 20;
     private static final int MAX_ERROR_LENGTH = 1000;
 
     private final CacheInvalidationQueueRepository cacheInvalidationQueueRepository;
     private final CacheManager cacheManager;
     private final TransactionTemplate transactionTemplate;
+    private final CacheInvalidationRetryProperties retryProperties;
 
     public List<CacheInvalidationQueueEntry> claimBatch() {
 
         OffsetDateTime now = OffsetDateTime.now();
 
+        CacheInvalidationRetryProperties.Scheduler settings = retryProperties.scheduler();
+
         List<CacheInvalidationQueueEntry> claimed = transactionTemplate.execute(status ->
-                cacheInvalidationQueueRepository.claimBatch(now, now.plus(LEASE), BATCH_SIZE));
+                cacheInvalidationQueueRepository.claimBatch(now, now.plus(settings.lease()), settings.batchSize()));
 
         return claimed == null ? List.of() : claimed;
     }
@@ -70,18 +68,20 @@ public class CacheInvalidationRetryService {
     private void recordFailure(CacheInvalidationQueueEntry entry, Exception cause) {
 
         int attempts = entry.getAttempts() + 1;
+        int maxAttempts = retryProperties.maxAttempts();
+
         entry.setAttempts(attempts);
         entry.setLastError(truncate(cause.toString()));
         entry.setLockedUntil(null);
 
-        if (attempts >= MAX_ATTEMPTS) {
+        if (attempts >= maxAttempts) {
             entry.setStatus(CacheInvalidationStatus.FAILED);
             log.error("Cache invalidation permanently failed for cache '{}', key '{}' after {} attempts",
                     entry.getCacheName(), entry.getCacheKey(), attempts, cause);
         } else {
             entry.setNextRetryAt(calculateNextRetryAt(attempts));
             log.warn("Cache invalidation failed for cache '{}', key '{}' (attempt {}/{}), next retry at {}: {}",
-                    entry.getCacheName(), entry.getCacheKey(), attempts, MAX_ATTEMPTS,
+                    entry.getCacheName(), entry.getCacheKey(), attempts, maxAttempts,
                     entry.getNextRetryAt(), cause.getMessage());
         }
 
@@ -102,12 +102,12 @@ public class CacheInvalidationRetryService {
     }
 
     private OffsetDateTime calculateNextRetryAt(int attempts) {
-        long delaySeconds = Math.min(
-                BASE_DELAY_SECONDS * (1L << Math.min(attempts - 1, 10)),
-                MAX_DELAY_SECONDS
-        );
+        int shift = Math.min(attempts - 1, MAX_BACKOFF_SHIFT);
 
-        return OffsetDateTime.now().plusSeconds(delaySeconds);
+        Duration delay = retryProperties.baseDelay().multipliedBy(1L << shift);
+        Duration maxDelay = retryProperties.maxDelay();
+
+        return OffsetDateTime.now().plus(delay.compareTo(maxDelay) > 0 ? maxDelay : delay);
     }
 
     private String truncate(String message) {

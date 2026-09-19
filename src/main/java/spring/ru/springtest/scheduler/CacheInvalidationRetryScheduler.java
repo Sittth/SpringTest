@@ -15,11 +15,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CacheInvalidationRetryScheduler {
 
-    private static final int BATCH_SIZE = 10;
-
     private final CacheInvalidationRetryService cacheInvalidationRetryService;
 
-    @Scheduled(fixedDelayString = "${cache.invalidation.retry.fixed-delay-ms:30000}")
+    @Scheduled(fixedDelayString = "${cache-invalidation.retry.scheduler.fixed-delay-ms:30000}")
     @SchedulerLock(name = "cacheInvalidationRetryScheduler", lockAtLeastFor = "5s", lockAtMostFor = "2m")
     public void retryPendingInvalidations() {
 

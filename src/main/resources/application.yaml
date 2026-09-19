@@ -30,6 +30,10 @@ spring:
     default-schema: test
 
 resilience4j:
+  circuitbreaker:
+    instances:
+      bookMetadataPost:
+        wait-duration-in-open-state: 60s
   retry:
     instances:
       bookMetadataPost:
@@ -44,8 +48,22 @@ resilience4j:
 
 book-metadata:
   retry:
+    max-attempts: 5
+    base-delay: 5m
     scheduler:
       fixed-delay-ms: 60000
+      batch-size: 10
+      lease: 10m
+
+cache-invalidation:
+  retry:
+    max-attempts: 10
+    base-delay: 30s
+    max-delay: 10m
+    scheduler:
+      fixed-delay-ms: 30000
+      batch-size: 10
+      lease: 5m
 
 services:
   second-service:

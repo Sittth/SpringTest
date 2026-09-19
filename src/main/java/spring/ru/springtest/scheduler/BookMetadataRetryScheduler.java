@@ -6,6 +6,7 @@ import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
+import spring.ru.springtest.config.BookMetadataRetryProperties;
 import spring.ru.springtest.models.BookModel;
 import spring.ru.springtest.repositories.BookRepository;
 import spring.ru.springtest.services.BookMetadataEnrichmentService;
@@ -20,15 +21,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookMetadataRetryScheduler {
 
-    private static final int BATCH_SIZE = 10;
-
-    private static final Duration LEASE = Duration.ofMinutes(10);
-
     private final BookRepository bookRepository;
     private final TransactionTemplate transactionTemplate;
     private final BookMetadataRegistrationService bookMetadataRegistrationService;
+    private final BookMetadataRetryProperties retryProperties;
 
-    @Scheduled(fixedDelayString = "${book.metadata.retry.fixed-delay-ms:30000}")
+    @Scheduled(fixedDelayString = "${book-metadata.retry.scheduler.fixed-delay-ms:30000}")
     @SchedulerLock(
             name = "bookMetadataRetryScheduler",
             lockAtLeastFor = "5s",
@@ -38,8 +36,10 @@ public class BookMetadataRetryScheduler {
 
         OffsetDateTime now = OffsetDateTime.now();
 
+        BookMetadataRetryProperties.Scheduler settings = retryProperties.scheduler();
+
         List<BookModel> claimed = transactionTemplate.execute(status ->
-                bookRepository.claimBatch(now, now.plus(LEASE), BATCH_SIZE));
+                bookRepository.claimBatch(now, now.plus(settings.lease()), settings.batchSize()));
 
         if (claimed == null || claimed.isEmpty()) {
             return;

@@ -32,7 +32,7 @@ public class AuthorService {
     private final AuthorMapper authorMapper;
     private final TransactionTemplate transactionTemplate;
     private final CacheInvalidationQueueService cacheInvalidationQueueService;
-    private final BookMetadataEnrichmentService bookMetadataEnrichmentService;
+    private final BookMetadataRegistrationService bookMetadataRegistrationService;
 
     private AuthorModel findExistingAuthor(UUID id) {
         return authorRepository.findByIdAndIsDeletedFalse(id)
@@ -82,7 +82,7 @@ public class AuthorService {
             return authorRepository.save(entity);
         });
 
-        saved.getBooks().forEach(bookMetadataEnrichmentService::enrichBook);
+        saved.getBooks().forEach(bookMetadataRegistrationService::register);
 
         transactionTemplate.executeWithoutResult(status -> authorRepository.save(saved));
 

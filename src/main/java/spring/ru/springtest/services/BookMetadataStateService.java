@@ -2,15 +2,19 @@ package spring.ru.springtest.services;
 
 import feign.FeignException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import spring.ru.springtest.client.metadata.dto.BookMetadataResponse;
+import spring.ru.springtest.config.BookMetadataRetryProperties;
 import spring.ru.springtest.mapper.AuthorMapper;
 import spring.ru.springtest.models.BookModel;
 import spring.ru.springtest.models.enums.BookMetadataStatus;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
 
 @Component
@@ -18,10 +22,11 @@ import java.time.OffsetDateTime;
 @Slf4j
 public class BookMetadataStateService {
 
-    private static final int MAX_ATTEMPTS = 5;
-    private static final int RETRY_INTERVAL_IN_MINUTES = 10;
+    private static final int MAX_BACKOFF_SHIFT = 20;
 
     private final AuthorMapper authorMapper;
+    private final CircuitBreakerRegistry circuitBreakerRegistry;
+    private final BookMetadataRetryProperties retryProperties;
 
     public void markConfirmed(BookModel book, BookMetadataResponse meta) {
         authorMapper.updateBookMetadata(meta, book);
@@ -30,10 +35,13 @@ public class BookMetadataStateService {
 
     public void recordFailure(BookModel book, Throwable cause) {
 
-        if (isCircuitBreakerRejection(cause)) {
-            book.setNextRetryAt(OffsetDateTime.now().plusMinutes(RETRY_INTERVAL_IN_MINUTES));
-            log.warn("Book metadata registration rejected for book {} by {}, next attempt in {} minutes",
-                    book.getId(), cause.getMessage(), RETRY_INTERVAL_IN_MINUTES);
+        CallNotPermittedException rejection = findCircuitBreakerRejection(cause);
+
+        if (rejection != null) {
+            Duration delay = openStateWaitDuration(rejection);
+            book.setNextRetryAt(OffsetDateTime.now().plus(delay));
+            log.warn("Book metadata registration rejected for book {} by {}, next attempt in {}",
+                    book.getId(), rejection.getMessage(), delay);
             return;
         }
 
@@ -47,16 +55,34 @@ public class BookMetadataStateService {
         int attempts = book.getAttempts() + 1;
         book.setAttempts(attempts);
 
-        if (attempts >= MAX_ATTEMPTS) {
+        int maxAttempts = retryProperties.maxAttempts();
+
+        if (attempts >= maxAttempts) {
             book.setMetadataStatus(BookMetadataStatus.FAILED);
             log.error("Book metadata registration permanently failed for book {} after {} attempts",
                     book.getId(), attempts, cause);
         } else {
-            long delayMinutes = 5L * (1L << (attempts - 1));
-            book.setNextRetryAt(OffsetDateTime.now().plusMinutes(delayMinutes));
+            Duration delay = backoffDelay(attempts);
+            book.setNextRetryAt(OffsetDateTime.now().plus(delay));
             log.warn("Book metadata registration failed for book {} (attempt {}/{}), next retry at {}",
-                    book.getId(), attempts, MAX_ATTEMPTS, book.getNextRetryAt(), cause);
+                    book.getId(), attempts, maxAttempts, book.getNextRetryAt(), cause);
         }
+    }
+
+    private Duration backoffDelay(int attempts) {
+        int shift = Math.min(attempts - 1, MAX_BACKOFF_SHIFT);
+        return retryProperties.baseDelay().multipliedBy(1L << shift);
+    }
+
+    private Duration openStateWaitDuration(CallNotPermittedException rejection) {
+        CircuitBreaker circuitBreaker =
+                circuitBreakerRegistry.circuitBreaker(rejection.getCausingCircuitBreakerName());
+
+        long waitMillis = circuitBreaker.getCircuitBreakerConfig()
+                .getWaitIntervalFunctionInOpenState()
+                .apply(1);
+
+        return Duration.ofMillis(waitMillis);
     }
 
     private boolean isPermanentFailure(Throwable cause) {
@@ -74,14 +100,14 @@ public class BookMetadataStateService {
         return false;
     }
 
-    private boolean isCircuitBreakerRejection(Throwable cause) {
+    private CallNotPermittedException findCircuitBreakerRejection(Throwable cause) {
         Throwable current = cause;
         while (current != null) {
-            if (current instanceof CallNotPermittedException) {
-                return true;
+            if (current instanceof CallNotPermittedException rejection) {
+                return rejection;
             }
             current = current.getCause();
         }
-        return false;
+        return null;
     }
 }
