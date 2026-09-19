@@ -6,19 +6,27 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import spring.ru.springtest.client.metadata.dto.BookMetadataResponse;
+import spring.ru.springtest.mapper.AuthorMapper;
 import spring.ru.springtest.models.BookModel;
 import spring.ru.springtest.models.enums.BookMetadataStatus;
 
-import java.awt.print.Book;
 import java.time.OffsetDateTime;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class BookMetadataRetryPolicy {
+public class BookMetadataStateService {
 
     private static final int MAX_ATTEMPTS = 5;
     private static final int RETRY_INTERVAL_IN_MINUTES = 10;
+
+    private final AuthorMapper authorMapper;
+
+    public void markConfirmed(BookModel book, BookMetadataResponse meta) {
+        authorMapper.updateBookMetadata(meta, book);
+        book.setMetadataStatus(BookMetadataStatus.CONFIRMED);
+    }
 
     public void recordFailure(BookModel book, Throwable cause) {
 

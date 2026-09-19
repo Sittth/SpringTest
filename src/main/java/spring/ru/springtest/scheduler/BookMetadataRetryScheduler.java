@@ -3,18 +3,13 @@ package spring.ru.springtest.scheduler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
-import spring.ru.springtest.client.BookMetadataResilientClient;
-import spring.ru.springtest.mapper.AuthorMapper;
 import spring.ru.springtest.models.BookModel;
-import spring.ru.springtest.models.enums.BookMetadataStatus;
 import spring.ru.springtest.repositories.BookRepository;
 import spring.ru.springtest.services.BookMetadataEnrichmentService;
-import spring.ru.springtest.services.BookMetadataRetryPolicy;
+import spring.ru.springtest.services.BookMetadataRegistrationService;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -31,7 +26,7 @@ public class BookMetadataRetryScheduler {
 
     private final BookRepository bookRepository;
     private final TransactionTemplate transactionTemplate;
-    private final BookMetadataEnrichmentService bookMetadataEnrichmentService;
+    private final BookMetadataRegistrationService bookMetadataRegistrationService;
 
     @Scheduled(fixedDelayString = "${book.metadata.retry.fixed-delay-ms:30000}")
     @SchedulerLock(
@@ -61,7 +56,7 @@ public class BookMetadataRetryScheduler {
 
     private void retryBookMetadata(BookModel book) {
 
-        bookMetadataEnrichmentService.enrichBook(book);
+        bookMetadataRegistrationService.register(book);
 
         book.setLockedUntil(null);
 
