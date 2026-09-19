@@ -1,25 +1,39 @@
 package spring.ru.springtest.services;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.transaction.support.TransactionTemplate;
 import spring.ru.springtest.models.CacheInvalidationQueueEntry;
 import spring.ru.springtest.repositories.CacheInvalidationQueueRepository;
 
 import java.util.UUID;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class CacheInvalidationQueueService {
 
     private final CacheInvalidationQueueRepository cacheInvalidationQueueRepository;
     private final CacheManager cacheManager;
+    private final TransactionTemplate requiresNewTransactionTemplate;
 
+    public CacheInvalidationQueueService(CacheInvalidationQueueRepository cacheInvalidationQueueRepository,
+                                         CacheManager cacheManager,
+                                         PlatformTransactionManager transactionManager) {
+        this.cacheInvalidationQueueRepository = cacheInvalidationQueueRepository;
+        this.cacheManager = cacheManager;
+        this.requiresNewTransactionTemplate = new TransactionTemplate(transactionManager);
+        this.requiresNewTransactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+    }
+
+    @Transactional(propagation = Propagation.MANDATORY)
     public void enqueue(String cacheName, String cacheKey) {
 
         CacheInvalidationQueueEntry entry = new CacheInvalidationQueueEntry();
@@ -27,17 +41,12 @@ public class CacheInvalidationQueueService {
         entry.setCacheKey(cacheKey);
         CacheInvalidationQueueEntry saved = cacheInvalidationQueueRepository.save(entry);
 
-        if (TransactionSynchronizationManager.isSynchronizationActive()) {
-            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-                @Override
-                public void afterCommit() {
-                    tryImmediateEviction(saved.getId(), cacheName, cacheKey);
-                }
-            });
-        } else {
-            log.warn("enqueue() called outside an active transaction — skipping immediate post-commit eviction for cache '{}', key '{}'; scheduler will retry",
-                    cacheName, cacheKey);
-        }
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                tryImmediateEviction(saved.getId(), cacheName, cacheKey);
+            }
+        });
     }
 
     private void tryImmediateEviction(UUID queueEntryId, String cacheName, String cacheKey) {
@@ -47,7 +56,10 @@ public class CacheInvalidationQueueService {
                 throw new IllegalStateException("Cache not found: " + cacheName);
             }
             cache.evict(cacheKey);
-            cacheInvalidationQueueRepository.deleteById(queueEntryId);
+
+            requiresNewTransactionTemplate.executeWithoutResult(status ->
+                    cacheInvalidationQueueRepository.deleteById(queueEntryId));
+
             log.info("Cache '{}' key '{}' invalidated immediately after commit", cacheName, cacheKey);
         } catch (Exception e) {
             log.warn("Immediate post-commit eviction failed for cache '{}', key '{}', will retry via scheduler: {}",
