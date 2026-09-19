@@ -16,6 +16,7 @@ import spring.ru.springtest.repositories.BookRepository;
 import spring.ru.springtest.services.BookMetadataEnrichmentService;
 import spring.ru.springtest.services.BookMetadataRetryPolicy;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -26,10 +27,9 @@ public class BookMetadataRetryScheduler {
 
     private static final int BATCH_SIZE = 10;
 
+    private static final Duration LEASE = Duration.ofMinutes(10);
+
     private final BookRepository bookRepository;
-    private final BookMetadataResilientClient bookMetadataResilientClient;
-    private final AuthorMapper authorMapper;
-    private final BookMetadataRetryPolicy bookMetadataRetryPolicy;
     private final TransactionTemplate transactionTemplate;
     private final BookMetadataEnrichmentService bookMetadataEnrichmentService;
 
@@ -43,23 +43,27 @@ public class BookMetadataRetryScheduler {
 
         OffsetDateTime now = OffsetDateTime.now();
 
-        Page<BookModel> pendingPage =
-                bookRepository.findByMetadataStatusAndNextRetryAtLessThanEqualAndIsDeletedFalse(
-                        BookMetadataStatus.PENDING,
-                        now,
-                        PageRequest.of(0, BATCH_SIZE)
-                );
+        List<BookModel> claimed = transactionTemplate.execute(status ->
+                bookRepository.claimBatch(now, now.plus(LEASE), BATCH_SIZE));
 
-        List<BookModel> pendingBooks = pendingPage.getContent();
+        if (claimed == null || claimed.isEmpty()) {
+            return;
+        }
 
-        for (BookModel book : pendingBooks) {
-            retryBookMetadata(book);
+        for (BookModel book : claimed) {
+            try {
+                retryBookMetadata(book);
+            } catch (Exception e) {
+                log.error("Unexpected error while retrying metadata for book {}", book.getId(), e);
+            }
         }
     }
 
     private void retryBookMetadata(BookModel book) {
 
         bookMetadataEnrichmentService.enrichBook(book);
+
+        book.setLockedUntil(null);
 
         transactionTemplate.executeWithoutResult(status ->
                 bookRepository.save(book)

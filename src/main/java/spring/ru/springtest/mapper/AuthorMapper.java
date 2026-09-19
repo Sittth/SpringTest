@@ -49,6 +49,7 @@ public interface AuthorMapper {
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "metadataStatus", ignore = true)
     @Mapping(target = "title", ignore = true)
+    @Mapping(target = "lockedUntil", ignore = true)
     void updateBookMetadata(BookMetadataResponse source, @MappingTarget BookModel target);
 
     default BookResponse toBookResponse(BookModel bookModel) {

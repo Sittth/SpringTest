@@ -51,3 +51,9 @@ ALTER TABLE test.courses
 
 ALTER TABLE test.students
     ALTER COLUMN id SET DEFAULT gen_random_uuid();
+
+ALTER TABLE test.books
+    ADD COLUMN IF NOT EXISTS locked_until timestamptz;
+
+ALTER TABLE test.cache_invalidation_queue
+    ADD COLUMN IF NOT EXISTS locked_until timestamptz;

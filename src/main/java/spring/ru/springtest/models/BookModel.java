@@ -52,6 +52,9 @@ public class BookModel {
     @Column(nullable = false)
     private OffsetDateTime nextRetryAt;
 
+    @Column
+    private OffsetDateTime lockedUntil;
+
     @PrePersist
     public void onCreate() {
         createdAt = OffsetDateTime.now();
