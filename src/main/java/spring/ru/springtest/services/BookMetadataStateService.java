@@ -31,6 +31,7 @@ public class BookMetadataStateService {
     public void markConfirmed(BookModel book, BookMetadataResponse meta) {
         authorMapper.updateBookMetadata(meta, book);
         book.setMetadataStatus(BookMetadataStatus.CONFIRMED);
+        book.setAttempts(0);
         book.setNextRetryAt(null);
     }
 
@@ -48,7 +49,6 @@ public class BookMetadataStateService {
     private void deferUntilCircuitMayClose(BookModel book, Throwable cause) {
         CallNotPermittedException rejection = findCircuitBreakerRejection(cause);
         Duration delay = openStateWaitDuration(rejection);
-
         book.setNextRetryAt(OffsetDateTime.now().plus(delay));
         log.warn("Book metadata registration rejected for book {} by {}, next attempt in {}",
                 book.getId(), rejection.getMessage(), delay);
