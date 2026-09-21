@@ -67,3 +67,17 @@ ALTER TABLE test.cache_invalidation_queue
 CREATE INDEX IF NOT EXISTS idx_cache_invalidation_queue_pending
     ON test.cache_invalidation_queue (next_retry_at)
     WHERE status = 'PENDING';
+
+ALTER TABLE test.cache_invalidation_queue
+    ALTER COLUMN next_retry_at DROP NOT NULL;
+
+UPDATE test.cache_invalidation_queue
+SET next_retry_at = NULL
+WHERE status = 'FAILED';
+
+ALTER TABLE test.books
+    ALTER COLUMN next_retry_at DROP NOT NULL;
+
+UPDATE test.books
+SET next_retry_at = NULL
+WHERE metadata_status IN ('FAILED', 'CONFIRMED');

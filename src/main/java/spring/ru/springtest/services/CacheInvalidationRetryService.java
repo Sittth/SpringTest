@@ -76,6 +76,7 @@ public class CacheInvalidationRetryService {
 
         if (attempts >= maxAttempts) {
             entry.setStatus(CacheInvalidationStatus.FAILED);
+            entry.setNextRetryAt(null);
             log.error("Cache invalidation permanently failed for cache '{}', key '{}' after {} attempts",
                     entry.getCacheName(), entry.getCacheKey(), attempts, cause);
         } else {
@@ -92,6 +93,7 @@ public class CacheInvalidationRetryService {
     private void markFailed(CacheInvalidationQueueEntry entry, String reason) {
 
         entry.setStatus(CacheInvalidationStatus.FAILED);
+        entry.setNextRetryAt(null);
         entry.setLastError(truncate(reason));
         entry.setLockedUntil(null);
 

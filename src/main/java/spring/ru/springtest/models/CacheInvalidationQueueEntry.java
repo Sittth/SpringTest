@@ -31,7 +31,7 @@ public class CacheInvalidationQueueEntry {
     @Column(nullable = false)
     private int attempts;
 
-    @Column(nullable = false)
+    @Column
     private OffsetDateTime nextRetryAt;
 
     @Column

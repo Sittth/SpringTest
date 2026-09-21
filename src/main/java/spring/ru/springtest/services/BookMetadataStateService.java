@@ -31,6 +31,7 @@ public class BookMetadataStateService {
     public void markConfirmed(BookModel book, BookMetadataResponse meta) {
         authorMapper.updateBookMetadata(meta, book);
         book.setMetadataStatus(BookMetadataStatus.CONFIRMED);
+        book.setNextRetryAt(null);
     }
 
     public void recordFailure(BookModel book, Throwable cause) {
@@ -54,7 +55,7 @@ public class BookMetadataStateService {
     }
 
     private void markFailedImmediately(BookModel book, Throwable cause) {
-        book.setMetadataStatus(BookMetadataStatus.FAILED);
+        markFailed(book);
         log.error("Book metadata registration permanently rejected for book {}, marking as FAILED immediately",
                 book.getId(), cause);
     }
@@ -66,7 +67,7 @@ public class BookMetadataStateService {
         int maxAttempts = retryProperties.maxAttempts();
 
         if (attempts >= maxAttempts) {
-            book.setMetadataStatus(BookMetadataStatus.FAILED);
+            markFailed(book);
             log.error("Book metadata registration permanently failed for book {} after {} attempts ({})",
                     book.getId(), attempts, type, cause);
             return;
@@ -82,6 +83,11 @@ public class BookMetadataStateService {
             log.warn("Transient failure for book {} (attempt {}/{}), next retry at {}",
                     book.getId(), attempts, maxAttempts, book.getNextRetryAt(), cause);
         }
+    }
+
+    private void markFailed(BookModel book) {
+        book.setMetadataStatus(BookMetadataStatus.FAILED);
+        book.setNextRetryAt(null);
     }
 
     private Duration backoffDelay(int attempts) {
