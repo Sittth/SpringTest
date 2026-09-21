@@ -3,8 +3,11 @@ package spring.ru.springtest.scheduler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
+import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.dao.TransientDataAccessException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.support.TransactionTemplate;
 import spring.ru.springtest.config.BookMetadataRetryProperties;
 import spring.ru.springtest.models.BookModel;
@@ -45,12 +48,30 @@ public class BookMetadataRetryScheduler {
             return;
         }
 
+        RuntimeException unexpected = null;
+
         for (BookModel book : claimed) {
             try {
                 retryBookMetadata(book);
-            } catch (Exception e) {
-                log.error("Unexpected error while retrying metadata for book {}", book.getId(), e);
+            } catch (TransientDataAccessException
+                     | DataAccessResourceFailureException
+                     | CannotCreateTransactionException e) {
+                log.warn("Temporary database problem while saving book {}, will be retried after lease expires: {}",
+                        book.getId(), e.toString());
+            } catch (RuntimeException e) {
+                log.error("Unexpected error while retrying metadata for book {}, book left untouched",
+                        book.getId(), e);
+                if (unexpected == null) {
+                    unexpected = e;
+                } else {
+                    unexpected.addSuppressed(e);
+                }
             }
+        }
+
+        if (unexpected != null) {
+            throw new IllegalStateException(
+                    "Unexpected error(s) during book metadata retry batch", unexpected);
         }
     }
 
