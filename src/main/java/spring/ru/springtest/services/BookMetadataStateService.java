@@ -1,18 +1,18 @@
 package spring.ru.springtest.services;
 
-import feign.FeignException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
-import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import spring.ru.springtest.client.FailureClassifier;
 import spring.ru.springtest.client.metadata.dto.BookMetadataResponse;
 import spring.ru.springtest.config.BookMetadataRetryProperties;
 import spring.ru.springtest.mapper.AuthorMapper;
 import spring.ru.springtest.models.BookModel;
 import spring.ru.springtest.models.enums.BookMetadataStatus;
+import spring.ru.springtest.models.enums.FailureType;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -35,23 +35,31 @@ public class BookMetadataStateService {
 
     public void recordFailure(BookModel book, Throwable cause) {
 
+        FailureType type = FailureClassifier.classify(cause);
+
+        switch (type) {
+            case CIRCUIT_OPEN -> deferUntilCircuitMayClose(book, cause);
+            case PERMANENT -> markFailedImmediately(book, cause);
+            case TRANSIENT, UNKNOWN -> scheduleRetryOrFail(book, cause, type);
+        }
+    }
+
+    private void deferUntilCircuitMayClose(BookModel book, Throwable cause) {
         CallNotPermittedException rejection = findCircuitBreakerRejection(cause);
+        Duration delay = openStateWaitDuration(rejection);
 
-        if (rejection != null) {
-            Duration delay = openStateWaitDuration(rejection);
-            book.setNextRetryAt(OffsetDateTime.now().plus(delay));
-            log.warn("Book metadata registration rejected for book {} by {}, next attempt in {}",
-                    book.getId(), rejection.getMessage(), delay);
-            return;
-        }
+        book.setNextRetryAt(OffsetDateTime.now().plus(delay));
+        log.warn("Book metadata registration rejected for book {} by {}, next attempt in {}",
+                book.getId(), rejection.getMessage(), delay);
+    }
 
-        if (isPermanentFailure(cause)) {
-            book.setMetadataStatus(BookMetadataStatus.FAILED);
-            log.error("Book metadata registration rejected by second-service (4xx) for book {}, marking as FAILED immediately",
-                    book.getId(), cause);
-            return;
-        }
+    private void markFailedImmediately(BookModel book, Throwable cause) {
+        book.setMetadataStatus(BookMetadataStatus.FAILED);
+        log.error("Book metadata registration permanently rejected for book {}, marking as FAILED immediately",
+                book.getId(), cause);
+    }
 
+    private void scheduleRetryOrFail(BookModel book, Throwable cause, FailureType type) {
         int attempts = book.getAttempts() + 1;
         book.setAttempts(attempts);
 
@@ -59,12 +67,19 @@ public class BookMetadataStateService {
 
         if (attempts >= maxAttempts) {
             book.setMetadataStatus(BookMetadataStatus.FAILED);
-            log.error("Book metadata registration permanently failed for book {} after {} attempts",
-                    book.getId(), attempts, cause);
+            log.error("Book metadata registration permanently failed for book {} after {} attempts ({})",
+                    book.getId(), attempts, type, cause);
+            return;
+        }
+
+        Duration delay = backoffDelay(attempts);
+        book.setNextRetryAt(OffsetDateTime.now().plus(delay));
+
+        if (type == FailureType.UNKNOWN) {
+            log.error("Unclassified failure for book {} (attempt {}/{}), next retry at {}",
+                    book.getId(), attempts, maxAttempts, book.getNextRetryAt(), cause);
         } else {
-            Duration delay = backoffDelay(attempts);
-            book.setNextRetryAt(OffsetDateTime.now().plus(delay));
-            log.warn("Book metadata registration failed for book {} (attempt {}/{}), next retry at {}",
+            log.warn("Transient failure for book {} (attempt {}/{}), next retry at {}",
                     book.getId(), attempts, maxAttempts, book.getNextRetryAt(), cause);
         }
     }
@@ -85,21 +100,6 @@ public class BookMetadataStateService {
         return Duration.ofMillis(waitMillis);
     }
 
-    private boolean isPermanentFailure(Throwable cause) {
-        Throwable current = cause;
-        while (current != null) {
-            if (current instanceof ConstraintViolationException) {
-                return true;
-            }
-            if (current instanceof FeignException feignException
-                    && feignException.status() >= 400 && feignException.status() < 500) {
-                return true;
-            }
-            current = current.getCause();
-        }
-        return false;
-    }
-
     private CallNotPermittedException findCircuitBreakerRejection(Throwable cause) {
         Throwable current = cause;
         while (current != null) {
@@ -108,6 +108,6 @@ public class BookMetadataStateService {
             }
             current = current.getCause();
         }
-        return null;
+        throw new IllegalStateException("CIRCUIT_OPEN without CallNotPermittedException in cause chain");
     }
 }

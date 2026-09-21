@@ -34,17 +34,13 @@ resilience4j:
     instances:
       bookMetadataPost:
         wait-duration-in-open-state: 60s
+        record-failure-predicate: spring.ru.springtest.client.TransientFailurePredicate
+        ignore-exceptions:
+          - jakarta.validation.ConstraintViolationException
   retry:
     instances:
       bookMetadataPost:
-        ignore-exceptions:
-          - jakarta.validation.ConstraintViolationException
-          - java.lang.IllegalArgumentException
-          - feign.FeignException.BadRequest
-          - feign.FeignException.Unauthorized
-          - feign.FeignException.Forbidden
-          - feign.FeignException.NotFound
-          - feign.FeignException.MethodNotAllowed
+        retry-exception-predicate: spring.ru.springtest.client.TransientFailurePredicate
 
 book-metadata:
   retry:
