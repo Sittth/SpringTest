@@ -42,7 +42,8 @@ public class BookMetadataStateService {
         switch (type) {
             case CIRCUIT_OPEN -> deferUntilCircuitMayClose(book, cause);
             case PERMANENT -> markFailedImmediately(book, cause);
-            case TRANSIENT, UNKNOWN -> scheduleRetryOrFail(book, cause, type);
+            case TRANSIENT -> scheduleRetryOrFail(book, cause);
+            case UNKNOWN -> throw unexpectedFailure(book, cause);
         }
     }
 
@@ -60,7 +61,7 @@ public class BookMetadataStateService {
                 book.getId(), cause);
     }
 
-    private void scheduleRetryOrFail(BookModel book, Throwable cause, FailureType type) {
+    private void scheduleRetryOrFail(BookModel book, Throwable cause) {
         int attempts = book.getAttempts() + 1;
         book.setAttempts(attempts);
 
@@ -68,21 +69,22 @@ public class BookMetadataStateService {
 
         if (attempts >= maxAttempts) {
             markFailed(book);
-            log.error("Book metadata registration permanently failed for book {} after {} attempts ({})",
-                    book.getId(), attempts, type, cause);
+            log.error("Book metadata registration permanently failed for book {} after {} attempts",
+                    book.getId(), attempts, cause);
             return;
         }
 
         Duration delay = backoffDelay(attempts);
         book.setNextRetryAt(OffsetDateTime.now().plus(delay));
 
-        if (type == FailureType.UNKNOWN) {
-            log.error("Unclassified failure for book {} (attempt {}/{}), next retry at {}",
-                    book.getId(), attempts, maxAttempts, book.getNextRetryAt(), cause);
-        } else {
-            log.warn("Transient failure for book {} (attempt {}/{}), next retry at {}",
-                    book.getId(), attempts, maxAttempts, book.getNextRetryAt(), cause);
-        }
+        log.warn("Transient failure for book {} (attempt {}/{}), next retry at {}",
+                book.getId(), attempts, maxAttempts, book.getNextRetryAt(), cause);
+    }
+
+    private IllegalStateException unexpectedFailure(BookModel book, Throwable cause) {
+        log.error("Unclassified failure for book {}, propagating instead of retrying", book.getId(), cause);
+        return new IllegalStateException(
+                "Unclassified failure while registering metadata for book " + book.getId(), cause);
     }
 
     private void markFailed(BookModel book) {
