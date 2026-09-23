@@ -2,7 +2,6 @@ package spring.ru.springtest.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import spring.ru.springtest.models.CacheInvalidationQueueEntry;
@@ -18,7 +17,6 @@ public class CacheInvalidationRetryScheduler {
     private final CacheInvalidationRetryService cacheInvalidationRetryService;
 
     @Scheduled(fixedDelayString = "${cache-invalidation.retry.scheduler.fixed-delay-ms:30000}")
-    @SchedulerLock(name = "cacheInvalidationRetryScheduler", lockAtLeastFor = "5s", lockAtMostFor = "2m")
     public void retryPendingInvalidations() {
 
         List<CacheInvalidationQueueEntry> claimed = cacheInvalidationRetryService.claimBatch();

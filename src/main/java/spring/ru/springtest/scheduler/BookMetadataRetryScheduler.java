@@ -2,7 +2,6 @@ package spring.ru.springtest.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.TransientDataAccessException;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -12,10 +11,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 import spring.ru.springtest.config.BookMetadataRetryProperties;
 import spring.ru.springtest.models.BookModel;
 import spring.ru.springtest.repositories.BookRepository;
-import spring.ru.springtest.services.BookMetadataEnrichmentService;
 import spring.ru.springtest.services.BookMetadataRegistrationService;
 
-import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -30,11 +27,6 @@ public class BookMetadataRetryScheduler {
     private final BookMetadataRetryProperties retryProperties;
 
     @Scheduled(fixedDelayString = "${book-metadata.retry.scheduler.fixed-delay-ms:30000}")
-    @SchedulerLock(
-            name = "bookMetadataRetryScheduler",
-            lockAtLeastFor = "5s",
-            lockAtMostFor = "2m"
-    )
     public void retryPendingMetadata() {
 
         OffsetDateTime now = OffsetDateTime.now();
