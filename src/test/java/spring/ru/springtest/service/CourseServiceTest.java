@@ -1,101 +1,78 @@
 package spring.ru.springtest.service;
 
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InOrder;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import spring.ru.springtest.controller.AbstractControllerTest;
+import spring.ru.springtest.dto.create.CourseCreateRequest;
 import spring.ru.springtest.dto.response.CourseResponse;
 import spring.ru.springtest.dto.update.CourseUpdateRequest;
 import spring.ru.springtest.exceptions.EntityNotFoundException;
-import spring.ru.springtest.mapper.CourseMapper;
 import spring.ru.springtest.models.CourseModel;
+import spring.ru.springtest.models.StudentModel;
 import spring.ru.springtest.repositories.CourseRepository;
+import spring.ru.springtest.repositories.StudentRepository;
 import spring.ru.springtest.services.CourseService;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
 
-@Transactional
-@ExtendWith(MockitoExtension.class)
-class CourseServiceTest {
+class CourseServiceTest extends AbstractControllerTest {
 
-    @Mock
-    private CourseRepository courseRepository;
-    @Mock
-    private CourseMapper courseMapper;
-    @Mock
-    private EntityManager entityManager;
+    @Autowired
+    CourseService courseService;
 
-    @InjectMocks
-    private CourseService courseService;
+    @Autowired
+    CourseRepository courseRepository;
+
+    @Autowired
+    StudentRepository studentRepository;
 
     @Test
-    void update_shouldFlushThenInsertStudentsThenRefresh_inCorrectOrder() {
-        UUID courseId = UUID.randomUUID();
-        UUID student1 = UUID.randomUUID();
-        UUID student2 = UUID.randomUUID();
+    void save_shouldPersistCourse() {
+        CourseResponse response = courseService.save(new CourseCreateRequest("Java Architecture"));
 
-        CourseModel existing = new CourseModel();
-        existing.setId(courseId);
+        assertThat(response.getId()).isNotNull();
+        assertThat(response.getTitle()).isEqualTo("Java Architecture");
 
-        CourseUpdateRequest request = new CourseUpdateRequest()
-                .title("Updated title")
-                .studentIds(List.of(student1, student2));
-
-        when(courseRepository.findByIdAndIsDeletedFalse(courseId)).thenReturn(Optional.of(existing));
-        when(courseMapper.toResponse(existing)).thenReturn(new CourseResponse().id(courseId));
-
-        courseService.update(courseId, request);
-
-        InOrder inOrder = inOrder(entityManager, courseRepository);
-        inOrder.verify(entityManager).flush();
-        inOrder.verify(courseRepository).insertStudentToCourse(courseId, student1);
-        inOrder.verify(courseRepository).insertStudentToCourse(courseId, student2);
-        inOrder.verify(entityManager).refresh(existing);
+        CourseModel persisted = courseRepository.findByIdAndIsDeletedFalse(response.getId()).orElseThrow();
+        assertThat(persisted.getTitle()).isEqualTo("Java Architecture");
     }
 
     @Test
-    void update_shouldThrow_whenCourseNotFound() {
-        UUID courseId = UUID.randomUUID();
-        when(courseRepository.findByIdAndIsDeletedFalse(courseId)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> courseService.update(courseId, new CourseUpdateRequest()))
+    void findById_shouldThrow_whenCourseNotFound() {
+        assertThatThrownBy(() -> courseService.findById(UUID.randomUUID()))
                 .isInstanceOf(EntityNotFoundException.class);
-
-        verifyNoInteractions(entityManager);
     }
 
     @Test
-    void findById_shouldReturnCourse_whenExists() {
-        UUID id = UUID.randomUUID();
-        CourseModel model = new CourseModel();
-        model.setId(id);
-        CourseResponse expected = new CourseResponse().id(id);
+    void update_shouldChangeTitle_andAttachStudents() {
+        CourseResponse created = courseService.save(new CourseCreateRequest("Old Title"));
 
-        when(courseRepository.findByIdAndIsDeletedFalse(id)).thenReturn(Optional.of(model));
-        when(courseMapper.toResponse(model)).thenReturn(expected);
+        StudentModel student1 = new StudentModel();
+        student1.setName("Alice");
+        student1 = studentRepository.save(student1);
 
-        assertThat(courseService.findById(id)).isEqualTo(expected);
+        StudentModel student2 = new StudentModel();
+        student2.setName("Bob");
+        student2 = studentRepository.save(student2);
+
+        CourseResponse updated = courseService.update(created.getId(), new CourseUpdateRequest()
+                .title("New Title")
+                .studentIds(List.of(student1.getId(), student2.getId())));
+
+        assertThat(updated.getTitle()).isEqualTo("New Title");
+        assertThat(updated.getStudents()).hasSize(2);
     }
 
     @Test
-    void delete_shouldRemoveCourse() {
-        UUID id = UUID.randomUUID();
-        CourseModel model = new CourseModel();
-        model.setId(id);
-        when(courseRepository.findByIdAndIsDeletedFalse(id)).thenReturn(Optional.of(model));
+    void delete_shouldSoftDeleteCourse() {
+        CourseResponse created = courseService.save(new CourseCreateRequest("To Delete"));
 
-        courseService.delete(id);
+        courseService.delete(created.getId());
 
-        verify(courseRepository).delete(model);
+        assertThat(courseRepository.findByIdAndIsDeletedFalse(created.getId())).isEmpty();
     }
 }

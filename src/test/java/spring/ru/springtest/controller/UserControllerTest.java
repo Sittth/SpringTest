@@ -16,10 +16,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class UserControllerTest extends AbstractControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    MockMvc mockMvc;
 
     @Autowired
-    private JsonMapper jsonMapper;
+    JsonMapper jsonMapper;
 
     @Test
     void createUser_withValidData_shouldReturn201() throws Exception {

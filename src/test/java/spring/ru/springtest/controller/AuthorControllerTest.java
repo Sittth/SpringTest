@@ -24,13 +24,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AuthorControllerTest extends AbstractControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    MockMvc mockMvc;
 
     @Autowired
-    private JsonMapper jsonMapper;
+    JsonMapper jsonMapper;
 
     @MockitoBean
-    private BookMetadataResilientClient bookMetadataResilientClient;
+    BookMetadataResilientClient bookMetadataResilientClient;
 
     @Test
     void createAuthor_withValidData_shouldReturn201WithEnrichedBook() throws Exception {

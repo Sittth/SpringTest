@@ -32,12 +32,13 @@ public abstract class AbstractControllerTest {
     }
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    JdbcTemplate jdbcTemplate;
 
     @BeforeEach
     void cleanDatabase() {
         jdbcTemplate.execute(
-                "TRUNCATE TABLE test.authors, test.books, test.courses, test.students, test.users, test.profiles, test.course_student RESTART IDENTITY CASCADE"
+                "TRUNCATE TABLE test.authors, test.books, test.courses, test.students, test.users, " +
+                        "test.profiles, test.course_student, test.cache_invalidation_queue RESTART IDENTITY CASCADE"
         );
     }
 
@@ -46,12 +47,9 @@ public abstract class AbstractControllerTest {
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
-
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
-
         registry.add("spring.data.redis.host", redis::getHost);
         registry.add("spring.data.redis.port", () -> redis.getMappedPort(6379));
-
         registry.add("services.second-service.url", () -> "http://localhost:0");
     }
 }
