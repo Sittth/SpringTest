@@ -19,7 +19,7 @@ public interface CourseRepository extends JpaRepository<CourseModel, UUID> {
 
     @Modifying
     @Query(value = """
-        INSERT INTO course_student (course_id, student_id)
+        INSERT INTO test.course_student (course_id, student_id)
         VALUES (:courseId, :studentId)
         ON CONFLICT (course_id, student_id) DO NOTHING
         """, nativeQuery = true)

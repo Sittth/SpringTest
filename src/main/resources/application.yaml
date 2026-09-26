@@ -1,3 +1,6 @@
+server:
+  port: ${SERVER_PORT:8080}
+
 spring:
   application:
     name: SpringTest
@@ -7,6 +10,13 @@ spring:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/postgres}
     password: ${SPRING_DATASOURCE_PASSWORD:123456}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
+
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+    cache:
+      type: redis
 
   jpa:
     hibernate:
@@ -19,6 +29,42 @@ spring:
   flyway:
     default-schema: test
 
-  logging:
-    pattern:
-      console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - [requestId: %X{requestId}] - %msg%n"
+resilience4j:
+  circuitbreaker:
+    instances:
+      bookMetadataPost:
+        wait-duration-in-open-state: 60s
+        record-failure-predicate: spring.ru.springtest.client.TransientFailurePredicate
+        ignore-exceptions:
+          - jakarta.validation.ConstraintViolationException
+  retry:
+    instances:
+      bookMetadataPost:
+        retry-exception-predicate: spring.ru.springtest.client.TransientFailurePredicate
+
+book-metadata:
+  retry:
+    max-attempts: 5
+    base-delay: 5m
+    scheduler:
+      fixed-delay-ms: 60000
+      batch-size: 10
+      lease: 10m
+
+cache-invalidation:
+  retry:
+    max-attempts: 10
+    base-delay: 30s
+    max-delay: 10m
+    scheduler:
+      fixed-delay-ms: 30000
+      batch-size: 10
+      lease: 5m
+
+services:
+  second-service:
+    url: ${SECOND_SERVICE_URL:http://localhost:8081}
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - [requestId: %X{requestId}] - %msg%n"

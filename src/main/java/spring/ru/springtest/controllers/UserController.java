@@ -19,7 +19,6 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@Validated
 public class UserController implements UsersApi {
 
     private final UserService userService;
@@ -32,21 +31,19 @@ public class UserController implements UsersApi {
     }
 
     @Override
-    public GetUsers200Response getUsers(
-            @Min(0) @NotNull Integer page,
-            @Min(1) @Max(50) @NotNull Integer size) {
+    public GetUsers200Response getUsers(Integer page, Integer size) {
 
         return userMapper.toPageResponse(userService.findAllPaginated(page, size));
     }
 
     @Override
-    public UserResponse createUser(@Valid UserCreateRequest requestCreate) {
+    public UserResponse createUser(UserCreateRequest requestCreate) {
 
         return userService.save(requestCreate);
     }
 
     @Override
-    public UserResponse updateUserById(UUID id, @Valid UserUpdateRequest requestUpdate) {
+    public UserResponse updateUserById(UUID id, UserUpdateRequest requestUpdate) {
 
         return userService.update(id, requestUpdate);
     }
