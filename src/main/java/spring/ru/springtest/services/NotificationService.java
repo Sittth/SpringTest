@@ -60,6 +60,7 @@ public class NotificationService {
         return notificationMapper.toResponse(notification);
     }
 
+    @Transactional
     public NotificationResponse save(NotificationCreateRequest requestCreate) {
 
         log.info("Save notification: {}", requestCreate);
