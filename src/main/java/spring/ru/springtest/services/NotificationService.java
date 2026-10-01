@@ -76,4 +76,16 @@ public class NotificationService {
 
         return notificationMapper.toResponse(saved);
     }
+
+    @Transactional
+    public void delete(UUID id) {
+
+        log.info("Delete notification with id {}", id);
+
+        NotificationModel notification = findExistingNotification(id);
+
+        notificationRepository.delete(notification);
+
+        log.info("Deleted notification with id {}", id);
+    }
 }

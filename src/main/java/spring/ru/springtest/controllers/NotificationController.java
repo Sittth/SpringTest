@@ -24,4 +24,9 @@ public class NotificationController implements NotificationsApi {
     public NotificationResponse getNotificationById(UUID id) {
         return notificationService.findById(id);
     }
+
+    @Override
+    public void deleteNotificationById(UUID id) {
+        notificationService.delete(id);
+    }
 }

@@ -94,6 +94,47 @@ public interface NotificationsApi {
 
 
     /**
+     * DELETE /notifications/{id} : Delete notification
+     *
+     * @param id  (required)
+     * @return Deleted (status code 204)
+     *         or Notification not found (status code 404)
+     */
+    @Operation(
+        operationId = "deleteNotificationById",
+        summary = "Delete notification",
+        responses = {
+            @ApiResponse(responseCode = "204", description = "Deleted"),
+            @ApiResponse(responseCode = "404", description = "Notification not found", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+            })
+        }
+    )
+    @RequestMapping(
+        method = RequestMethod.DELETE,
+        value = "/notifications/{id}",
+        produces = { "application/json" }
+    )
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    
+    default void deleteNotificationById(
+        @Parameter(name = "id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id
+    ) {
+        getRequest().ifPresent(request -> {
+            for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
+                if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
+                    String exampleString = "{ \"code\" : \"code\", \"details\" : [ \"details\", \"details\" ], \"message\" : \"message\", \"timestamp\" : \"2000-01-23T04:56:07.000+00:00\" }";
+                    ApiUtil.setExampleResponse(request, "application/json", exampleString);
+                    break;
+                }
+            }
+        });
+        throw new IllegalArgumentException("Not implemented");
+
+    }
+
+
+    /**
      * GET /notifications/{id} : Get notification by id
      *
      * @param id  (required)
