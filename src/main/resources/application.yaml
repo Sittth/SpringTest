@@ -13,6 +13,7 @@ spring:
 
   kafka:
     bootstrap-servers: localhost:9092
+    notification-topic: notifications
     consumer:
       group-id: notification-consumer-group
       auto-offset-reset: earliest
@@ -21,7 +22,6 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
-
 
   data:
     redis:
@@ -72,6 +72,16 @@ cache-invalidation:
       fixed-delay-ms: 30000
       batch-size: 10
       lease: 5m
+
+notification-outbox:
+  retry:
+    max-attempts: 10
+    base-delay: 30s
+    max-delay: 10m
+    scheduler:
+      fixed-delay-ms: 5000
+      batch-size: 10
+      lease: 1m
 
 services:
   second-service:
