@@ -50,6 +50,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-aspectj'
     implementation 'net.javacrumbs.shedlock:shedlock-spring:7.10.1'
     implementation 'net.javacrumbs.shedlock:shedlock-provider-jdbc-template:7.10.1'
+    implementation 'org.springframework.boot:spring-boot-starter-kafka'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
@@ -62,6 +63,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
     testImplementation 'org.testcontainers:testcontainers-junit-jupiter'
     testImplementation 'org.testcontainers:testcontainers-postgresql'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+    testImplementation 'org.testcontainers:testcontainers-kafka:2.0.3'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
@@ -93,10 +96,12 @@ tasks.register("generateCreateDto", org.openapitools.generator.gradle.plugin.tas
                     "AuthorCreateRequest," +
                     "BookCreateRequest," +
                     "CourseCreateRequest," +
-                    "StudentCreateRequest"
+                    "StudentCreateRequest," +
+                    "NotificationCreateRequest"
     ]
 
     configOptions = [
+            hideGenerationTimestamp: "true",
             interfaceOnly: "true",
             useSpringBoot3: "true",
             useJakartaEe: 'true',
@@ -125,6 +130,7 @@ tasks.register("generateUpdateDto", org.openapitools.generator.gradle.plugin.tas
 
     configOptions = [
             interfaceOnly: "true",
+            hideGenerationTimestamp: "true",
             useSpringBoot3: "true",
             useJakartaEe: 'true',
             useBeanValidation: "true",
@@ -151,11 +157,13 @@ tasks.register("generateResponseDto", org.openapitools.generator.gradle.plugin.t
                     "ErrorResponse," +
                     "GetUsers200Response," +
                     "GetAuthors200Response," +
-                    "GetCourses200Response"
+                    "GetCourses200Response," +
+                    "NotificationResponse"
     ]
 
     configOptions = [
             interfaceOnly: "true",
+            hideGenerationTimestamp: "true",
             useSpringBoot3: "true",
             useJakartaEe: 'true',
             useBeanValidation: "true",
@@ -197,7 +205,10 @@ tasks.register("generateApi", org.openapitools.generator.gradle.plugin.tasks.Gen
             "ErrorResponse": "spring.ru.springtest.dto.response.ErrorResponse",
             "GetUsers200Response": "spring.ru.springtest.dto.response.GetUsers200Response",
             "GetAuthors200Response": "spring.ru.springtest.dto.response.GetAuthors200Response",
-            "GetCourses200Response": "spring.ru.springtest.dto.response.GetCourses200Response"
+            "GetCourses200Response": "spring.ru.springtest.dto.response.GetCourses200Response",
+
+            "NotificationCreateRequest": "spring.ru.springtest.dto.create.NotificationCreateRequest",
+            "NotificationResponse": "spring.ru.springtest.dto.response.NotificationResponse"
     ]
 
     apiPackage = "spring.ru.springtest.api"
@@ -211,6 +222,7 @@ tasks.register("generateApi", org.openapitools.generator.gradle.plugin.tasks.Gen
 
     configOptions = [
             interfaceOnly: "true",
+            hideGenerationTimestamp: "true",
             useSpringBoot3: "true",
             useJakartaEe: 'true',
             useResponseEntity: "false"
@@ -239,6 +251,7 @@ tasks.register("generateBookMetadataClient", org.openapitools.generator.gradle.p
     modelPackage = "spring.ru.springtest.client.metadata.dto"
 
     configOptions = [
+            hideGenerationTimestamp: "true",
             useSpringBoot3: "true",
             useJakartaEe: "true",
             useBeanValidation: "true",

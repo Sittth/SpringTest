@@ -1,4 +1,5 @@
 src/main/java/spring/ru/springtest/api/ApiUtil.java
 src/main/java/spring/ru/springtest/api/AuthorsApi.java
 src/main/java/spring/ru/springtest/api/CoursesApi.java
+src/main/java/spring/ru/springtest/api/NotificationsApi.java
 src/main/java/spring/ru/springtest/api/UsersApi.java

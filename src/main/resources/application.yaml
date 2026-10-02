@@ -11,6 +11,18 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD:123456}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
 
+  kafka:
+    bootstrap-servers: localhost:9092
+    notification-topic: notifications
+    consumer:
+      group-id: notification-consumer-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
   data:
     redis:
       host: ${SPRING_DATA_REDIS_HOST:localhost}
@@ -60,6 +72,16 @@ cache-invalidation:
       fixed-delay-ms: 30000
       batch-size: 10
       lease: 5m
+
+notification-outbox:
+  retry:
+    max-attempts: 10
+    base-delay: 30s
+    max-delay: 10m
+    scheduler:
+      fixed-delay-ms: 5000
+      batch-size: 10
+      lease: 1m
 
 services:
   second-service:
