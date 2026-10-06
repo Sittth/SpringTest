@@ -32,7 +32,7 @@ public class NotificationOutboxRetryService {
     private final NotificationOutboxRetryProperties retryProperties;
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    @Value("${spring.kafka.notification-topic")
+    @Value("${spring.kafka.notification-topic}")
     private String topic;
 
     public List<NotificationOutboxModel> claimBatch() {
