@@ -3,6 +3,7 @@ package spring.ru.springtest.models;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
 import spring.ru.springtest.models.enums.NotificationStatus;
 
 import java.time.OffsetDateTime;
@@ -12,6 +13,7 @@ import java.util.UUID;
 @Table(name = "notifications", schema = "test")
 @Getter
 @Setter
+@SQLDelete(sql = "UPDATE test.notifications SET is_deleted = true, updated_at = now() WHERE id=?")
 public class NotificationModel {
 
     @Id
