@@ -1,5 +1,9 @@
 package spring.ru.springtest.controller;
 
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -11,7 +15,14 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.kafka.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
+
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Predicate;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
@@ -26,9 +37,13 @@ public abstract class AbstractControllerTest {
     static final GenericContainer<?> redis = new GenericContainer<>(DockerImageName.parse("redis:7.4-alpine"))
             .withExposedPorts(6379);
 
+    protected static final KafkaContainer kafka =
+            new KafkaContainer(DockerImageName.parse("apache/kafka:3.9.1"));
+
     static {
         postgres.start();
         redis.start();
+        kafka.start();
     }
 
     @Autowired
@@ -38,7 +53,8 @@ public abstract class AbstractControllerTest {
     void cleanDatabase() {
         jdbcTemplate.execute(
                 "TRUNCATE TABLE test.authors, test.books, test.courses, test.students, test.users, " +
-                        "test.profiles, test.course_student, test.cache_invalidation_queue RESTART IDENTITY CASCADE"
+                        "test.profiles, test.course_student, test.cache_invalidation_queue, " +
+                        "test.notifications, test.notification_outbox RESTART IDENTITY CASCADE"
         );
     }
 
@@ -50,6 +66,36 @@ public abstract class AbstractControllerTest {
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
         registry.add("spring.data.redis.host", redis::getHost);
         registry.add("spring.data.redis.port", () -> redis.getMappedPort(6379));
+        registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
         registry.add("services.second-service.url", () -> "http://localhost:0");
+
+        registry.add("notification-outbox.retry.scheduler.fixed-delay-ms", () -> 3600000);
+    }
+
+    protected static ConsumerRecord<String, String> awaitRecord(
+            String topic, Predicate<ConsumerRecord<String, String>> match) {
+
+        Map<String, Object> props = Map.of(
+                ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka.getBootstrapServers(),
+                ConsumerConfig.GROUP_ID_CONFIG, "test-" + UUID.randomUUID(),
+                ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest",
+                ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false",
+                ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class,
+                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class
+        );
+
+        try (KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props)) {
+            consumer.subscribe(List.of(topic));
+            long deadline = System.currentTimeMillis() + 30_000;
+            while (System.currentTimeMillis() < deadline) {
+                for (ConsumerRecord<String, String> record : consumer.poll(Duration.ofMillis(500))) {
+                    if (match.test(record)) {
+                        return record;
+                    }
+                }
+            }
+        }
+
+        throw new AssertionError("No matching record in topic " + topic + " within 30s");
     }
 }
