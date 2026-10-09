@@ -3,11 +3,12 @@ package spring.ru.springtest.scheduler;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.kafka.core.KafkaTemplate;
+import spring.ru.springtest.client.NotificationKafkaClient;
 import spring.ru.springtest.config.NotificationOutboxRetryProperties;
 import spring.ru.springtest.controller.AbstractControllerTest;
 import spring.ru.springtest.dto.create.NotificationCreateRequest;
 import spring.ru.springtest.dto.response.NotificationResponse;
+import spring.ru.springtest.exceptions.NotificationPublishException;
 import spring.ru.springtest.models.NotificationOutboxModel;
 import spring.ru.springtest.models.enums.NotificationOutboxStatus;
 import spring.ru.springtest.models.enums.NotificationStatus;
@@ -16,13 +17,11 @@ import spring.ru.springtest.repositories.NotificationRepository;
 import spring.ru.springtest.services.NotificationService;
 
 import java.time.OffsetDateTime;
-import java.util.concurrent.CompletableFuture;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class NotificationOutboxFailureTest extends AbstractControllerTest {
 
@@ -42,7 +41,7 @@ class NotificationOutboxFailureTest extends AbstractControllerTest {
     NotificationOutboxRetryProperties retryProperties;
 
     @MockitoBean
-    KafkaTemplate<String, String> kafkaTemplate;
+    NotificationKafkaClient notificationKafkaClient;
 
     @Test
     void retryNotificationOutbox_shouldScheduleBackoff_whenKafkaFails() {
@@ -62,7 +61,7 @@ class NotificationOutboxFailureTest extends AbstractControllerTest {
 
         scheduler.retryNotificationOutbox();
 
-        verify(kafkaTemplate, times(1)).send(anyString(), anyString(), anyString());
+        verify(notificationKafkaClient, times(1)).send(any(UUID.class), anyString());
         assertThat(notificationOutboxRepository.findAll().get(0).getAttempts()).isEqualTo(1);
     }
 
@@ -86,7 +85,7 @@ class NotificationOutboxFailureTest extends AbstractControllerTest {
     }
 
     private void failKafka() {
-        when(kafkaTemplate.send(anyString(), anyString(), anyString()))
-                .thenReturn(CompletableFuture.failedFuture(new RuntimeException("broker down")));
+        doThrow(new NotificationPublishException(UUID.randomUUID(), new RuntimeException("broker down")))
+                .when(notificationKafkaClient).send(any(UUID.class), anyString());
     }
 }

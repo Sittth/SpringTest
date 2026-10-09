@@ -29,7 +29,7 @@ class NotificationOutboxRetrySchedulerTest extends AbstractControllerTest {
     @Autowired
     NotificationOutboxRepository notificationOutboxRepository;
 
-    @Value("${spring.kafka.notification-topic}")
+    @Value("${notification.kafka.topic}")
     String topic;
 
     @Test

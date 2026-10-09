@@ -13,7 +13,6 @@ spring:
 
   kafka:
     bootstrap-servers: localhost:9092
-    notification-topic: notifications
     consumer:
       group-id: notification-consumer-group
       auto-offset-reset: earliest
@@ -86,6 +85,11 @@ notification-outbox:
       fixed-delay-ms: 5000
       batch-size: 10
       lease: 1m
+
+notification:
+  kafka:
+    topic: notifications
+    send-timeout: 10s
 
 services:
   second-service:
