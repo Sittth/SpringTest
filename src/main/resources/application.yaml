@@ -81,6 +81,7 @@ notification-outbox:
     max-attempts: 10
     base-delay: 30s
     max-delay: 10m
+    max-backoff-shift: 20
     scheduler:
       fixed-delay-ms: 5000
       batch-size: 10

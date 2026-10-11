@@ -2,6 +2,7 @@ package spring.ru.springtest.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 import spring.ru.springtest.client.NotificationKafkaClient;
@@ -22,13 +23,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class NotificationOutboxRetryService {
 
-    private static final int MAX_BACKOFF_SHIFT = 20;
-
     private final NotificationOutboxRepository notificationOutboxRepository;
     private final NotificationRepository notificationRepository;
     private final TransactionTemplate transactionTemplate;
     private final NotificationOutboxRetryProperties retryProperties;
     private final NotificationKafkaClient notificationKafkaClient;
+
+    @Value("${notification-outbox.retry.max-backoff-shift}")
+    private int maxBackoffShift;
 
     public List<NotificationOutboxModel> claimBatch() {
 
@@ -95,7 +97,8 @@ public class NotificationOutboxRetryService {
     }
 
     private OffsetDateTime calculateNextRetryAt(int attempts) {
-        int shift = Math.min(attempts - 1, MAX_BACKOFF_SHIFT);
+
+        int shift = Math.min(attempts - 1, maxBackoffShift);
         Duration delay = retryProperties.baseDelay().multipliedBy(1L << shift);
         Duration maxDelay = retryProperties.maxDelay();
         return OffsetDateTime.now().plus(delay.compareTo(maxDelay) > 0 ? maxDelay : delay);
