@@ -13,7 +13,7 @@ public interface NotificationOutboxRepository extends JpaRepository<Notification
 
     @Query(value = """
         UPDATE test.notification_outbox
-        SET locked_until = :lockUntil
+        SET locked_until = :lockUntil, version = version + 1
         WHERE id IN (
             SELECT id
             FROM test.notification_outbox

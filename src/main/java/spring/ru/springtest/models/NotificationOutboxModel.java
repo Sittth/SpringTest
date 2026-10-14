@@ -40,6 +40,10 @@ public class NotificationOutboxModel {
     @Column
     private OffsetDateTime nextRetryAt;
 
+    @Version
+    @Column(nullable = false)
+    private long version;
+
     @PrePersist
     public void onCreate() {
         createdAt = OffsetDateTime.now();

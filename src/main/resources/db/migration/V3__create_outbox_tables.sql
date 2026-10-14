@@ -25,7 +25,8 @@ CREATE TABLE test.notification_outbox(
     attempts int NOT NULL DEFAULT 0,
     locked_until timestamptz,
     next_retry_at timestamptz DEFAULT now(),
-    created_at timestamptz NOT NULL DEFAULT now()
+    created_at timestamptz NOT NULL DEFAULT now(),
+    version bigint NOT NULL DEFAULT 0
 );
 
 CREATE INDEX IF NOT EXISTS idx_notification_outbox_pending

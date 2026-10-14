@@ -3,6 +3,7 @@ package spring.ru.springtest.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 import spring.ru.springtest.client.NotificationKafkaClient;
@@ -17,6 +18,7 @@ import spring.ru.springtest.repositories.NotificationRepository;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.function.Consumer;
 
 @Slf4j
 @Service
@@ -56,44 +58,71 @@ public class NotificationOutboxRetryService {
 
     private void complete(NotificationOutboxModel outboxModel) {
 
-        transactionTemplate.executeWithoutResult(status -> {
-            notificationRepository.findById(outboxModel.getNotificationId())
-                    .ifPresent(n -> n.setNotificationStatus(NotificationStatus.SENT));
-            notificationOutboxRepository.deleteById(outboxModel.getId());
+        boolean updated = updateIfStillOwner(outboxModel, current -> {
+            notificationRepository.findById(current.getNotificationId())
+                    .ifPresent(notification ->
+                            notification.setNotificationStatus(NotificationStatus.SENT));
+            notificationOutboxRepository.delete(current);
         });
 
-        log.info("Notification {} published to Kafka, outbox entry {} removed",
-                outboxModel.getNotificationId(), outboxModel.getId());
+        if (updated) {
+            log.info("Notification {} published to Kafka, outbox entry {} removed",
+                    outboxModel.getNotificationId(), outboxModel.getId());
+        }
     }
 
     private void recordFailure(NotificationOutboxModel outboxModel, Exception cause) {
 
         int attempts = outboxModel.getAttempts() + 1;
         int maxAttempts = retryProperties.maxAttempts();
-
-        outboxModel.setAttempts(attempts);
-        outboxModel.setLockedUntil(null);
-
         boolean exhausted = attempts >= maxAttempts;
+        OffsetDateTime nextRetryAt = exhausted ? null : calculateNextRetryAt(attempts);
 
-        if (exhausted) {
-            outboxModel.setNotificationOutboxStatus(NotificationOutboxStatus.FAILED);
-            outboxModel.setNextRetryAt(null);
-            log.error("Outbox entry {} permanently failed after {} attempts",
-                    outboxModel.getId(), attempts, cause);
-        } else {
-            outboxModel.setNextRetryAt(calculateNextRetryAt(attempts));
-            log.warn("Outbox entry {} failed (attempt {}/{}), next retry at {}: {}",
-                    outboxModel.getId(), attempts, maxAttempts, outboxModel.getNextRetryAt(), cause.toString());
-        }
-
-        transactionTemplate.executeWithoutResult(status -> {
-            notificationOutboxRepository.save(outboxModel);
+        boolean updated = updateIfStillOwner(outboxModel, current -> {
+            current.setAttempts(attempts);
+            current.setLockedUntil(null);
+            current.setNextRetryAt(nextRetryAt);
             if (exhausted) {
-                notificationRepository.findById(outboxModel.getNotificationId())
+                current.setNotificationOutboxStatus(NotificationOutboxStatus.FAILED);
+                notificationRepository.findById(current.getNotificationId())
                         .ifPresent(n -> n.setNotificationStatus(NotificationStatus.FAILED));
             }
         });
+
+        if (!updated) {
+            return;
+        }
+
+        if (exhausted) {
+            log.error("Outbox entry {} permanently failed after {} attempts",
+                    outboxModel.getId(), attempts, cause);
+        } else {
+            log.warn("Outbox entry {} failed (attempt {}/{}), next retry at {}: {}",
+                    outboxModel.getId(), attempts, maxAttempts, nextRetryAt, cause.toString());
+        }
+
+    }
+
+    private boolean updateIfStillOwner(NotificationOutboxModel claimedEntry,
+                                       Consumer<NotificationOutboxModel> action) {
+        try {
+            return Boolean.TRUE.equals(transactionTemplate.execute(status -> {
+                NotificationOutboxModel current =
+                        notificationOutboxRepository.findById(claimedEntry.getId()).orElse(null);
+
+                if (current == null || current.getVersion() != claimedEntry.getVersion()) {
+                    log.warn("Outbox entry {} was taken over by another worker, skipping update",
+                            claimedEntry.getId());
+                    return false;
+                }
+
+                action.accept(current);
+                return true;
+            }));
+        } catch (ObjectOptimisticLockingFailureException e) {
+            log.warn("Outbox entry {} was modified concurrently, skipping update", claimedEntry.getId());
+            return false;
+        }
     }
 
     private OffsetDateTime calculateNextRetryAt(int attempts) {
