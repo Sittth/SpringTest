@@ -22,6 +22,10 @@ public class NotificationOutboxRetryScheduler {
         List<NotificationOutboxModel> claimed = notificationOutboxRetryService.claimBatch();
 
         for (NotificationOutboxModel entry : claimed) {
+            if (Thread.currentThread().isInterrupted()) {
+                log.warn("Outbox processing interrupted, remaining entries stay locked until lease expires");
+                break;
+            }
             try {
                 notificationOutboxRetryService.process(entry);
             } catch (Exception e) {

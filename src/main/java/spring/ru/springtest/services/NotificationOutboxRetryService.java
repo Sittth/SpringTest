@@ -9,6 +9,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import spring.ru.springtest.client.NotificationKafkaClient;
 import spring.ru.springtest.config.NotificationOutboxRetryProperties;
 import spring.ru.springtest.exceptions.NotificationPublishException;
+import spring.ru.springtest.exceptions.NotificationPublishInterruptedException;
 import spring.ru.springtest.models.NotificationOutboxModel;
 import spring.ru.springtest.models.enums.NotificationOutboxStatus;
 import spring.ru.springtest.models.enums.NotificationStatus;
@@ -49,6 +50,10 @@ public class NotificationOutboxRetryService {
     public void process(NotificationOutboxModel outboxModel) {
         try {
             notificationKafkaClient.send(outboxModel.getNotificationId(), outboxModel.getPayload());
+        } catch (NotificationPublishInterruptedException e) {
+            log.warn("Sending of outbox entry {} was interrupted, leaving it until lease expires",
+                    outboxModel.getId());
+            return;
         } catch (NotificationPublishException e) {
             recordFailure(outboxModel, e);
             return;

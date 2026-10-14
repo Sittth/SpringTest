@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import spring.ru.springtest.config.NotificationKafkaProperties;
 import spring.ru.springtest.exceptions.NotificationPublishException;
+import spring.ru.springtest.exceptions.NotificationPublishInterruptedException;
 
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -23,7 +24,7 @@ public class NotificationKafkaClient {
                     .get(properties.sendTimeout().toMillis(), TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new NotificationPublishException(notificationId, e);
+            throw new NotificationPublishInterruptedException(notificationId, e);
         } catch (ExecutionException | TimeoutException e) {
             throw new NotificationPublishException(notificationId, e);
         }
