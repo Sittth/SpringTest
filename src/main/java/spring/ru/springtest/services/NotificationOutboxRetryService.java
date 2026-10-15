@@ -32,9 +32,6 @@ public class NotificationOutboxRetryService {
     private final NotificationOutboxRetryProperties retryProperties;
     private final NotificationKafkaClient notificationKafkaClient;
 
-    @Value("${notification-outbox.retry.max-backoff-shift}")
-    private int maxBackoffShift;
-
     public List<NotificationOutboxModel> claimBatch() {
 
         OffsetDateTime now = OffsetDateTime.now();
@@ -132,7 +129,7 @@ public class NotificationOutboxRetryService {
 
     private OffsetDateTime calculateNextRetryAt(int attempts) {
 
-        int shift = Math.min(attempts - 1, maxBackoffShift);
+        int shift = Math.min(attempts - 1, retryProperties.maxBackoffShift());
         Duration delay = retryProperties.baseDelay().multipliedBy(1L << shift);
         Duration maxDelay = retryProperties.maxDelay();
         return OffsetDateTime.now().plus(delay.compareTo(maxDelay) > 0 ? maxDelay : delay);

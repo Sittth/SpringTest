@@ -1,6 +1,7 @@
 package spring.ru.springtest.config;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -18,6 +19,8 @@ public record NotificationOutboxRetryProperties(
         @DefaultValue("30s") @NotNull Duration baseDelay,
 
         @DefaultValue("10m") @NotNull Duration maxDelay,
+
+        @DefaultValue("20") @Min(0) @Max(62) int maxBackoffShift,
 
         @DefaultValue @Valid Scheduler scheduler
 ) {
