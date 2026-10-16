@@ -19,6 +19,7 @@ import org.testcontainers.kafka.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -47,7 +48,7 @@ public abstract class AbstractControllerTest {
     }
 
     @Autowired
-    JdbcTemplate jdbcTemplate;
+    protected JdbcTemplate jdbcTemplate;
 
     @BeforeEach
     void cleanDatabase() {
@@ -74,6 +75,11 @@ public abstract class AbstractControllerTest {
 
     protected static ConsumerRecord<String, String> awaitRecord(
             String topic, Predicate<ConsumerRecord<String, String>> match) {
+        return awaitRecords(topic, match, 1).get(0);
+    }
+
+    protected static List<ConsumerRecord<String, String>> awaitRecords(
+            String topic, Predicate<ConsumerRecord<String, String>> match, int expectedCount) {
 
         Map<String, Object> props = Map.of(
                 ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka.getBootstrapServers(),
@@ -84,18 +90,24 @@ public abstract class AbstractControllerTest {
                 ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class
         );
 
+        List<ConsumerRecord<String, String>> found = new ArrayList<>();
+
         try (KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props)) {
             consumer.subscribe(List.of(topic));
             long deadline = System.currentTimeMillis() + 30_000;
-            while (System.currentTimeMillis() < deadline) {
+            while (System.currentTimeMillis() < deadline && found.size() < expectedCount) {
                 for (ConsumerRecord<String, String> record : consumer.poll(Duration.ofMillis(500))) {
                     if (match.test(record)) {
-                        return record;
+                        found.add(record);
                     }
                 }
             }
         }
 
-        throw new AssertionError("No matching record in topic " + topic + " within 30s");
+        if (found.size() < expectedCount) {
+            throw new AssertionError("Expected " + expectedCount + " records in topic " + topic
+                    + " but found " + found.size() + " within 30s");
+        }
+        return found;
     }
 }

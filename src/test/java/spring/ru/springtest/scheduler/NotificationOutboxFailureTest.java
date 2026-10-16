@@ -43,9 +43,11 @@ class NotificationOutboxFailureTest extends AbstractControllerTest {
     @MockitoBean
     NotificationKafkaClient notificationKafkaClient;
 
+
     @Test
-    void retryNotificationOutbox_shouldScheduleBackoff_whenKafkaFails() {
+    void retryNotificationOutbox_shouldRetryAfterBackoff_whenKafkaRecovers() {
         failKafka();
+
         NotificationResponse created = notificationService.save(
                 new NotificationCreateRequest("alice", "hello"));
 
@@ -56,14 +58,25 @@ class NotificationOutboxFailureTest extends AbstractControllerTest {
         assertThat(entry.getAttempts()).isEqualTo(1);
         assertThat(entry.getLockedUntil()).isNull();
         assertThat(entry.getNextRetryAt()).isAfter(OffsetDateTime.now());
-        assertThat(notificationRepository.findById(created.getId()).orElseThrow().getNotificationStatus())
-                .isEqualTo(NotificationStatus.PENDING);
+
+        scheduler.retryNotificationOutbox();
+        verify(notificationKafkaClient, times(1)).send(any(UUID.class), anyString());
+
+        entry.setNextRetryAt(OffsetDateTime.now().minusSeconds(1));
+        notificationOutboxRepository.saveAndFlush(entry);
+
+        doNothing().when(notificationKafkaClient).send(any(UUID.class), anyString());
 
         scheduler.retryNotificationOutbox();
 
-        verify(notificationKafkaClient, times(1)).send(any(UUID.class), anyString());
-        assertThat(notificationOutboxRepository.findAll().get(0).getAttempts()).isEqualTo(1);
+        assertThat(notificationOutboxRepository.findAll()).isEmpty();
+        assertThat(notificationRepository.findById(created.getId()).orElseThrow()
+                .getNotificationStatus()).isEqualTo(NotificationStatus.SENT);
+
+        verify(notificationKafkaClient, times(2)).send(
+                eq(created.getId()), anyString());
     }
+
 
     @Test
     void retryNotificationOutbox_shouldMarkFailed_whenAttemptsExhausted() {
